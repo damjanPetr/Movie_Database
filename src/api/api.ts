@@ -207,6 +207,7 @@ export async function getWatchProvidersRegionMovie(region: string) {
  * @param region :region to get the watch providers
  * @returns
  */
+
 export async function getWatchProvidersRegionTVShow(region: string) {
   const response = await fetch(
     apiURL + `/watch/providers/tv?watch_region=${region.toUpperCase()}`,
