@@ -34,10 +34,11 @@ export type actionReducer =
       countryData: { text: string; engFullName: string };
     }
   | { type: "change_sort_filter"; text: string }
-  | { type: "filtering"; text: string };
+  | { type: string; text: string };
 
 function Filter() {
   const [watchProviders, setWatchProviders] = useState<MovieProvidersGeneral>();
+
   const country = useCountry();
 
   const target = useRef<HTMLLIElement>(null);
@@ -108,8 +109,10 @@ function Filter() {
           });
         }
       });
-      const regions = await getWatchProvidersRegionMovie(country!);
-      setWatchProviders(regions);
+      if (country) {
+        const regions = await getWatchProvidersRegionMovie(country);
+        setWatchProviders(regions);
+      }
     })();
   }, [country]);
 
@@ -129,9 +132,11 @@ function Filter() {
     state;
 
   useEffect(() => {
-    if (searchTerm.type) {
+    if (searchTerm.type != undefined) {
       const delayDebounceFn = setTimeout(() => {
-        dispatch(searchTerm);
+        if (searchTerm.text !== undefined && searchTerm.text !== null) {
+          dispatch(searchTerm);
+        }
       }, 400);
       return () => clearTimeout(delayDebounceFn);
     }
