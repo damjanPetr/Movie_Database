@@ -1,5 +1,6 @@
 export function getFlag(flagCode: string) {
-  const flagstr = `https://flagcdn.com/24x18/${flagCode.toLowerCase()}.png`;
+  // const flagstr = `https://flagcdn.com/24x18/${flagCode.toLowerCase()}.png`;
+  const flagstr = `/assets/flag/${flagCode.toLowerCase()}.svg`;
   return flagstr;
 }
 

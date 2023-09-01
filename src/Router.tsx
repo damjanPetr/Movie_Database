@@ -1,4 +1,4 @@
-import { createBrowserRouter, defer } from "react-router-dom";
+import { createBrowserRouter, createHashRouter, defer } from "react-router-dom";
 import ErrorPage from "./ErrorPage.tsx";
 import {
   getAltTitles,
@@ -40,7 +40,7 @@ import { MovieAltTitles, MovieDetails } from "./types/types.tsx";
 import MovieTemp from "./pages/Movie/MovieTemp.tsx";
 import TVShowTemp from "./pages/TVShow/TVShowTemp.tsx";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     element: <AuthProvider />,
     children: [
