@@ -26,7 +26,7 @@ import Posters from "./pages/Media/Posters/Posters.tsx";
 import Videos from "./pages/Media/Videos/Videos.tsx";
 import AlternativeTitles from "./pages/MovieDetail/AlternativeTitles/AlternativeTitles.tsx";
 import CastCrew from "./pages/MovieDetail/CastCrew/CastCrew.tsx";
-import Changes from "./pages/MovieDetail/Changes/Changes.tsx";
+// import Changes from "./pages/MovieDetail/Changes/Changes.tsx";
 import Edit from "./pages/MovieDetail/Edit/Edit.tsx";
 import MovieDetail, {
   movieDetailLoader,
@@ -141,15 +141,15 @@ const router = createBrowserRouter([
                   return { data, details };
                 },
               },
-              {
-                path: "/:movieId/changes",
-                element: <Changes />,
-                loader: async ({ params }) => {
-                  const data = await getChanges(params.movieId);
-                  const details = await movieDetailLoader(params.movieId);
-                  return { data, details };
-                },
-              },
+              // {
+              //   path: "/:movieId/changes",
+              //   element: <Changes />,
+              //   loader: async ({ params }) => {
+              //     const data = await getChanges(params.movieId);
+              //     const details = await movieDetailLoader(params.movieId);
+              //     return { data, details };
+              //   },
+              // },
               {
                 path: "/:movieId/report",
                 element: <Report />,

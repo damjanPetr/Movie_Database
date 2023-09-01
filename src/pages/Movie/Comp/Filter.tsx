@@ -20,7 +20,7 @@ export type stateReducer = {
   filterUrl: "";
   whereToWatchOpen: boolean;
   countryCode: {
-    text: string;
+    text: string | { [key: string]: any };
     engFullName: string;
   };
   filter: string;
@@ -34,7 +34,7 @@ export type actionReducer =
       countryData: { text: string; engFullName: string };
     }
   | { type: "change_sort_filter"; text: string }
-  | { type: string; text: string };
+  | { type: "filtering" | ""; text: string | null; countryData?: object };
 
 function Filter() {
   const [watchProviders, setWatchProviders] = useState<MovieProvidersGeneral>();
@@ -44,10 +44,11 @@ function Filter() {
   const target = useRef<HTMLLIElement>(null);
   const [countries, setCountries] = useState<Countries>([]);
   const [searchTerm, setSearchTerm] = useState<{
-    type: string;
-    text?: string | null;
+    type: "filtering" | "";
+    text: string | null;
   }>({
     type: "",
+    text: "",
   });
 
   const reducer = (
@@ -134,8 +135,10 @@ function Filter() {
   useEffect(() => {
     if (searchTerm.type != undefined) {
       const delayDebounceFn = setTimeout(() => {
-        if (searchTerm.text !== undefined && searchTerm.text !== null) {
-          dispatch(searchTerm);
+        if (searchTerm.type === "filtering") {
+          if (typeof searchTerm.text == "string") {
+            dispatch(searchTerm);
+          }
         }
       }, 400);
       return () => clearTimeout(delayDebounceFn);

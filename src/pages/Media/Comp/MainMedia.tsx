@@ -16,7 +16,7 @@ function MainMedia({ data, type }: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const filterLanguage = searchParams.get("image_lang");
-  const filterSearchFunction = (item) => {
+  const filterSearchFunction = (item: any) => {
     if (filterLanguage === "null") {
       return item.iso_639_1 === null;
     }

@@ -1,19 +1,20 @@
 import { AiFillPlusCircle } from "react-icons/ai";
 import { Link, NavLink } from "react-router-dom";
-type Props = {
+export type PropsAsideVideo = {
   type: "trailers" | "Clip" | "teasers" | "featurettes" | "BehindTheScenes";
   data: {
-    [x in
-      | "Clip"
-      | "Featurette"
-      | "Teaser"
-      | "Trailer"
-      | "Bloopers"
-      | "Behind the Scenes"]: object[];
+    // [x in
+    //   | "Clip"
+    //   | "Featurette"
+    //   | "Teaser"
+    //   | "Trailer"
+    //   | "Bloopers"
+    //   | "Behind the Scenes"]
+    [x: string]: object[];
   };
 };
 
-function AsideVideo({ type, data }: Props) {
+function AsideVideo({ type, data }: PropsAsideVideo) {
   // const dataObjectKeys = Object.keys(data).map((item) => {
   //   const number = data[item].length;
   //   return { item, number };

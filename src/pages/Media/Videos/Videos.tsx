@@ -3,7 +3,6 @@ import { MovieDetails, MovieVideos } from "../../../types/types";
 import Banner from "../../components/Banner";
 import AsideVideo from "./Comp/AsideVideo";
 import MainVideo from "./Comp/MainVideo";
-import { videoResults } from "./Teasers/Teasers";
 
 export default function Videos() {
   const { data, details } = useLoaderData() as {
@@ -11,7 +10,7 @@ export default function Videos() {
     details: MovieDetails;
   };
 
-  const dataFilterBytitle: { [x: string]: videoResults } = {};
+  const dataFilterBytitle: { [key in string]: object[] } = {};
 
   data.results.forEach((item) => {
     if (!dataFilterBytitle[item.type]) {
