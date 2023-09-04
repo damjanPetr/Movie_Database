@@ -48,7 +48,7 @@ export default function CastCrew() {
                       <div className="">
                         <img
                           src={
-                            "../../../../public/assets/noun-user-2063433.svg"
+                            "assets/noun-user-2063433.svg"
                           }
                           className=" h-[278px] w-[185px] rounded-md bg-slate-300 object-contain text-white shadow-inner shadow-black "
                           alt=""
@@ -87,7 +87,7 @@ export default function CastCrew() {
                           <div className="">
                             <img
                               src={
-                                "../../../../public/assets/noun-user-2063433.svg"
+                                "assets/noun-user-2063433.svg"
                               }
                               className=" h-[278px] w-[185px] rounded-md bg-slate-300 object-contain text-white shadow-inner shadow-black "
                               alt=""
