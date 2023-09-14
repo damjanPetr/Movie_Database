@@ -61,3 +61,8 @@ export function getHighlight(text: string, filter: string) {
     return { left, middle, right };
   }
 }
+
+export const convertLinks = (videoId: string) => {
+  const imageUrl = `https://i.ytimg.com/vi/${videoId}/${"hq"}${"default"}.jpg`;
+  return imageUrl;
+};

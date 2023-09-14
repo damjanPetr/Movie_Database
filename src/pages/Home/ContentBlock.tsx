@@ -44,7 +44,6 @@ export default function ContentBlock({
 }) {
   // const [change, dispatch] = useReducer(reducer, data);
   const target = useRef<HTMLDivElement>(null);
-  // console.log("🚀 ~ file: ContentBlock.tsx:45 ~ change:", change);
   const [state, setState] = useState(data);
   const [change, setChange] = useState("");
 

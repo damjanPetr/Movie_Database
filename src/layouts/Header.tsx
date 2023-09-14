@@ -100,7 +100,7 @@ export default function Header() {
             </ul>
           </div>
         </nav>
-        <div className="ml-auto mr-4">
+        {/* <div className="ml-auto mr-4">
           <ul>
             {user ? (
               <li className="ml-auto p-1 first-letter:underline first-letter:underline-offset-2">
@@ -114,7 +114,7 @@ export default function Header() {
               </li>
             )}
           </ul>
-        </div>
+        </div> */}
       </div>
     </header>
   );

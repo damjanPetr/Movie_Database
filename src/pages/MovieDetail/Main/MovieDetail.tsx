@@ -15,7 +15,10 @@ import Recommendations from "./comp/Recommendations";
 import Nav from "../../components/Nav";
 
 export async function movieDetailLoader<T>(id: T) {
-  const response = await fetch(apiURL + `/movie/${id}`, apiFetchOptions);
+  const response = await fetch(
+    apiURL + `/movie/${id}?append_to_response=videos,images,reviews`,
+    apiFetchOptions
+  );
   return response.json();
 }
 
@@ -24,6 +27,7 @@ export default function MovieDetail() {
     movieDetail: MovieDetails;
   };
 
+  console.log(movieDetail);
   const { hours, minutes } = toHoursAndMinutes(movieDetail.runtime);
 
   return (
@@ -159,7 +163,6 @@ export default function MovieDetail() {
             <Recommendations />
           </section>
 
-          <section></section>
           <aside className="min-w-[30%]  p-2 shadow-lg">
             <div className="">
               <h3 className="mb-2">Made in :</h3>

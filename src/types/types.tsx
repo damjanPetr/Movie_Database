@@ -31,6 +31,15 @@ export type MovieDetails = {
   homepage: string;
   id: number;
   imdb_id: number;
+  images: {
+    backdrops: MovieImages["backdrops"];
+    logos: MovieImages["logos"];
+    posters: MovieImages["posters"];
+  };
+  videos: {
+    results: MovieVideos["results"];
+  };
+
   original_language: string;
   original_title: string;
   overview: string;
@@ -85,7 +94,7 @@ export type MovieImages<
     vote_average: number;
     vote_count: number;
     width: number;
-  }
+  },
 > = {
   backdrops: T[];
   id: number;
@@ -230,7 +239,7 @@ export type MovieCredits<
     character: string;
     credit_id: string;
     order: number;
-  }
+  },
 > = {
   id: number;
   cast: T[];

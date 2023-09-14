@@ -19,7 +19,6 @@ import ContentIssues from "./pages/Discussion/ContentIssues/ContentIssues.tsx";
 import General from "./pages/Discussion/General/General.tsx";
 import Overview from "./pages/Discussion/Overview/Overview.tsx";
 import Home from "./pages/Home/Home.tsx";
-import Login from "./pages/Login/Login.tsx";
 import Backdrops from "./pages/Media/Backdrops/Backdrops.tsx";
 import Logos from "./pages/Media/Logos/Logos.tsx";
 import Posters from "./pages/Media/Posters/Posters.tsx";
@@ -48,14 +47,14 @@ const router = createHashRouter([
         element: <Main />,
         errorElement: <ErrorPage />,
         children: [
-          {
-            path: "/login",
-            element: <Login />,
-            action: ({ request }) => {
-              console.log(request.url);
-              return null;
-            },
-          },
+          // {
+          //   path: "/login",
+          //   element: <Login />,
+          //   action: ({ request }) => {
+          //     console.log(request.url);
+          //     return null;
+          //   },
+          // },
           {
             path: "/people",
             element: <People />,
