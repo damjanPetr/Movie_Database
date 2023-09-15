@@ -21,7 +21,8 @@ export const apiURL = "https://api.themoviedb.org/3";
 
 export async function movieDetailLoader<T>(id: T) {
   const response = await fetch(
-    apiURL + `/movie/${id}?append_to_response=videos,images,reviews,credits`,
+    apiURL +
+      `/movie/${id}?append_to_response=videos,images,reviews,credits,recommendations`,
     apiFetchOptions
   );
   return response.json();

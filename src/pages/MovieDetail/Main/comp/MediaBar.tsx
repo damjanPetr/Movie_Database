@@ -94,10 +94,10 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
   }, [movieData]);
 
   return (
-    <div className="mediaBar h-full">
+    <div className="mediaBar  mt-4 p-2">
       <header className="flex items-center ">
         <div className="logo">
-          <h3>Media</h3>
+          <h3 className="text-xl font-bold mb-2 ml-1.5">Media</h3>
         </div>
         <nav className="ml-auto mr-8">
           <ul className="ml-auto flex gap-4">
@@ -188,6 +188,7 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
           <LoadMoreBtn func={handelClick} />
         ) : null}
       </div>
+      <hr className="mt-10" />
     </div>
   );
 }

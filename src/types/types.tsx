@@ -17,6 +17,7 @@ export type TVProps = {
 };
 
 export type TVbase = Movie;
+
 export type MovieDetails = {
   adult: boolean;
   backdrop_path: null | string;
@@ -64,6 +65,7 @@ export type MovieDetails = {
   video: boolean;
   vote_average: number;
   vote_count: number;
+  recommendations: MovieRecommendations;
 };
 
 export type MovieKeywords = {
