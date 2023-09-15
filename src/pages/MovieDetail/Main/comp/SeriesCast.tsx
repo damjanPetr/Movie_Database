@@ -1,4 +1,4 @@
 type Props = {};
-export default function SeriesCast({}: Props) {
+export default function Social({}: Props) {
   return <div>SeriesCast</div>;
 }

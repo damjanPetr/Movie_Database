@@ -9,8 +9,8 @@ import {
 import { MovieDetails, MovieImages, MovieVideos } from "../../../types/types";
 import { toHoursAndMinutes } from "../../../utils/func";
 import MediaBar from "./comp/MediaBar";
-import SeriesCast from "./comp/SeriesCast";
-import SeasonSection from "./comp/SeasonSection";
+import Social from "./comp/SeriesCast";
+import TopBilledCast from "./comp/SeasonSection";
 import Recommendations from "./comp/Recommendations";
 import Nav from "../../components/Nav";
 
@@ -157,9 +157,10 @@ export default function MovieDetail() {
         </article>
         <article className="container mx-auto flex  p-4">
           <section className="max-h-[500px] min-w-[70%]">
+            <Social />
+
             <MediaBar movieId={movieDetail.id} />
-            <SeriesCast />
-            <SeasonSection />
+            <TopBilledCast />
             <Recommendations />
           </section>
 

@@ -146,7 +146,10 @@ export default function MediaBar({ movieId }: { movieId: number }) {
         ref={content}
       >
         {data && state.video === true ? (
-          <div id="videos" className="flex h-full items-stretch overflow-auto">
+          <div
+            id="videos"
+            className="flex h-full items-stretch overflow-auto scb"
+          >
             {data.videos.results.slice(0, loadNumber).map((item) => (
               <VideoTab item={item} key={item.id} />
             ))}
@@ -155,7 +158,7 @@ export default function MediaBar({ movieId }: { movieId: number }) {
 
         {/* backdrops */}
         {data && state.backdrops === true ? (
-          <div className="flex overflow-auto h-full " id="backdrops">
+          <div className="flex overflow-auto h-full  scb" id="backdrops">
             {data.images.backdrops.slice(0, loadNumber).map((item) => {
               return <BackdropTab item={item} key={item.file_path} />;
             })}
@@ -165,7 +168,7 @@ export default function MediaBar({ movieId }: { movieId: number }) {
         {/* posters */}
 
         {data && state.poster === true ? (
-          <div id="posters" className="flex overflow-auto h-full ">
+          <div id="posters" className="flex overflow-auto h-full scb ">
             {data.images.posters.slice(0, loadNumber).map((item) => {
               return <PosterTab item={item} key={item.file_path} />;
             })}
