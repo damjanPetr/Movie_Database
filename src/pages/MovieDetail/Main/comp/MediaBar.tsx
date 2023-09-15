@@ -45,7 +45,7 @@ export type Actions =
       type: "backdrops";
     };
 
-export default function MediaBar({ movieId }: { movieId: number }) {
+export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
   /**
    *
    */
@@ -88,10 +88,10 @@ export default function MediaBar({ movieId }: { movieId: number }) {
 
   useEffect(() => {
     (async () => {
-      const movieData = await movieDetailLoader(movieId);
+      // const movieData = await movieDetailLoader(movieId);
       setData(movieData);
     })();
-  }, [movieId]);
+  }, [movieData]);
 
   return (
     <div className="mediaBar h-full">
@@ -141,10 +141,7 @@ export default function MediaBar({ movieId }: { movieId: number }) {
       </header>
 
       {/* videos */}
-      <div
-        className="h-[350px]  border border-red-600  bg-gray-200  "
-        ref={content}
-      >
+      <div className="h-[350px]   bg-gray-200  " ref={content}>
         {data && state.video === true ? (
           <div
             id="videos"

@@ -27,6 +27,7 @@ export type MovieDetails = {
     backdrop_path: string;
   };
   budget: number;
+  credits: MovieCredits;
   genres: { id: number; name: string }[];
   homepage: string;
   id: number;
@@ -52,6 +53,7 @@ export type MovieDetails = {
     origin_country: string;
   }[];
   production_countries: { iso_3166_1: string; name: string }[];
+  reviews: MovieReviews;
   release_date: string;
   revenue: number;
   runtime: number;

@@ -13,8 +13,8 @@ export default function VideoTab({ item }: Props) {
     >
       {item.site.toLowerCase() === "youtube" && (
         <div className="relative">
-          <dialog id={`my_modal_${item.id}`} className="modal ">
-            <div className="modal-box bg-black w-[80vw] h-[80vh] ">
+          <dialog id={`my_modal_${item.id}`} className="modal">
+            <div className="modal-box bg-black w-[80vw] h-[80vh]">
               <form method="dialog">
                 <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white p-2 ">
                   ✕
@@ -22,17 +22,19 @@ export default function VideoTab({ item }: Props) {
               </form>
               <iframe
                 className="w-full h-full rounded-lg"
-                // height={"100%"}
-                // width={"100%"}
                 src={`https://youtube.com/embed/${item.key}`}
               ></iframe>
             </div>
           </dialog>
 
-          <img src={convertLinks(item.key)} alt="" />
+          <img
+            src={convertLinks(item.key)}
+            alt=""
+            className="object-cover h-[450px]"
+          />
           <div
             className="rounded-full p-4 bg-black/60 group absolute top-1/2 left-1/2 -translate-y-1/2 hover:bg-black/70 transition-colors active:bg-white"
-            onClick={(e) => {
+            onClick={() => {
               const modal = document.querySelector(
                 `#my_modal_${item.id}`
               ) as HTMLDialogElement;

@@ -10,7 +10,7 @@ export default function BackdropTab({ item }: Props) {
       <img
         src={base_url + item.file_path}
         alt=""
-        className="mr-2  min-h-full  rounded-lg object-cover"
+        className="mr-2  min-h-full   object-cover"
       />
     </div>
   );

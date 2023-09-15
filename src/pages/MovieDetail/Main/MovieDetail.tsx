@@ -9,18 +9,10 @@ import {
 import { MovieDetails, MovieImages, MovieVideos } from "../../../types/types";
 import { toHoursAndMinutes } from "../../../utils/func";
 import MediaBar from "./comp/MediaBar";
-import Social from "./comp/SeriesCast";
-import TopBilledCast from "./comp/SeasonSection";
+import Social from "./comp/Social";
+import TopBilledCast from "./comp/TopBilledCast";
 import Recommendations from "./comp/Recommendations";
 import Nav from "../../components/Nav";
-
-export async function movieDetailLoader<T>(id: T) {
-  const response = await fetch(
-    apiURL + `/movie/${id}?append_to_response=videos,images,reviews`,
-    apiFetchOptions
-  );
-  return response.json();
-}
 
 export default function MovieDetail() {
   const { movieDetail /* mediaBarData */ } = useLoaderData() as {
@@ -157,10 +149,9 @@ export default function MovieDetail() {
         </article>
         <article className="container mx-auto flex  p-4">
           <section className="max-h-[500px] min-w-[70%]">
-            <Social />
-
-            <MediaBar movieId={movieDetail.id} />
-            <TopBilledCast />
+            <TopBilledCast castData={movieDetail.credits} />
+            <Social reviews={movieDetail.reviews.results} />
+            <MediaBar movieData={movieDetail} />
             <Recommendations />
           </section>
 

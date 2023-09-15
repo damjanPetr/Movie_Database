@@ -12,6 +12,7 @@ import {
   getTranslations,
   getTrending,
   getVideos,
+  movieDetailLoader,
 } from "./api/api.ts";
 import { AuthProvider } from "./context/Auth.tsx";
 import Main from "./layouts/Main.tsx";
@@ -27,9 +28,7 @@ import AlternativeTitles from "./pages/MovieDetail/AlternativeTitles/Alternative
 import CastCrew from "./pages/MovieDetail/CastCrew/CastCrew.tsx";
 // import Changes from "./pages/MovieDetail/Changes/Changes.tsx";
 import Edit from "./pages/MovieDetail/Edit/Edit.tsx";
-import MovieDetail, {
-  movieDetailLoader,
-} from "./pages/MovieDetail/Main/MovieDetail.tsx";
+import MovieDetail from "./pages/MovieDetail/Main/MovieDetail.tsx";
 import ReleaseDate from "./pages/MovieDetail/ReleaseDate/ReleaseDate.tsx";
 import Report from "./pages/MovieDetail/Report/Report.tsx";
 import Translations from "./pages/MovieDetail/Translations/Translations.tsx";

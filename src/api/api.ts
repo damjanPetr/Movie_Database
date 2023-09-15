@@ -19,6 +19,14 @@ export const still_original = "http://image.tmdb.org/t/p/w500";
 export const base_urlBg = "http://image.tmdb.org/t/p/original";
 export const apiURL = "https://api.themoviedb.org/3";
 
+export async function movieDetailLoader<T>(id: T) {
+  const response = await fetch(
+    apiURL + `/movie/${id}?append_to_response=videos,images,reviews,credits`,
+    apiFetchOptions
+  );
+  return response.json();
+}
+
 export async function getDBCounties(): Promise<Countries> {
   const response = await fetch(
     apiURL + `/configuration/countries`,
