@@ -173,7 +173,10 @@ export default function MovieDetail() {
         {/* Main Section */}
         <article className=" mx-auto flex max-w-screen-xl  p-10">
           <section className=" min-w-[75%] pr-10">
-            <TopBilledCast castData={movieDetail.credits} />
+            <TopBilledCast
+              castData={movieDetail.credits}
+              movieId={movieDetail.id}
+            />
             <Social reviews={movieDetail.reviews.results} />
             <MediaBar movieData={movieDetail} />
             {movieDetail.belongs_to_collection && <div className=""></div>}

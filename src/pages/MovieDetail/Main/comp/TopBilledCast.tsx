@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { still_300 } from "../../../../api/api";
 import { MovieCredits } from "../../../../types/types";
+import MovieDetailAside from "../MovieDetailAside";
+import { Link } from "react-router-dom";
 
 type Props = {
   castData: MovieCredits;
+  movieId: number;
 };
-export default function TopBilledCast({ castData }: Props) {
+export default function TopBilledCast({ castData, movieId }: Props) {
   const [loadNumber, setLoadNumber] = useState(10);
   return (
     <div className="p-2 border-b">
@@ -51,9 +54,12 @@ export default function TopBilledCast({ castData }: Props) {
           </div>
         </div>
       </div>
-      <a href="" className="text-base font-semibold mt-4 ml-1.5 inline-block ">
+      <Link
+        to={`/${movieId}` + "/cast-crew"}
+        className="text-base font-semibold mt-4 ml-1.5 inline-block "
+      >
         Full Cast & Crew
-      </a>
+      </Link>
     </div>
   );
 }

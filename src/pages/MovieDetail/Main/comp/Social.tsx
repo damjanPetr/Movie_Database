@@ -10,15 +10,16 @@ function Social({ reviews }: Props) {
 
   const ul = useRef<HTMLUListElement>(null);
 
-  const reviews1 = reviews[Math.floor(Math.random() * reviews.length)];
-  reviews1.content = new DOMParser().parseFromString(
-    reviews1.content,
-    "text/html"
-  ).documentElement.textContent as string;
-
-  reviews = [reviews1];
-
-  console.log("🚀 ✔ file: Social.tsx:14 ✔ Social ✔ reviews:", reviews1);
+  if (reviews.length != 0) {
+    const reviews1 = reviews[Math.floor(Math.random() * reviews.length)];
+    reviews1.content = new DOMParser().parseFromString(
+      reviews1.content,
+      "text/html"
+    ).documentElement.textContent as string;
+    reviews = [reviews1];
+  } else {
+    reviews = [];
+  }
 
   const [tabLoad, setTabLoad] = useState<"reviews" | "discussion">("reviews");
 
@@ -52,7 +53,6 @@ function Social({ reviews }: Props) {
     }
     return;
   }
-
   return (
     <div className="p-2 border-b">
       <h3 className="text-xl font-bold mb-2 ml-1.5">Social</h3>
@@ -69,7 +69,7 @@ function Social({ reviews }: Props) {
                     handelClick(e, index);
                   }}
                 >
-                  {item}
+                  {item} <span>{` ${index == 0 ? reviews.length : "0"}`}</span>
                   <div
                     className={`h-1 bg-teal-500 rounded-lg  transition-opacity ${
                       index === 0 ? "opacity-100" : "opacity-0"
@@ -150,13 +150,32 @@ function Social({ reviews }: Props) {
             <div className="">
               <div className="prose-slate  text-clip text-sm">
                 {reviews.length !== 0 ? (
-                  reviews[0].content.split("\n").map((item, index) => {
-                    return (
-                      <p className="mb-5 " key={index}>
-                        {item}
-                      </p>
-                    );
-                  })
+                  (() => {
+                    const chunks = reviews[0].content.split("\n");
+                    if (chunks.length > 1) {
+                      console.log("line");
+                      return chunks.map((item, index) => {
+                        return (
+                          <p className="mb-5 " key={index}>
+                            {item}
+                          </p>
+                        );
+                      });
+                    } else {
+                      const chunks = reviews[0].content
+                        .split(".")
+                        .map((item) => (item = item + "."));
+                      console.log("uuuu");
+
+                      return chunks.map((item, index) => {
+                        return (
+                          <p className="mb-2 " key={index}>
+                            {item}
+                          </p>
+                        );
+                      });
+                    }
+                  })()
                 ) : (
                   <p> There are no reviews</p>
                 )}
