@@ -148,7 +148,7 @@ function Social({ reviews }: Props) {
             ) : null}
 
             <div className="">
-              <div className="prose-slate  text-clip text-sm">
+              <div className="prose-slate  text-clip ">
                 {reviews.length !== 0 ? (
                   (() => {
                     const chunks = reviews[0].content.split("\n");

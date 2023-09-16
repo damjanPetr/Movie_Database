@@ -39,38 +39,67 @@ export default function MovieDetail() {
             </div>
             {/* Content*/}
             <section className="content flex flex-col  pl-10">
-              <div className="mb-10 space-x-1">
-                <h2 className="text-4xl font-bold">
+              <div className="mb-10 space-x-1 ">
+                <h2 className="text-4xl font-bold ">
                   {movieDetail.title}
                   <span className="text-4xl text-gray-200 font-normal">
                     {" (" + movieDetail.release_date.slice(0, 4) + ")"}
                   </span>
                 </h2>
-                <span className="">
-                  {new Date(movieDetail.release_date).toLocaleDateString(
-                    navigator.language,
-                    {
-                      month: "numeric",
-                      day: "numeric",
-                      year: "numeric",
-                    }
-                  )}
-                  {" (" +
-                    movieDetail.production_countries[
-                      movieDetail.production_countries.length - 1
-                    ].iso_3166_1 +
-                    ")"}
-                </span>
-                {movieDetail.genres.map((item, index) => (
-                  <span key={item.id}>
-                    {item.name}
-                    {index !== movieDetail.genres.length - 1 ? "," : null}
+                <div className="flex items-center">
+                  <span className="">
+                    {new Date(movieDetail.release_date).toLocaleDateString(
+                      navigator.language,
+                      {
+                        month: "numeric",
+                        day: "numeric",
+                        year: "numeric",
+                      }
+                    )}
+                    {" (" +
+                      movieDetail.production_countries[
+                        movieDetail.production_countries.length - 1
+                      ].iso_3166_1 +
+                      ")"}
                   </span>
-                ))}
-                <span>
-                  {hours}h {minutes}m
-                </span>
+                  <span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M12 10a2 2 0 0 0-2 2a2 2 0 0 0 2 2c1.11 0 2-.89 2-2a2 2 0 0 0-2-2Z"
+                      />
+                    </svg>
+                  </span>
+                  {movieDetail.genres.map((item, index) => (
+                    <span key={item.id}>
+                      {item.name}
+                      {index !== movieDetail.genres.length - 1 ? "," : null}
+                    </span>
+                  ))}
+                  <span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M12 10a2 2 0 0 0-2 2a2 2 0 0 0 2 2c1.11 0 2-.89 2-2a2 2 0 0 0-2-2Z"
+                      />
+                    </svg>
+                  </span>
+                  <span>
+                    {hours}h {minutes}m
+                  </span>
+                </div>
               </div>
+
               {/* User Score / Trailer */}
               <div className="flex items-center">
                 {/* Circular Progress Meter */}
@@ -79,7 +108,27 @@ export default function MovieDetail() {
                   <div
                     className="relative h-16 w-16   rounded-full flex items-center justify-center   border-4 border-black hover:scale-105 transition-all delay-150"
                     style={{
-                      backgroundImage: `conic-gradient(rgb(15, 189, 66) ${Math.round(
+                      backgroundImage: `conic-gradient(${
+                        movieDetail.vote_average > 9
+                          ? "hsl(116deg 100% 50%)"
+                          : movieDetail.vote_average > 8
+                          ? "hsl(104deg 100% 50%)"
+                          : movieDetail.vote_average > 7
+                          ? "hsl(93deg 100% 50%)"
+                          : movieDetail.vote_average > 6
+                          ? "hsl(81deg 100% 50%)"
+                          : movieDetail.vote_average > 5
+                          ? "hsl(70deg 100% 50%)"
+                          : movieDetail.vote_average > 4
+                          ? "hsl(58deg 100% 50%)"
+                          : movieDetail.vote_average > 3
+                          ? "hsl(35deg 100% 50%)"
+                          : movieDetail.vote_average > 2
+                          ? "hsl(12deg 100% 49%)"
+                          : movieDetail.vote_average > 1
+                          ? "hsl(0deg 100% 49%)"
+                          : null
+                      } ${Math.round(
                         ((movieDetail.vote_average * 10) / 100) * 360
                       )}deg, ${0}deg, rgb(24, 18, 18))`,
                     }}
