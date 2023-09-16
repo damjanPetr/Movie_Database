@@ -29,6 +29,7 @@ export default function Header() {
     <header className=" bg-[#032541]   text-white ">
       <div className="mx-auto max-w-screen-xl flex items-center text-lg">
         <Switch />
+
         <div className="logo ml-4 ">
           <Link to="/">
             <img

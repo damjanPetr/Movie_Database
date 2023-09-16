@@ -1,21 +1,15 @@
 import {} from "react";
-import { useLoaderData, Link } from "react-router-dom";
-import {
-  apiFetchOptions,
-  apiURL,
-  base_url,
-  base_urlBg,
-} from "../../../api/api";
-import { MovieDetails, MovieImages, MovieVideos } from "../../../types/types";
+import { useLoaderData } from "react-router-dom";
+import { base_url, base_urlBg } from "../../../api/api";
+import { MovieDetails } from "../../../types/types";
 import { toHoursAndMinutes } from "../../../utils/func";
+import Nav from "../../components/Nav";
+import MovieCollection from "./MovieCollection";
+import MovieDetailAside from "./MovieDetailAside";
 import MediaBar from "./comp/MediaBar";
+import Recommendations from "./comp/Recommendations";
 import Social from "./comp/Social";
 import TopBilledCast from "./comp/TopBilledCast";
-import Recommendations from "./comp/Recommendations";
-import Nav from "../../components/Nav";
-import Aside from "../../components/Aside";
-import MovieDetailAside from "./MovieDetailAside";
-import MovieCollection from "./MovieCollection";
 
 export default function MovieDetail() {
   const { movieDetail /* mediaBarData */ } = useLoaderData() as {
@@ -79,12 +73,27 @@ export default function MovieDetail() {
               </div>
               {/* User Score / Trailer */}
               <div className="flex items-center">
-                <p className="">Vote Everage: {movieDetail.vote_average}</p>
-                <p className="bg-blue-800">
-                  Vote Count: {movieDetail.vote_count}
-                </p>
+                {/* Circular Progress Meter */}
+
+                <div className="flex justify-between gap-2 items-center">
+                  <div
+                    className="relative h-16 w-16   rounded-full flex items-center justify-center   border-4 border-black hover:scale-105 transition-all delay-150"
+                    style={{
+                      backgroundImage: `conic-gradient(rgb(15, 189, 66) ${Math.round(
+                        ((movieDetail.vote_average * 10) / 100) * 360
+                      )}deg, ${0}deg, rgb(24, 18, 18))`,
+                    }}
+                  >
+                    <div className="absolute h-10 w-10 bg-black rounded-full text-white text-center  font-bold flex items-center justify-center ">
+                      {Math.round(movieDetail.vote_average * 10)}%
+                    </div>
+                  </div>
+                  <p className="text-base font-bold break-word w-16">
+                    User Score
+                  </p>
+                </div>
                 <button
-                  className="btn flex items-center font-semibold"
+                  className="btn flex items-center font-semibold p-2 bg-black/60"
                   onClick={() => {
                     const modal = document.getElementById(
                       "trailer_modal"
@@ -121,6 +130,7 @@ export default function MovieDetail() {
                 </button>
               </div>
               {/* Overview */}
+
               <div className="min-h-[150px]">
                 <p className="mb-2 italic text-gray-400">
                   {movieDetail.tagline}

@@ -86,3 +86,18 @@
 .shadowAside {
   box-shadow: 10px 0px 50px rgb(255, 255, 255);
 }
+
+.circleRadial {
+  /* background-image: conic-gradient(
+    hsl(360, 100%, 50%),
+    hsl(315, 100%, 50%),
+    hsl(270, 100%, 50%),
+    hsl(225, 100%, 50%),
+    hsl(180, 100%, 50%),
+    hsl(135, 100%, 50%),
+    hsl(90, 100%, 50%),
+    hsl(45, 100%, 50%),
+    hsl(0, 100%, 50%)
+  ); */
+  background-image: conic-gradient(lime 50deg, 50deg, rgb(24, 18, 18));
+}
