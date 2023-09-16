@@ -8,7 +8,7 @@ type Props = {
 export default function Recommendations({ recommendations }: Props) {
   return (
     <div className="p-2">
-      <h1 className="text-xl font-bold mb-2 ml-1.5 p-2">Recommendations</h1>
+      <h3 className="text-xl font-bold mb-2 ml-1.5 p-2">Recommendations</h3>
       <div className="scb flex overflow-x-auto space-x-4 ">
         {recommendations.map((item) => {
           return (

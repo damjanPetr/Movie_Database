@@ -1,6 +1,10 @@
 // import dotenv from "dotenv";
 
-import { Countries, MovieProvidersGeneral } from "../types/types";
+import {
+  Countries,
+  MovieProvidersGeneral,
+  MovieRecommendations,
+} from "../types/types";
 
 // dotenv.config();
 export const apiFetchOptions = {
@@ -22,9 +26,14 @@ export const apiURL = "https://api.themoviedb.org/3";
 export async function movieDetailLoader<T>(id: T) {
   const response = await fetch(
     apiURL +
-      `/movie/${id}?append_to_response=videos,images,reviews,credits,recommendations`,
+      `/movie/${id}?append_to_response=videos,images,reviews,credits,recommendations,keywords,collections`,
     apiFetchOptions
   );
+  return response.json();
+}
+
+export async function movieCollection<T>(id: T) {
+  const response = await fetch(apiURL + `/collection/${id}`, apiFetchOptions);
   return response.json();
 }
 

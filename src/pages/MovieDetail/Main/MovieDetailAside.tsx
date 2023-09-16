@@ -6,37 +6,73 @@ type Props = {
 };
 function MovieDetailAside({ movieDetail }: Props) {
   return (
-    <aside className="min-w-[30%]   shadow-lg">
+    <aside className="min-w-[25%]    pt-8">
       <div className="mb-6">
-        <h3 className="mb-2">Made in :</h3>
-        {movieDetail.production_countries.map((item, index) => (
-          <div key={index} className="mb-2 flex justify-between gap-4">
-            <p>{item.name}</p>
-            <img
-              src={`https://flagcdn.com/20x15/${item.iso_3166_1.toLocaleLowerCase()}.png`}
-              srcSet={`https://flagcdn.com/40x30/${item.iso_3166_1.toLowerCase()}.png 2x, https://flagcdn.com/60x45/${item.iso_3166_1.toLowerCase()}.png 3x`}
-              width="30"
-              height="15"
-              alt="Ukraine"
-            ></img>
-          </div>
-        ))}
-      </div>
-      <div className="mb-6">
-        <h3 className="mb-2">By : </h3>
-        <ul>
-          {movieDetail.production_companies.map((item, index) => (
-            <li key={index} className="flex justify-between gap-4">
-              {/* <p>{item.id}</p> */}
-              <p>{item.name}</p>
-              <img
-                src={base_url + item.logo_path}
-                className="h-10 max-w-[70px]"
-              ></img>
-              {/* <p>{item.origin_country}</p> */}
-            </li>
-          ))}
+        <div className="mb-5  ">
+          <strong className="   font-bold">Status</strong>
+          <p className="">{movieDetail.status}</p>
+        </div>
+        <div className="mb-5  ">
+          <strong className="   font-bold">Original Language:</strong>
+          <p className="">
+            {new Intl.DisplayNames(navigator.language, { type: "language" }).of(
+              movieDetail.original_language
+            )}
+          </p>
+        </div>
+        <div className="mb-5  ">
+          <strong className="   font-bold"> Budget</strong>
+          <p className="">
+            {movieDetail.revenue
+              ? new Intl.NumberFormat(navigator.language, {
+                  style: "currency",
+                  currency: "USD",
+                  maximumFractionDigits: 2,
+                  unitDisplay: "long",
+                  notation: "standard",
+                }).format(movieDetail.budget)
+              : "-"}
+          </p>
+        </div>
+        <div className="mb-5  ">
+          <strong className="   font-bold">Revenue</strong>
+          <p className="">
+            {movieDetail.revenue
+              ? new Intl.NumberFormat(navigator.language, {
+                  style: "currency",
+                  currency: "USD",
+                  maximumFractionDigits: 2,
+                  unitDisplay: "long",
+                  notation: "standard",
+                }).format(movieDetail.revenue)
+              : "-"}
+          </p>
+        </div>
+
+        <div className="mb-2">
+          <p className="font-bold">Keywords</p>
+        </div>
+
+        <ul className="flex flex-wrap  content-center gap-2 ">
+          {movieDetail.keywords.keywords.map((item) => {
+            return (
+              <li
+                className="p-2 bg-gray-200 rounded-sm text-sm font-"
+                key={item.id}
+              >
+                {item.name}
+              </li>
+            );
+          })}
         </ul>
+        <hr className="my-10" />
+        <div className="">
+          <h3 className="font-bold">Content Score</h3>
+          <div className=" rounded-lg">
+            {/* <div className="">{movieDetail.}</div> */}
+            <div className=""></div>
+          </div>
+        </div>
       </div>
     </aside>
   );

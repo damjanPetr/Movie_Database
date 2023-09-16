@@ -99,7 +99,7 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
         <div className="logo">
           <h3 className="text-xl font-bold mb-2 ml-1.5">Media</h3>
         </div>
-        <nav className="ml-auto mr-8">
+        <nav className="ml-auto mr-8 shadowAside">
           <ul className="ml-auto flex gap-4">
             <li>Most Popular</li>
             <li
@@ -141,15 +141,21 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
       </header>
 
       {/* videos */}
-      <div className="h-[350px]   bg-gray-200  " ref={content}>
+      <div className="h-[300px]   bg-gray-200  " ref={content}>
         {data && state.video === true ? (
           <div
             id="videos"
             className="flex h-full items-stretch overflow-auto scb"
           >
-            {data.videos.results.slice(0, loadNumber).map((item) => (
-              <VideoTab item={item} key={item.id} />
-            ))}
+            {data.videos.results
+              .slice(0, loadNumber)
+              // .filter((item) => {
+              // console.log(item.type);
+              // return item.type == "Trailer";
+              // })
+              .map((item) => (
+                <VideoTab item={item} key={item.id} />
+              ))}
           </div>
         ) : null}
 

@@ -27,11 +27,7 @@ export default function VideoTab({ item }: Props) {
             </div>
           </dialog>
 
-          <img
-            src={convertLinks(item.key)}
-            alt=""
-            className="object-cover h-[450px]"
-          />
+          <img src={convertLinks(item.key)} alt="" className="object-cover" />
           <div
             className="rounded-full p-4 bg-black/60 group absolute top-1/2 left-1/2 -translate-y-1/2 hover:bg-black/70 transition-colors active:bg-white"
             onClick={() => {

@@ -9,7 +9,7 @@ export default function TopBilledCast({ castData }: Props) {
   const [loadNumber, setLoadNumber] = useState(10);
   return (
     <div className="p-2 border-b">
-      <p className="text-xl font-bold mb-2 ml-1.5">Top Billed Cast</p>
+      <h3 className="text-xl font-bold mb-2 ml-1.5">Top Billed Cast</h3>
       <div className="flex overflow-auto scb space-x-4 pb-4 bg-stone-50">
         {castData.cast
           .slice(0, loadNumber)
@@ -26,7 +26,7 @@ export default function TopBilledCast({ castData }: Props) {
                 />
               </div>
               <div className="content py-2 px-1.5">
-                <h3 className="text-base font-bold">{item.name}</h3>
+                <strong className="text-base font-bold">{item.name}</strong>
                 <p className="text-gray text-sm">{item.character}</p>
               </div>
             </div>
@@ -51,9 +51,9 @@ export default function TopBilledCast({ castData }: Props) {
           </div>
         </div>
       </div>
-      <p className="text-base font-semibold mt-4 ml-1.5 ">
-        <a href="">Full Cast & Crew</a>
-      </p>
+      <a href="" className="text-base font-semibold mt-4 ml-1.5 inline-block ">
+        Full Cast & Crew
+      </a>
     </div>
   );
 }
