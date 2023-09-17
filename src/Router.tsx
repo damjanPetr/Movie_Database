@@ -7,7 +7,7 @@ import {
   getImages,
   getMovieReleaseDate,
   getMovieReviews,
-  getPopular,
+  getPopularMovies,
   getPopularTv,
   getTranslations,
   getTrending,
@@ -62,7 +62,7 @@ const router = createHashRouter([
             path: "/",
             element: <Home />,
             loader: async () => {
-              const popular = await getPopular(1);
+              const popular = await getPopularMovies(1);
               const trending = await getTrending();
               const getPTV = await getPopularTv();
 

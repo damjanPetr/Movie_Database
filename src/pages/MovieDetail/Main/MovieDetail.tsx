@@ -106,7 +106,7 @@ export default function MovieDetail() {
 
                 <div className="flex justify-between gap-2 items-center">
                   <div
-                    className="relative h-16 w-16   rounded-full flex items-center justify-center   border-4 border-black hover:scale-105 transition-all delay-150"
+                    className="relative h-16 w-16   rounded-full flex items-center justify-center   border-4 border-black hover:scale-105 transition-all "
                     style={{
                       backgroundImage: `conic-gradient(${
                         movieDetail.vote_average > 9
@@ -133,8 +133,9 @@ export default function MovieDetail() {
                       )}deg, ${0}deg, rgb(24, 18, 18))`,
                     }}
                   >
-                    <div className="absolute h-10 w-10 bg-black rounded-full text-white text-center  font-bold flex items-center justify-center ">
-                      {Math.round(movieDetail.vote_average * 10)}%
+                    <div className="absolute h-12 w-12 bg-black rounded-full text-white text-center  font-bold flex items-center justify-center ">
+                      {Math.round(movieDetail.vote_average * 10)}
+                      <sup>%</sup>
                     </div>
                   </div>
                   <p className="text-base font-bold break-word w-16">
@@ -142,7 +143,7 @@ export default function MovieDetail() {
                   </p>
                 </div>
                 <button
-                  className="btn flex items-center font-semibold p-2 bg-black/60"
+                  className="btn flex items-center font-semibold p-2 bg-black/60 hover:shadow-lg transition-all hover:bg-black/70 rounded-md hover:scale-105 "
                   onClick={() => {
                     const modal = document.getElementById(
                       "trailer_modal"

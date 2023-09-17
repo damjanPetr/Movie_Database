@@ -68,7 +68,7 @@ export async function getDiscoverTV(arg: string) {
   return data;
 }
 
-export async function getPopular(page?: number) {
+export async function getPopularMovies(page?: number) {
   if (page != undefined) {
     const response = await fetch(
       apiURL + `/movie/popular?language=en_US&page=${page}`,
