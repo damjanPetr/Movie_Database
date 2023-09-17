@@ -190,10 +190,15 @@ export default function ContentBlock({
                     </div>
                   );
                 } else {
+                  console.log(item);
                   return (
                     <Link
                       key={item.id}
-                      to={`/${item.id}/details`}
+                      to={
+                        item.first_air_date
+                          ? `/${item.id}/tv/details`
+                          : `/${item.id}/details`
+                      }
                       className={`hover:scale-105 transition-all p-2 duration-200 ease-linear    ${
                         loading ? "opacity-0" : "opacity-100"
                       } `}

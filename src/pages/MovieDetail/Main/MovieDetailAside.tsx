@@ -1,15 +1,15 @@
 import { base_url } from "../../../api/api";
-import { MovieDetails } from "../../../types/types";
+import { MovieDetails, TvDetails } from "../../../types/types";
 
 type Props = {
-  movieDetail: MovieDetails;
+  itemDetail: MovieDetails | TvDetails;
 };
-function MovieDetailAside({ movieDetail }: Props) {
+function MovieDetailAside({ itemDetail: movieDetail }: Props) {
   return (
     <aside className="min-w-[25%]    pt-8">
       <div className="mb-6">
         <div className="mb-5  ">
-          <strong className="   font-bold">Status</strong>
+          <strong className=" font-bold">Status</strong>
           <p className="">{movieDetail.status}</p>
         </div>
         <div className="mb-5  ">
@@ -23,7 +23,7 @@ function MovieDetailAside({ movieDetail }: Props) {
         <div className="mb-5  ">
           <strong className="   font-bold"> Budget</strong>
           <p className="">
-            {movieDetail.revenue
+            {"budget" in movieDetail
               ? new Intl.NumberFormat(navigator.language, {
                   style: "currency",
                   currency: "USD",
@@ -37,7 +37,7 @@ function MovieDetailAside({ movieDetail }: Props) {
         <div className="mb-5  ">
           <strong className="   font-bold">Revenue</strong>
           <p className="">
-            {movieDetail.revenue
+            {"revenue" in movieDetail
               ? new Intl.NumberFormat(navigator.language, {
                   style: "currency",
                   currency: "USD",
@@ -54,7 +54,10 @@ function MovieDetailAside({ movieDetail }: Props) {
         </div>
 
         <ul className="flex flex-wrap  content-center gap-2 ">
-          {movieDetail.keywords.keywords.map((item) => {
+          {("results" in movieDetail.keywords
+            ? movieDetail.keywords.results
+            : movieDetail.keywords.keywords
+          ).map((item) => {
             return (
               <li
                 className="p-2 bg-gray-200 rounded-sm text-sm font-"

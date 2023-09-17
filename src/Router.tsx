@@ -13,6 +13,7 @@ import {
   getTrending,
   getVideos,
   movieDetailLoader,
+  tvDetailLoader,
 } from "./api/api.ts";
 import { AuthProvider } from "./context/Auth.tsx";
 import Main from "./layouts/Main.tsx";
@@ -34,7 +35,7 @@ import Report from "./pages/MovieDetail/Report/Report.tsx";
 import Translations from "./pages/MovieDetail/Translations/Translations.tsx";
 import People from "./pages/People/People.tsx";
 import Reviews from "./pages/Reviews/Reviews.tsx";
-import { MovieAltTitles, MovieDetails } from "./types/types.tsx";
+import { MovieAltTitles, MovieDetails, TvDetails } from "./types/types.tsx";
 import MovieTemp from "./pages/Movie/MovieTemp.tsx";
 import TVShowTemp from "./pages/TVShow/TVShowTemp.tsx";
 
@@ -74,8 +75,14 @@ const router = createHashRouter([
             element: <MovieTemp />,
           },
           {
-            path: "/tvshow",
+            path: "/:tvId/tv/details",
             element: <TVShowTemp />,
+            loader: async ({ params }) => {
+              const tvDetail = (await tvDetailLoader(params.tvId)) as TvDetails;
+              return defer({
+                tvDetail,
+              });
+            },
           },
           {
             path: "/:movieId",

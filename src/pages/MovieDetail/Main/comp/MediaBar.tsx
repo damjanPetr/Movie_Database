@@ -1,15 +1,9 @@
-import { useEffect, useState, useReducer, useRef } from "react";
-import { base_url, getImages, getVideos } from "../../../../api/api";
-import {
-  MovieDetails,
-  MovieImages,
-  MovieVideos,
-} from "../../../../types/types";
-import LoadMoreBtn from "./mediaBarComp/LoadMoreBtn";
+import { useEffect, useReducer, useRef, useState } from "react";
+import { MovieDetails, TvDetails } from "../../../../types/types";
 import BackdropTab from "./mediaBarComp/BackdropTab";
-import MovieDetail, { movieDetailLoader } from "../MovieDetail";
-import VideoTab from "./mediaBarComp/VideoTab";
+import LoadMoreBtn from "./mediaBarComp/LoadMoreBtn";
 import PosterTab from "./mediaBarComp/PosterTab";
+import VideoTab from "./mediaBarComp/VideoTab";
 
 /* reducer types */
 export type State =
@@ -45,7 +39,11 @@ export type Actions =
       type: "backdrops";
     };
 
-export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
+export default function MediaBar({
+  movieData,
+}: {
+  movieData: MovieDetails | TvDetails;
+}) {
   /**
    *
    */
@@ -69,19 +67,19 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
     setTimeout(() => {
       if (e.target instanceof HTMLButtonElement && e.target !== null) {
         e.target?.parentElement?.parentElement?.scrollBy({
-          left: 400,
+          left: 600,
           top: 0,
           behavior: "smooth",
         });
       }
-    }, 80);
+    }, 180);
   }
 
   const [loadNumber, setLoadNumber] = useState(5);
 
   //change use state to load more items
 
-  const [data, setData] = useState<MovieDetails>();
+  const [data, setData] = useState<MovieDetails | TvDetails>();
 
   const content = useRef<HTMLDivElement>(null);
 
@@ -99,7 +97,11 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
   useEffect(() => {
     (async () => {
       // const movieData = await movieDetailLoader(movieId);
-      setData(movieData);
+      if ("first_air_date" in movieData) {
+        setData(movieData);
+      } else {
+        setData(movieData);
+      }
     })();
   }, [movieData]);
 

@@ -177,7 +177,7 @@ function Social({ reviews }: Props) {
                     }
                   })()
                 ) : (
-                  <p> There are no reviews</p>
+                  <p> There are no reviews </p>
                 )}
               </div>
               <span className="inline text-sm underline">

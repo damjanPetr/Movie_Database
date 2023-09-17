@@ -1,5 +1,5 @@
 type Props = {
-  func: () => void;
+  func: (e: any) => void;
 };
 export default function LoadMoreBtn({ func }: Props) {
   return (
