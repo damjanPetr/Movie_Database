@@ -63,8 +63,18 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
     }
   }
 
-  function handelClick() {
+  function handelClick(e: MouseEvent) {
     setLoadNumber(loadNumber + 5);
+
+    setTimeout(() => {
+      if (e.target instanceof HTMLButtonElement && e.target !== null) {
+        e.target?.parentElement?.parentElement?.scrollBy({
+          left: 400,
+          top: 0,
+          behavior: "smooth",
+        });
+      }
+    }, 80);
   }
 
   const [loadNumber, setLoadNumber] = useState(5);
@@ -103,6 +113,7 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
           <ul className="ml-auto flex gap-4">
             <li>Most Popular</li>
             <li
+              className="text-base font-semibold"
               onClick={() => {
                 setLoadNumber(5);
                 console.log("video");
@@ -110,9 +121,13 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
                 dispatch({ type: "video" });
               }}
             >
-              Videos
+              Videos{" "}
+              <span className="text-gray-500 ml-1 ">
+                {movieData.videos.results.length}
+              </span>
             </li>
             <li
+              className="text-base font-semibold"
               onClick={() => {
                 console.log("backdrops");
                 setLoadNumber(5);
@@ -123,8 +138,12 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
               }}
             >
               Backdrops
+              <span className="text-gray-500 ml-1 ">
+                {movieData.images.backdrops.length}
+              </span>
             </li>
             <li
+              className="text-base font-semibold"
               onClick={() => {
                 console.log("posters");
                 setLoadNumber(5);
@@ -135,13 +154,16 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
               }}
             >
               Posters
+              <span className="text-gray-500 ml-1 ">
+                {movieData.images.posters.length}
+              </span>
             </li>
           </ul>
         </nav>
       </header>
 
-      {/* videos */}
-      <div className="h-[300px]   bg-gray-200  " ref={content}>
+      <div className="h-[300px] " ref={content}>
+        {/* videos */}
         {data && state.video === true ? (
           <div
             id="videos"
@@ -156,6 +178,9 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
               .map((item) => (
                 <VideoTab item={item} key={item.id} />
               ))}
+            {data.videos.results.length > loadNumber ? (
+              <LoadMoreBtn func={(e) => handelClick(e)} />
+            ) : null}
           </div>
         ) : null}
 
@@ -165,6 +190,9 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
             {data.images.backdrops.slice(0, loadNumber).map((item) => {
               return <BackdropTab item={item} key={item.file_path} />;
             })}
+            {data.images.posters.length > loadNumber ? (
+              <LoadMoreBtn func={(e) => handelClick(e)} />
+            ) : null}
           </div>
         ) : null}
 
@@ -175,24 +203,30 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
             {data.images.posters.slice(0, loadNumber).map((item) => {
               return <PosterTab item={item} key={item.file_path} />;
             })}
+            {data.images.posters.length > loadNumber ? (
+              <LoadMoreBtn func={(e) => handelClick(e)} />
+            ) : null}
           </div>
         ) : null}
 
         {state.video === true &&
         data &&
-        loadNumber < data?.videos.results.length ? (
-          <LoadMoreBtn func={handelClick} />
-        ) : null}
+        loadNumber < data?.videos.results.length
+          ? // <LoadMoreBtn func={handelClick} />
+            null
+          : null}
         {state.backdrops === true &&
         data &&
-        loadNumber < data?.images.backdrops.length ? (
-          <LoadMoreBtn func={handelClick} />
-        ) : null}
+        loadNumber < data?.images.backdrops.length
+          ? // <LoadMoreBtn func={handelClick} />
+            null
+          : null}
         {state.poster === true &&
         data &&
-        loadNumber < data?.images.posters.length ? (
-          <LoadMoreBtn func={handelClick} />
-        ) : null}
+        loadNumber < data?.images.posters.length
+          ? // <LoadMoreBtn func={handelClick} />
+            null
+          : null}
       </div>
       <hr className="mt-10" />
     </div>

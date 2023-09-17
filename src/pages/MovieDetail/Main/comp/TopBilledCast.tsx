@@ -36,7 +36,9 @@ export default function TopBilledCast({ castData, movieId }: Props) {
           ))}
         <div className="w-36 flex items-center flex-none">
           <div className="w-full flex items-center ml-2 hover:text-gray-500">
-            <p className="font-bold">View More</p>
+            <Link to={`/${movieId}/cast-crew`} className="font-bold">
+              View More
+            </Link>
             <span>
               <svg
                 className="ml-1.5 font-bold"
