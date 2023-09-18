@@ -1,9 +1,9 @@
-import { createBrowserRouter, createHashRouter, defer } from "react-router-dom";
+import { createHashRouter, defer } from "react-router-dom";
 import ErrorPage from "./ErrorPage.tsx";
 import {
   getAltTitles,
-  getChanges,
   getCredits,
+  getGenres,
   getImages,
   getMovieReleaseDate,
   getMovieReviews,
@@ -28,6 +28,7 @@ import Videos from "./pages/Media/Videos/Videos.tsx";
 import AlternativeTitles from "./pages/MovieDetail/AlternativeTitles/AlternativeTitles.tsx";
 import CastCrew from "./pages/MovieDetail/CastCrew/CastCrew.tsx";
 // import Changes from "./pages/MovieDetail/Changes/Changes.tsx";
+import MovieTemp from "./pages/Movie/MovieTemp.tsx";
 import Edit from "./pages/MovieDetail/Edit/Edit.tsx";
 import MovieDetail from "./pages/MovieDetail/Main/MovieDetail.tsx";
 import ReleaseDate from "./pages/MovieDetail/ReleaseDate/ReleaseDate.tsx";
@@ -35,9 +36,9 @@ import Report from "./pages/MovieDetail/Report/Report.tsx";
 import Translations from "./pages/MovieDetail/Translations/Translations.tsx";
 import People from "./pages/People/People.tsx";
 import Reviews from "./pages/Reviews/Reviews.tsx";
+import TVShowDetail from "./pages/TVShowDetail/TVShowDetail.tsx";
 import { MovieAltTitles, MovieDetails, TvDetails } from "./types/types.tsx";
-import MovieTemp from "./pages/Movie/MovieTemp.tsx";
-import TVShowTemp from "./pages/TVShow/TVShowTemp.tsx";
+import TvTemp from "./pages/TV/TvTemp.tsx";
 
 const router = createHashRouter([
   {
@@ -75,8 +76,19 @@ const router = createHashRouter([
             element: <MovieTemp />,
           },
           {
+            path: "/tvshow",
+            element: <TvTemp />,
+            loader: async () => {
+              const data = await getGenres();
+
+              return {
+                genres: data,
+              };
+            },
+          },
+          {
             path: "/:tvId/tv/details",
-            element: <TVShowTemp />,
+            element: <TVShowDetail />,
             loader: async ({ params }) => {
               const tvDetail = (await tvDetailLoader(params.tvId)) as TvDetails;
               return defer({

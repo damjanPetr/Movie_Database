@@ -42,6 +42,13 @@ export type TVProps = {
   total_results: number;
 };
 
+export type genres = {
+  genres: {
+    id: number;
+    name: string;
+  }[];
+};
+
 export type TVbase = Movie;
 
 export type TvDetails = {

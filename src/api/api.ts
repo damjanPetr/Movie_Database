@@ -41,6 +41,11 @@ export async function tvDetailLoader<T>(id: T) {
   return response.json();
 }
 
+export async function getGenres() {
+  const response = await fetch(apiURL + `/genre/tv/list`, apiFetchOptions);
+  return response.json();
+}
+
 export async function movieCollection<T>(id: T) {
   const response = await fetch(apiURL + `/collection/${id}`, apiFetchOptions);
   return response.json();

@@ -9,7 +9,7 @@ import {
   getWatchProvidersRegionMovie,
   still_92,
 } from "../../../api/api";
-import { Countries, MovieProvidersGeneral } from "../../../types/types";
+import { Countries, MovieProvidersGeneral, genres } from "../../../types/types";
 import { getFlag, getHighlight } from "../../../utils/func";
 import { useCountry } from "../../../utils/hooks";
 import Card from "./Card";
@@ -36,7 +36,10 @@ export type actionReducer =
   | { type: "change_sort_filter"; text: string }
   | { type: "filtering" | ""; text: string | null; countryData?: object };
 
-function Filter() {
+export type Props = {
+  genres: genres;
+};
+function Filter({ genres }: Props) {
   const [watchProviders, setWatchProviders] = useState<MovieProvidersGeneral>();
 
   const country = useCountry();
@@ -167,7 +170,7 @@ function Filter() {
             dispatch({
               type: "open_search",
             });
-            target.current?.scrollIntoView({ behavior: "smooth" });
+            // target.current?.scrollIntoView({ behavior: "smooth" });
           }}
         >
           <span className="">{searchFilter}</span>
@@ -230,10 +233,10 @@ function Filter() {
               (e.target as HTMLElement).tagName.toLowerCase() !== "input"
             ) {
               await dispatch({ type: "open_where_to_watch" });
-              target.current?.scrollIntoView({
-                behavior: "auto",
-                block: "center",
-              });
+              // target.current?.scrollIntoView({
+              //   behavior: "auto",
+              //   block: "center",
+              // });
             }
           }}
         >
@@ -242,7 +245,7 @@ function Filter() {
             {countryCode.text && (
               <img
                 src={getFlag((countryCode.text as string).toLowerCase())}
-                className="mr-2"
+                className="mr-2 w-8"
               ></img>
             )}
             {/* geolocation Name */}
@@ -258,8 +261,8 @@ function Filter() {
 
           <div
             className={
-              "absolute top-full z-10 -translate-x-4 flex-col " +
-              (whereToWatchOpen ? "flex" : "hidden")
+              "absolute top-full z-10 -inset-x-10  flex-col  flex transition-all " +
+              (whereToWatchOpen ? "opacity-100" : "opacity-0 hidden")
             }
           >
             <div className=" bg-stone-50 p-4">
@@ -324,7 +327,7 @@ function Filter() {
                         : "")
                     }
                   >
-                    <img src={getFlag(item.iso_3166_1)}></img>
+                    <img className="w-6" src={getFlag(item.iso_3166_1)}></img>
                     {filter ? (
                       <p className="ml-2 ">
                         <span>
@@ -377,7 +380,214 @@ function Filter() {
             })}
         </div>
       </Card>
-      <Card title="Filter">hhhh</Card>
+      <Card title="Filter">
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Avalibilities</h3>
+          <input className="peer" type="checkbox" name="main" id="main" />
+          <label
+            htmlFor="main"
+            className="inline-block ml-1.5  justify-start w-30 "
+          >
+            Search all availabilities?
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-20 "
+          >
+            <input className="mr-1" type="checkbox" name="stream" id="stream" />
+            Stream
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-20 "
+          >
+            <input className="mr-1" type="checkbox" name="free" id="free" />
+            Free
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-20 "
+          >
+            <input className="mr-1" type="checkbox" name="ads" id="ads" />
+            Ads
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-20 "
+          >
+            <input className="mr-1" type="checkbox" name="rent" id="rent" />
+            Rent
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-20 "
+          >
+            <input className="mr-1" type="checkbox" name="buy" id="buy" />
+            Buy
+          </label>
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Release Dates</h3>
+          <input type="checkbox" name="main" id="main" className="peer" />
+          <label
+            htmlFor="main"
+            className="inline-block ml-1.5  justify-start w-30 "
+          >
+            Search all releases?
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-30 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="countries"
+              id="countries"
+            />
+            Search All Countries?
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-30 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="premiere"
+              id="premiere"
+            />
+            Premiere
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-30 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="theatrical-limited"
+              id="theatrical-limited"
+            />
+            Theatrical (Limited)
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-30 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="theatrical"
+              id="theatrical"
+            />
+            Theatrical
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-30 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="digital"
+              id="digital "
+            />
+            Digital
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-30 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="physical"
+              id="physical"
+            />
+            Physical
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-30 "
+          >
+            <input className="mr-1" type="checkbox" name="tv" id="tv" />
+            TV
+          </label>
+
+          <div className="flex justify-between items-center mt-4 ">
+            <label className="text-gray-400" htmlFor="formDate">
+              form:
+            </label>{" "}
+            <input
+              className="p-1.5 outline-none  border border-blue-200 text-sm font-light focus:ring-1 ring-blue-300 rounded-sm"
+              type="date"
+              name="formDate"
+              id="formDate"
+            />
+          </div>
+          <div className="flex justify-between items-center ">
+            <label className="text-gray-400" htmlFor="toDate">
+              to:
+            </label>{" "}
+            <input
+              className="p-1.5 outline-none  border border-blue-200 text-sm font-light focus:ring-1 ring-blue-300 rounded-sm"
+              type="date"
+              name="toDate"
+              id="toDate"
+            />
+          </div>
+
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Genres</h3>
+
+          <ul className="flex flex-wrap gap-2">
+            {genres &&
+              genres.genres.map((item) => {
+                return (
+                  <li
+                    onClick={(e) => {}}
+                    className="px-3 py-1  rounded-full text-sm border-[0.8px] bg-white border-black "
+                  >
+                    {item.name}
+                  </li>
+                );
+              })}
+          </ul>
+
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Certification</h3>
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Language</h3>
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">User Score</h3>
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Minimum User Scores</h3>
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Runtime</h3>
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Keywords</h3>
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+        <div className="  fci">
+          <div className="">hetuaoen</div>
+        </div>
+      </Card>
     </aside>
   );
 }

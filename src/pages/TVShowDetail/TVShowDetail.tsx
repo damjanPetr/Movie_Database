@@ -1,24 +1,24 @@
-import { useLoaderData } from "react-router-dom";
-import { base_urlBg, base_url } from "../../api/api";
-import MovieCollection from "../MovieDetail/Main/MovieCollection";
+import { ScrollRestoration, useLoaderData } from "react-router-dom";
+import { base_url, base_urlBg } from "../../api/api";
+import { TvDetails } from "../../types/types";
 import MovieDetailAside from "../MovieDetail/Main/MovieDetailAside";
 import MediaBar from "../MovieDetail/Main/comp/MediaBar";
 import Recommendations from "../MovieDetail/Main/comp/Recommendations";
 import Social from "../MovieDetail/Main/comp/Social";
 import TopBilledCast from "../MovieDetail/Main/comp/TopBilledCast";
 import Nav from "../components/Nav";
-import { MovieDetails, TvDetails } from "../../types/types";
 
 type Props = {
   tvDetail: TvDetails;
 };
-function TVShowTemp() {
+function TVShowDetail() {
   const { tvDetail } = useLoaderData() as Props;
 
   console.log(tvDetail);
 
   return (
     <div className=" ">
+      <ScrollRestoration />
       <Nav />
       <main className="">
         <section
@@ -270,4 +270,4 @@ function TVShowTemp() {
     </div>
   );
 }
-export default TVShowTemp;
+export default TVShowDetail;
