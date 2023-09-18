@@ -380,7 +380,7 @@ function Filter({ genres }: Props) {
             })}
         </div>
       </Card>
-      <Card title="Filter">
+      <Card title="Filter" padding={0}>
         <div className="    p-3.5 ">
           <h3 className="font-light mb-2.5">Avalibilities</h3>
           <input className="peer" type="checkbox" name="main" id="main" />
@@ -560,6 +560,53 @@ function Filter({ genres }: Props) {
 
           <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
         </div>
+
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Network</h3>
+          <div className="fci mb-4">
+            <div className="inner flex items-center relative ">
+              <input
+                type="text"
+                name=" "
+                id=""
+                placeholder="Filter By Tv Networks"
+                className="peer w-full  px-3 py-1.5 rounded-sm outline-none text-sm   ring-blue-200 focus:ring-blue-400  ring-1  "
+                onKeyUp={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  if (target.value.length !== 0) {
+                    target.dataset.type = "search";
+                  } else {
+                    target.dataset.type = "";
+                  }
+                }}
+              />
+              <div className="flex-1  peer-data-[type=search]:opacity-100 transition-opacity opacity-0 absolute right-1 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-800">
+                <svg
+                  onClick={function (e: React.MouseEvent) {
+                    const input =
+                      e.currentTarget.parentElement?.parentElement?.querySelector(
+                        "input"
+                      ) as HTMLInputElement;
+                    input.value = "";
+                    input.dataset.type = "";
+                  }}
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  className="w-full"
+                  height="18"
+                  viewBox="0 0 256 256"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M205.66 194.34a8 8 0 0 1-11.32 11.32L128 139.31l-66.34 66.35a8 8 0 0 1-11.32-11.32L116.69 128L50.34 61.66a8 8 0 0 1 11.32-11.32L128 116.69l66.34-66.35a8 8 0 0 1 11.32 11.32L139.31 128Z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+
         <div className="    p-3.5 ">
           <h3 className="font-light mb-2.5">Certification</h3>
           <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
