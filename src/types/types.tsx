@@ -42,12 +42,18 @@ export type TVProps = {
   total_results: number;
 };
 
-export type genres = {
+export type genresTV = {
   genres: {
     id: number;
     name: string;
   }[];
 };
+
+export type languagesTV = {
+  english_name: string;
+  iso_639_1: string;
+  name: string;
+}[];
 
 export type TVbase = Movie;
 

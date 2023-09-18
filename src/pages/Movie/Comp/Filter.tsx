@@ -9,7 +9,12 @@ import {
   getWatchProvidersRegionMovie,
   still_92,
 } from "../../../api/api";
-import { Countries, MovieProvidersGeneral, genres } from "../../../types/types";
+import {
+  Countries,
+  MovieProvidersGeneral,
+  genresTV,
+  languagesTV,
+} from "../../../types/types";
 import { getFlag, getHighlight } from "../../../utils/func";
 import { useCountry } from "../../../utils/hooks";
 import Card from "./Card";
@@ -37,9 +42,10 @@ export type actionReducer =
   | { type: "filtering" | ""; text: string | null; countryData?: object };
 
 export type Props = {
-  genres: genres;
+  genres: genresTV;
+  languages: languagesTV;
 };
-function Filter({ genres }: Props) {
+function Filter({ genres, languages }: Props) {
   const [watchProviders, setWatchProviders] = useState<MovieProvidersGeneral>();
 
   const country = useCountry();
@@ -613,6 +619,59 @@ function Filter({ genres }: Props) {
         </div>
         <div className="    p-3.5 ">
           <h3 className="font-light mb-2.5">Language</h3>
+          <div
+            className="w-full bg-stone-50 group relative text-sm  "
+            onClick={(e) => {
+              e.currentTarget.classList.toggle("open");
+              const liElements = e.currentTarget.querySelectorAll("ul li");
+              liElements.forEach((item, index) => {
+                if (item.textContent == e.currentTarget.textContent) {
+                  // item.scrollIntoView(true);
+                  // break;
+                }
+              });
+            }}
+          >
+            <div className="py-2 px-4 bg-stone-100">
+              {languages.find((item) => (item.english_name = "English"))
+                ?.english_name ?? "No selected language"}
+            </div>
+            <ul className="hidden group-open:block flex-col w-full absolute blur-0 bg-white  z-10 max-h-40 overflow-auto scb p-2 rounded-sm mt-1">
+              {languages.map((item) => {
+                return (
+                  <li
+                    className="px-2 py-1 hover:bg-gray-200 flex items-center  "
+                    onClick={(e) => {
+                      e.currentTarget?.parentElement
+                        ?.querySelectorAll("li")
+                        .forEach((item) => {
+                          item.classList.remove("bg-violet-200");
+                        });
+                      e.currentTarget.classList.add("bg-violet-200");
+                      const liElement = e.currentTarget.cloneNode(
+                        true
+                      ) as HTMLLIElement;
+                      liElement.className =
+                        " hover:bg-gray-200 flex items-center  ";
+                      const parent =
+                        e.currentTarget.parentElement?.previousElementSibling;
+                      parent?.firstChild?.remove();
+                      parent?.appendChild(liElement);
+                    }}
+                  >
+                    <img
+                      src={`public/assets/flag/${item.iso_639_1}.svg`}
+                      className="w-4 mr-2"
+                      alt=""
+                    />
+
+                    {item.english_name}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
           <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
         </div>
         <div className="    p-3.5 ">

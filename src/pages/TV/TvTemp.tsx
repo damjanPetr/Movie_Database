@@ -1,16 +1,23 @@
 import { useLoaderData } from "react-router-dom";
 import Filter from "../Movie/Comp/Filter";
 import ShowSection from "../Movie/Comp/ShowSection";
-import { genres } from "../../types/types";
+import { genresTV, languagesTV } from "../../types/types";
 
 function TvTemp() {
-  const { genres } = useLoaderData() as { genres: genres };
+  const { genres, languages } = useLoaderData() as {
+    genres: genresTV;
+    languages: languagesTV;
+  };
+  console.log(
+    "🚀 ✔ file: TvTemp.tsx:11 ✔ const{genres,languages}=useLoaderData ✔ languages:",
+    languages
+  );
 
   return (
     <main className="mx-auto  w-11/12 max-w-screen-xl px-10 py-8">
       <h1 className="mb-6 text-2xl font-bold">Popular Movies</h1>
       <div className="flex justify-between">
-        <Filter genres={genres} />
+        <Filter genres={genres} languages={languages} />
         <ShowSection />
       </div>
     </main>

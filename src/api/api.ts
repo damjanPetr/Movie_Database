@@ -46,6 +46,14 @@ export async function getGenres() {
   return response.json();
 }
 
+export async function getLanguages() {
+  const response = await fetch(
+    apiURL + `/configuration/languages`,
+    apiFetchOptions
+  );
+  return response.json();
+}
+
 export async function movieCollection<T>(id: T) {
   const response = await fetch(apiURL + `/collection/${id}`, apiFetchOptions);
   return response.json();

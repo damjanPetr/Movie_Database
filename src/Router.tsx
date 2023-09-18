@@ -5,6 +5,7 @@ import {
   getCredits,
   getGenres,
   getImages,
+  getLanguages,
   getMovieReleaseDate,
   getMovieReviews,
   getPopularMovies,
@@ -80,9 +81,11 @@ const router = createHashRouter([
             element: <TvTemp />,
             loader: async () => {
               const data = await getGenres();
+              const data2 = await getLanguages();
 
               return {
                 genres: data,
+                languages: data2,
               };
             },
           },
