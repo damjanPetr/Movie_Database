@@ -527,7 +527,7 @@ function Filter({ genres, languages }: Props) {
               form:
             </label>{" "}
             <input
-              className="p-1.5 outline-none  border border-blue-200 text-sm font-light focus:ring-1 ring-blue-300 rounded-sm"
+              className="p-1.5 outline-none  border border-blue-200 text-sm font-normal focus:ring-1 ring-blue-300 rounded-sm"
               type="date"
               name="formDate"
               id="formDate"
@@ -538,8 +538,9 @@ function Filter({ genres, languages }: Props) {
               to:
             </label>{" "}
             <input
-              className="p-1.5 outline-none  border border-blue-200 text-sm font-light focus:ring-1 ring-blue-300 rounded-sm"
+              className="p-1.5 outline-none  border border-blue-200 text-sm font-normal focus:ring-1 ring-blue-300 rounded-sm "
               type="date"
+              value={new Date().toISOString().split("T")[0]}
               name="toDate"
               id="toDate"
             />
@@ -550,7 +551,7 @@ function Filter({ genres, languages }: Props) {
         <div className="    p-3.5 ">
           <h3 className="font-light mb-2.5">Genres</h3>
 
-          <ul className="flex flex-wrap gap-2">
+          <ul className="flex flex-wrap gap-2 p-1">
             {genres &&
               genres.genres.map((item) => {
                 return (
@@ -706,9 +707,7 @@ function Filter({ genres, languages }: Props) {
                   htmlFor="min-runtime"
                   name="bubble"
                   className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5 text-sm"
-                >
-                  0
-                </output>
+                ></output>
                 <datalist id="markersUserScore" className="">
                   <option value="0"> 0</option>
                   <option value="1"></option>
@@ -750,11 +749,9 @@ function Filter({ genres, languages }: Props) {
                   htmlFor="min-runtime"
                   name="bubble"
                   className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5 text-sm  "
-                >
-                  10
-                </output>
+                ></output>
                 <datalist id="markersUserScoreMax" className="">
-                  <option value="0"> 0</option>
+                  <option value="0">0</option>
                   <option value="1"></option>
                   <option value="2"></option>
                   <option value="3"></option>
@@ -770,7 +767,7 @@ function Filter({ genres, languages }: Props) {
             </div>
             <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
           </div>
-          <div className="    p-3.5 ">
+          <div className="p-3.5 ">
             <h3 className="font-light mb-2.5">Minimum User Votes</h3>
 
             <div className="flex  items-center h-10">
@@ -785,6 +782,7 @@ function Filter({ genres, languages }: Props) {
                   min={0}
                   className="accent-sky-600 flex-grow w-full"
                   list="markersUserVotes"
+                  defaultValue={0}
                   max={10}
                   step={1}
                   onInput={(e) => {
@@ -798,9 +796,7 @@ function Filter({ genres, languages }: Props) {
                   htmlFor="min-runtime"
                   name="bubble"
                   className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5 text-sm "
-                >
-                  400
-                </output>
+                ></output>
                 <datalist id="markersUserVotes" className="">
                   <option value="0"> 0</option>
                   <option value="1"></option>
@@ -831,6 +827,7 @@ function Filter({ genres, languages }: Props) {
                   id="min-runtime"
                   min={0}
                   className="accent-sky-600 w-full"
+                  defaultValue={0}
                   max={400}
                   list="markersRuntime"
                   step={10}
@@ -845,9 +842,7 @@ function Filter({ genres, languages }: Props) {
                   htmlFor="min-runtime"
                   name="bubble"
                   className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5 text-sm "
-                >
-                  400
-                </output>
+                ></output>
                 <datalist id="markersRuntime" className="">
                   <option value="0">0</option>
 
@@ -874,30 +869,34 @@ function Filter({ genres, languages }: Props) {
                   className="accent-sky-600 w-full"
                   list="markersRuntime"
                   max={400}
+                  defaultValue={400}
                   step={10}
-                  onInput={(e) => {
+                  onChange={(e) => {
                     const output =
                       e.currentTarget.parentElement?.querySelector("output");
-                    // if (output) output.textContent = e.currentTarget.value;
-                    setBubble(e.currentTarget, output);
+                    const minRuntime = document.querySelector(
+                      "#min-runtime"
+                    ) as HTMLInputElement;
+                    console.log(minRuntime.value, e.currentTarget.value);
+                    if (minRuntime.value < e.currentTarget.value) {
+                      if (output) {
+                        setBubble(e.currentTarget, output);
+                      }
+                    } else {
+                      minRuntime.value = e.currentTarget.value;
+                    }
                   }}
                 />
                 <output
                   htmlFor="min-runtime"
                   name="bubble"
-                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5  text-sm"
-                >
-                  400
-                </output>
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5  text-sm opacity-0"
+                ></output>
                 <datalist id="markersRuntime" className="">
                   <option value="0">0</option>
-
                   <option value="100">100</option>
-
                   <option value="200">200</option>
-
                   <option value="300">300</option>
-
                   <option value="400">400</option>
                 </datalist>
               </form>
@@ -911,8 +910,18 @@ function Filter({ genres, languages }: Props) {
           <h3 className="font-light mb-2.5">Keywords</h3>
           <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
         </div>
-        <div className="  fci">
-          <div className="">hetuaoen</div>
+        <div className="  fci  p-3.5">
+          <div className="">
+            <form action="">
+              <input
+                placeholder="Filter by keywords..."
+                type="text"
+                name="keywords"
+                id="keywords"
+                className="outline-none ring-1 ring-blue-200 focus-within:ring-blue-400 p-1 rounded-sm"
+              />
+            </form>
+          </div>
         </div>
       </Card>
     </aside>
