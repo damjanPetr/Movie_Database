@@ -386,7 +386,7 @@ function Filter({ genres, languages }: Props) {
             })}
         </div>
       </Card>
-      <Card title="Filter" padding={0}>
+      <Card title="Filter" padding={0} openCardProp={true}>
         <div className="    p-3.5 ">
           <h3 className="font-light mb-2.5">Avalibilities</h3>
           <input className="peer" type="checkbox" name="main" id="main" />
@@ -557,7 +557,7 @@ function Filter({ genres, languages }: Props) {
                   <li
                     key={item.id}
                     onClick={(e) => {}}
-                    className="px-3 py-1  rounded-full text-sm border-[0.8px] bg-white border-black "
+                    className="px-3 py-1  rounded-full text-sm ring-[0.8px] bg-white  hover:bg-cyan-500 hover:text-white hover:ring-none active:bg-cyan-800"
                   >
                     {item.name}
                   </li>
@@ -676,14 +676,14 @@ function Filter({ genres, languages }: Props) {
 
           <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
         </div>
-        <div className="dirChildren::mt-4">
-          <div className="    p-3.5   ">
+        <div className="">
+          <div className="p-3.5">
             <h3 className="font-light mb-2.5">User Score</h3>
             <div className="flex  items-center h-10">
               <label htmlFor="min-user-score" className="mr-2 w-10">
                 Min
               </label>
-              <form action="" className="relative p-1 flex-grow">
+              <form action="" className="relative  flex-grow">
                 <input
                   type="range"
                   name="min-user-score"
@@ -693,6 +693,8 @@ function Filter({ genres, languages }: Props) {
                   className="accent-sky-600  w-full"
                   max={10}
                   step={1}
+                  defaultValue={0}
+                  autoComplete="on"
                   onInput={(e) => {
                     const output =
                       e.currentTarget.parentElement?.querySelector("output");
@@ -703,23 +705,37 @@ function Filter({ genres, languages }: Props) {
                 <output
                   htmlFor="min-runtime"
                   name="bubble"
-                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5"
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5 text-sm"
                 >
-                  400
+                  0
                 </output>
+                <datalist id="markersUserScore" className="">
+                  <option value="0"> 0</option>
+                  <option value="1"></option>
+                  <option value="2"></option>
+                  <option value="3"></option>
+                  <option value="4"></option>
+                  <option value="5">5</option>
+                  <option value="6"></option>
+                  <option value="7"></option>
+                  <option value="8"></option>
+                  <option value="9"></option>
+                  <option value="10">10</option>
+                </datalist>
               </form>
             </div>
-            <div className="flex  items-center h-10">
-              <label htmlFor="" className="mr-2 w-10">
+            <div className="flex  items-center h-10 mt-4">
+              <label htmlFor="max-user-score" className="mr-2 w-10">
                 Max
               </label>
-              <form action="" className="relative p-1 flex-grow">
+              <form action="" className="relative  flex-grow">
                 <input
                   type="range"
                   name="max-user-score"
                   id="max-user-score"
                   min={0}
-                  list="markersUserScore"
+                  defaultValue={10}
+                  list="markersUserScoreMax"
                   className="accent-sky-600  w-full"
                   max={10}
                   step={1}
@@ -733,24 +749,24 @@ function Filter({ genres, languages }: Props) {
                 <output
                   htmlFor="min-runtime"
                   name="bubble"
-                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5  "
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5 text-sm  "
                 >
-                  400
+                  10
                 </output>
+                <datalist id="markersUserScoreMax" className="">
+                  <option value="0"> 0</option>
+                  <option value="1"></option>
+                  <option value="2"></option>
+                  <option value="3"></option>
+                  <option value="4"></option>
+                  <option value="5">5</option>
+                  <option value="6"></option>
+                  <option value="7"></option>
+                  <option value="8"></option>
+                  <option value="9"></option>
+                  <option value="10">10</option>
+                </datalist>
               </form>
-              <datalist id="markersUserScore">
-                <option value="0"></option>
-                <option value="1"></option>
-                <option value="2"></option>
-                <option value="3"></option>
-                <option value="4"></option>
-                <option value="5"></option>
-                <option value="6"></option>
-                <option value="7"></option>
-                <option value="8"></option>
-                <option value="9"></option>
-                <option value="10"></option>
-              </datalist>
             </div>
             <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
           </div>
@@ -761,14 +777,14 @@ function Filter({ genres, languages }: Props) {
               <label htmlFor="min-user-vote" className="mr-2 w-10">
                 Min
               </label>
-              <form action="" className="relative flex-grow p-1">
+              <form action="" className="relative flex-grow ">
                 <input
                   type="range"
                   name="min-user-vote"
                   id="min-user-vote"
                   min={0}
                   className="accent-sky-600 flex-grow w-full"
-                  list="markersVote"
+                  list="markersUserVotes"
                   max={10}
                   step={1}
                   onInput={(e) => {
@@ -781,24 +797,24 @@ function Filter({ genres, languages }: Props) {
                 <output
                   htmlFor="min-runtime"
                   name="bubble"
-                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5  "
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5 text-sm "
                 >
                   400
                 </output>
+                <datalist id="markersUserVotes" className="">
+                  <option value="0"> 0</option>
+                  <option value="1"></option>
+                  <option value="2"></option>
+                  <option value="3"></option>
+                  <option value="4"></option>
+                  <option value="5">5</option>
+                  <option value="6"></option>
+                  <option value="7"></option>
+                  <option value="8"></option>
+                  <option value="9"></option>
+                  <option value="10">10</option>
+                </datalist>
               </form>
-              <datalist id="markersVote">
-                <option value="0"></option>
-                <option value="1"></option>
-                <option value="2"></option>
-                <option value="3"></option>
-                <option value="4"></option>
-                <option value="5"></option>
-                <option value="6"></option>
-                <option value="7"></option>
-                <option value="8"></option>
-                <option value="9"></option>
-                <option value="10"></option>
-              </datalist>
             </div>
             <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
           </div>
@@ -808,7 +824,7 @@ function Filter({ genres, languages }: Props) {
               <label htmlFor="min-runtime" className="mr-2 w-10">
                 Min
               </label>
-              <form action="" className="relative flex-grow p-1">
+              <form action="" className="relative flex-grow ">
                 <input
                   type="range"
                   name="min-runtime"
@@ -817,7 +833,7 @@ function Filter({ genres, languages }: Props) {
                   className="accent-sky-600 w-full"
                   max={400}
                   list="markersRuntime"
-                  step={15}
+                  step={10}
                   onInput={(e) => {
                     const output =
                       e.currentTarget.parentElement?.querySelector("output");
@@ -828,17 +844,28 @@ function Filter({ genres, languages }: Props) {
                 <output
                   htmlFor="min-runtime"
                   name="bubble"
-                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5  "
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5 text-sm "
                 >
                   400
                 </output>
+                <datalist id="markersRuntime" className="">
+                  <option value="0">0</option>
+
+                  <option value="100">100</option>
+
+                  <option value="200">200</option>
+
+                  <option value="300">300</option>
+
+                  <option value="400">400</option>
+                </datalist>
               </form>
             </div>
-            <div className="flex  items-center h-10">
+            <div className="flex  items-center h-10 mt-4 ">
               <label htmlFor="max-runtime" className="mr-2 w-10">
                 Max
               </label>
-              <form action="" className="relative p-1 flex-grow">
+              <form action="" className="relative  flex-grow">
                 <input
                   type="range"
                   name="max-runtime"
@@ -847,7 +874,7 @@ function Filter({ genres, languages }: Props) {
                   className="accent-sky-600 w-full"
                   list="markersRuntime"
                   max={400}
-                  step={15}
+                  step={10}
                   onInput={(e) => {
                     const output =
                       e.currentTarget.parentElement?.querySelector("output");
@@ -858,41 +885,22 @@ function Filter({ genres, languages }: Props) {
                 <output
                   htmlFor="min-runtime"
                   name="bubble"
-                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5  "
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5  text-sm"
                 >
                   400
                 </output>
+                <datalist id="markersRuntime" className="">
+                  <option value="0">0</option>
+
+                  <option value="100">100</option>
+
+                  <option value="200">200</option>
+
+                  <option value="300">300</option>
+
+                  <option value="400">400</option>
+                </datalist>
               </form>
-              <datalist id="markersRuntime">
-                <option>0</option>
-                <option>15</option>
-                <option>30</option>
-                <option>45</option>
-                <option>60</option>
-                <option>75</option>
-                <option>90</option>
-                <option>105</option>
-                <option>120</option>
-                <option>135</option>
-                <option>150</option>
-                <option>165</option>
-                <option>180</option>
-                <option>195</option>
-                <option>210</option>
-                <option>225</option>
-                <option>240</option>
-                <option>255</option>
-                <option>270</option>
-                <option>285</option>
-                <option>300</option>
-                <option>315</option>
-                <option>330</option>
-                <option>345</option>
-                <option>360</option>
-                <option>375</option>
-                <option>390</option>
-                <option>400</option>
-              </datalist>
             </div>
 
             <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>

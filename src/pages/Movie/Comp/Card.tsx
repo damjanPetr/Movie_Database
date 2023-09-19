@@ -6,9 +6,16 @@ type Props = {
   watchProviderNumber?: number;
   title: string;
   padding?: number;
+  openCardProp?: boolean;
 };
-function Card({ children, title, watchProviderNumber, padding = 4 }: Props) {
-  const [openCard, setOpenCard] = useState(false);
+function Card({
+  children,
+  title,
+  watchProviderNumber,
+  padding = 4,
+  openCardProp = false,
+}: Props) {
+  const [openCard, setOpenCard] = useState(openCardProp);
 
   return (
     <div className="mb-4 rounded-lg border shadow-md">

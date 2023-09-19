@@ -9,7 +9,7 @@ function TvTemp() {
     languages: languagesTV;
   };
   return (
-    <main className="mx-auto  w-11/12 max-w-screen-xl px-10 py-8">
+    <main className="w-11/12   max-w-screen-xl px-10 py-8">
       <h1 className="mb-6 text-2xl font-bold">Popular Movies</h1>
       <div className="flex justify-between">
         <Filter genres={genres} languages={languages} />
