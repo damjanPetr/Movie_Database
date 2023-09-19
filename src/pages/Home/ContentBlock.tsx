@@ -190,7 +190,6 @@ export default function ContentBlock({
                     </div>
                   );
                 } else {
-                  console.log(item);
                   return (
                     <Link
                       key={item.id}

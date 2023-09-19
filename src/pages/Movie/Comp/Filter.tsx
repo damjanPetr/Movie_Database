@@ -15,7 +15,7 @@ import {
   genresTV,
   languagesTV,
 } from "../../../types/types";
-import { getFlag, getHighlight } from "../../../utils/func";
+import { getFlag, getHighlight, setBubble, slider } from "../../../utils/func";
 import { useCountry } from "../../../utils/hooks";
 import Card from "./Card";
 
@@ -555,6 +555,7 @@ function Filter({ genres, languages }: Props) {
               genres.genres.map((item) => {
                 return (
                   <li
+                    key={item.id}
                     onClick={(e) => {}}
                     className="px-3 py-1  rounded-full text-sm border-[0.8px] bg-white border-black "
                   >
@@ -640,6 +641,7 @@ function Filter({ genres, languages }: Props) {
               {languages.map((item) => {
                 return (
                   <li
+                    key={item.iso_639_1}
                     className="px-2 py-1 hover:bg-gray-200 flex items-center  "
                     onClick={(e) => {
                       e.currentTarget?.parentElement
@@ -660,7 +662,7 @@ function Filter({ genres, languages }: Props) {
                     }}
                   >
                     <img
-                      src={`public/assets/flag/${item.iso_639_1}.svg`}
+                      src={`assets/flag/${item.iso_639_1}.svg`}
                       className="w-4 mr-2"
                       alt=""
                     />
@@ -674,18 +676,229 @@ function Filter({ genres, languages }: Props) {
 
           <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
         </div>
-        <div className="    p-3.5 ">
-          <h3 className="font-light mb-2.5">User Score</h3>
-          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        <div className="dirChildren::mt-4">
+          <div className="    p-3.5   ">
+            <h3 className="font-light mb-2.5">User Score</h3>
+            <div className="flex  items-center h-10">
+              <label htmlFor="min-user-score" className="mr-2 w-10">
+                Min
+              </label>
+              <form action="" className="relative p-1 flex-grow">
+                <input
+                  type="range"
+                  name="min-user-score"
+                  id="min-user-score"
+                  list="markersUserScore"
+                  min={0}
+                  className="accent-sky-600  w-full"
+                  max={10}
+                  step={1}
+                  onInput={(e) => {
+                    const output =
+                      e.currentTarget.parentElement?.querySelector("output");
+                    // if (output) output.textContent = e.currentTarget.value;
+                    setBubble(e.currentTarget, output);
+                  }}
+                />
+                <output
+                  htmlFor="min-runtime"
+                  name="bubble"
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5"
+                >
+                  400
+                </output>
+              </form>
+            </div>
+            <div className="flex  items-center h-10">
+              <label htmlFor="" className="mr-2 w-10">
+                Max
+              </label>
+              <form action="" className="relative p-1 flex-grow">
+                <input
+                  type="range"
+                  name="max-user-score"
+                  id="max-user-score"
+                  min={0}
+                  list="markersUserScore"
+                  className="accent-sky-600  w-full"
+                  max={10}
+                  step={1}
+                  onInput={(e) => {
+                    const output =
+                      e.currentTarget.parentElement?.querySelector("output");
+                    // if (output) output.textContent = e.currentTarget.value;
+                    setBubble(e.currentTarget, output);
+                  }}
+                />
+                <output
+                  htmlFor="min-runtime"
+                  name="bubble"
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5  "
+                >
+                  400
+                </output>
+              </form>
+              <datalist id="markersUserScore">
+                <option value="0"></option>
+                <option value="1"></option>
+                <option value="2"></option>
+                <option value="3"></option>
+                <option value="4"></option>
+                <option value="5"></option>
+                <option value="6"></option>
+                <option value="7"></option>
+                <option value="8"></option>
+                <option value="9"></option>
+                <option value="10"></option>
+              </datalist>
+            </div>
+            <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+          </div>
+          <div className="    p-3.5 ">
+            <h3 className="font-light mb-2.5">Minimum User Votes</h3>
+
+            <div className="flex  items-center h-10">
+              <label htmlFor="min-user-vote" className="mr-2 w-10">
+                Min
+              </label>
+              <form action="" className="relative flex-grow p-1">
+                <input
+                  type="range"
+                  name="min-user-vote"
+                  id="min-user-vote"
+                  min={0}
+                  className="accent-sky-600 flex-grow w-full"
+                  list="markersVote"
+                  max={10}
+                  step={1}
+                  onInput={(e) => {
+                    const output =
+                      e.currentTarget.parentElement?.querySelector("output");
+                    // if (output) output.textContent = e.currentTarget.value;
+                    setBubble(e.currentTarget, output);
+                  }}
+                />
+                <output
+                  htmlFor="min-runtime"
+                  name="bubble"
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5  "
+                >
+                  400
+                </output>
+              </form>
+              <datalist id="markersVote">
+                <option value="0"></option>
+                <option value="1"></option>
+                <option value="2"></option>
+                <option value="3"></option>
+                <option value="4"></option>
+                <option value="5"></option>
+                <option value="6"></option>
+                <option value="7"></option>
+                <option value="8"></option>
+                <option value="9"></option>
+                <option value="10"></option>
+              </datalist>
+            </div>
+            <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+          </div>
+          <div className="    p-3.5 ">
+            <h3 className="font-light mb-2.5">Runtime</h3>
+            <div className="flex  items-center h-10">
+              <label htmlFor="min-runtime" className="mr-2 w-10">
+                Min
+              </label>
+              <form action="" className="relative flex-grow p-1">
+                <input
+                  type="range"
+                  name="min-runtime"
+                  id="min-runtime"
+                  min={0}
+                  className="accent-sky-600 w-full"
+                  max={400}
+                  list="markersRuntime"
+                  step={15}
+                  onInput={(e) => {
+                    const output =
+                      e.currentTarget.parentElement?.querySelector("output");
+                    // if (output) output.textContent = e.currentTarget.value;
+                    setBubble(e.currentTarget, output);
+                  }}
+                />
+                <output
+                  htmlFor="min-runtime"
+                  name="bubble"
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5  "
+                >
+                  400
+                </output>
+              </form>
+            </div>
+            <div className="flex  items-center h-10">
+              <label htmlFor="max-runtime" className="mr-2 w-10">
+                Max
+              </label>
+              <form action="" className="relative p-1 flex-grow">
+                <input
+                  type="range"
+                  name="max-runtime"
+                  id="max-runtime"
+                  min={0}
+                  className="accent-sky-600 w-full"
+                  list="markersRuntime"
+                  max={400}
+                  step={15}
+                  onInput={(e) => {
+                    const output =
+                      e.currentTarget.parentElement?.querySelector("output");
+                    // if (output) output.textContent = e.currentTarget.value;
+                    setBubble(e.currentTarget, output);
+                  }}
+                />
+                <output
+                  htmlFor="min-runtime"
+                  name="bubble"
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5  "
+                >
+                  400
+                </output>
+              </form>
+              <datalist id="markersRuntime">
+                <option>0</option>
+                <option>15</option>
+                <option>30</option>
+                <option>45</option>
+                <option>60</option>
+                <option>75</option>
+                <option>90</option>
+                <option>105</option>
+                <option>120</option>
+                <option>135</option>
+                <option>150</option>
+                <option>165</option>
+                <option>180</option>
+                <option>195</option>
+                <option>210</option>
+                <option>225</option>
+                <option>240</option>
+                <option>255</option>
+                <option>270</option>
+                <option>285</option>
+                <option>300</option>
+                <option>315</option>
+                <option>330</option>
+                <option>345</option>
+                <option>360</option>
+                <option>375</option>
+                <option>390</option>
+                <option>400</option>
+              </datalist>
+            </div>
+
+            <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+          </div>
         </div>
-        <div className="    p-3.5 ">
-          <h3 className="font-light mb-2.5">Minimum User Scores</h3>
-          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
-        </div>
-        <div className="    p-3.5 ">
-          <h3 className="font-light mb-2.5">Runtime</h3>
-          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
-        </div>
+
         <div className="    p-3.5 ">
           <h3 className="font-light mb-2.5">Keywords</h3>
           <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>

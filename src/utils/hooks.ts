@@ -13,7 +13,6 @@ export const useCountry = () => {
         window.localStorage.setItem("loc", data.country_code);
         setLocation(data.country_code);
       } else {
-        console.log("else");
         const loc = window.localStorage.getItem("loc");
 
         setLocation(loc);

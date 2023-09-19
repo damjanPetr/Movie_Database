@@ -8,11 +8,6 @@ function TvTemp() {
     genres: genresTV;
     languages: languagesTV;
   };
-  console.log(
-    "🚀 ✔ file: TvTemp.tsx:11 ✔ const{genres,languages}=useLoaderData ✔ languages:",
-    languages
-  );
-
   return (
     <main className="mx-auto  w-11/12 max-w-screen-xl px-10 py-8">
       <h1 className="mb-6 text-2xl font-bold">Popular Movies</h1>
