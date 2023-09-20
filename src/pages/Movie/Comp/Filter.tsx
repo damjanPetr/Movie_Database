@@ -540,7 +540,7 @@ function Filter({ genres, languages }: Props) {
             <input
               className="p-1.5 outline-none  border border-blue-200 text-sm font-normal focus:ring-1 ring-blue-300 rounded-sm "
               type="date"
-              value={new Date().toISOString().split("T")[0]}
+              defaultValue={new Date().toISOString().split("T")[0]}
               name="toDate"
               id="toDate"
             />
@@ -699,8 +699,25 @@ function Filter({ genres, languages }: Props) {
                   onInput={(e) => {
                     const output =
                       e.currentTarget.parentElement?.querySelector("output");
-                    // if (output) output.textContent = e.currentTarget.value;
-                    setBubble(e.currentTarget, output);
+
+                    const maxUserScore = document.querySelector(
+                      "#max-user-score"
+                    ) as HTMLInputElement;
+
+                    if (
+                      maxUserScore.valueAsNumber >=
+                      e.currentTarget.valueAsNumber
+                    ) {
+                      if (output) {
+                        setBubble(e.currentTarget, output);
+                      }
+                    } else {
+                      const value = e.currentTarget.valueAsNumber;
+                      maxUserScore.value = String(value);
+                    }
+                    if (output) {
+                      setBubble(e.currentTarget, output);
+                    }
                   }}
                 />
                 <output
@@ -741,8 +758,25 @@ function Filter({ genres, languages }: Props) {
                   onInput={(e) => {
                     const output =
                       e.currentTarget.parentElement?.querySelector("output");
-                    // if (output) output.textContent = e.currentTarget.value;
-                    setBubble(e.currentTarget, output);
+
+                    const minUserScore = document.querySelector(
+                      "#min-user-score"
+                    ) as HTMLInputElement;
+
+                    if (
+                      minUserScore.valueAsNumber <=
+                      e.currentTarget.valueAsNumber
+                    ) {
+                      if (output) {
+                        setBubble(e.currentTarget, output);
+                      }
+                    } else {
+                      const value = e.currentTarget.valueAsNumber;
+                      minUserScore.value = String(value);
+                    }
+                    if (output) {
+                      setBubble(e.currentTarget, output);
+                    }
                   }}
                 />
                 <output
@@ -835,7 +869,18 @@ function Filter({ genres, languages }: Props) {
                     const output =
                       e.currentTarget.parentElement?.querySelector("output");
                     // if (output) output.textContent = e.currentTarget.value;
-                    setBubble(e.currentTarget, output);
+                    const maxRuntime = document.querySelector(
+                      "#max-runtime"
+                    ) as HTMLInputElement;
+
+                    if (
+                      e.currentTarget.valueAsNumber >= maxRuntime.valueAsNumber
+                    ) {
+                      maxRuntime.value = String(e.currentTarget.valueAsNumber);
+                    }
+                    if (output) {
+                      setBubble(e.currentTarget, output);
+                    }
                   }}
                 />
                 <output
@@ -871,19 +916,22 @@ function Filter({ genres, languages }: Props) {
                   max={400}
                   defaultValue={400}
                   step={10}
-                  onChange={(e) => {
+                  onInputCapture={(e) => {
                     const output =
                       e.currentTarget.parentElement?.querySelector("output");
                     const minRuntime = document.querySelector(
                       "#min-runtime"
                     ) as HTMLInputElement;
-                    console.log(minRuntime.value, e.currentTarget.value);
-                    if (minRuntime.value < e.currentTarget.value) {
+
+                    if (
+                      minRuntime.valueAsNumber <= e.currentTarget.valueAsNumber
+                    ) {
                       if (output) {
                         setBubble(e.currentTarget, output);
                       }
                     } else {
-                      minRuntime.value = e.currentTarget.value;
+                      const value = e.currentTarget.valueAsNumber;
+                      minRuntime.value = String(value);
                     }
                   }}
                 />

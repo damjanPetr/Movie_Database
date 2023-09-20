@@ -39,7 +39,7 @@ import People from "./pages/People/People.tsx";
 import Reviews from "./pages/Reviews/Reviews.tsx";
 import TVShowDetail from "./pages/TVShowDetail/TVShowDetail.tsx";
 import { MovieAltTitles, MovieDetails, TvDetails } from "./types/types.tsx";
-import TvTemp from "./pages/TV/TvTemp.tsx";
+import TvTemp from "./pages/Movie/TvTemp.tsx";
 
 const router = createHashRouter([
   {
@@ -82,10 +82,12 @@ const router = createHashRouter([
             loader: async () => {
               const data = await getGenres();
               const data2 = await getLanguages();
+              const tvShows = await getPopularTv();
 
               return {
                 genres: data,
                 languages: data2,
+                tvShows: tvShows,
               };
             },
           },

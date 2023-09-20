@@ -55,6 +55,13 @@ export type languagesTV = {
   name: string;
 }[];
 
+export type TvShows = {
+  id: number;
+  results: TvDetails[];
+  total_pages: number;
+  total_results: number;
+};
+
 export type TVbase = Movie;
 
 export type TvDetails = {
