@@ -1,8 +1,7 @@
 type Props = {};
 function Footer({}: Props) {
   return (
-    <div className="bg-[#032541] text-white p-4">
-      Footer
+    <div className="bg-[#032541] text-white p-4 flex items-center">
       <div className="w-32">
         <img
           src={
@@ -11,6 +10,9 @@ function Footer({}: Props) {
           alt=""
         />
       </div>
+      <p className="ml-auto">
+        This product uses the TMDB API but is not endorsed or certified by TMDB.
+      </p>
     </div>
   );
 }

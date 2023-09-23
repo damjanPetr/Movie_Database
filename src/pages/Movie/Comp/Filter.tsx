@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { BiSearch } from "react-icons/bi";
-import { RiArrowRightSLine } from "react-icons/ri";
-import { IoMdCheckbox, IoMdCheckmark } from "react-icons/io";
 import { GiCheckMark } from "react-icons/gi";
+import { RiArrowRightSLine } from "react-icons/ri";
 
 import {
   getDBCounties,
   getWatchProvidersRegionMovie,
+  getWatchProvidersRegionTVShow,
+  searchKeywords,
   still_92,
 } from "../../../api/api";
 import {
@@ -14,15 +15,16 @@ import {
   MovieProvidersGeneral,
   genresTV,
   languagesTV,
+  searchKeywordResultsObject,
+  searchKeywordsType,
 } from "../../../types/types";
-import { getFlag, getHighlight, setBubble, slider } from "../../../utils/func";
+import { getFlag, getHighlight, setBubble } from "../../../utils/func";
 import { useCountry } from "../../../utils/hooks";
 import Card from "./Card";
 
 export type stateReducer = {
   searchFilter: string;
   searchOpen: boolean;
-  filterUrl: "";
   whereToWatchOpen: boolean;
   countryCode: {
     text: string | { [key: string]: any };
@@ -42,14 +44,105 @@ export type actionReducer =
   | { type: "filtering" | ""; text: string | null; countryData?: object };
 
 export type Props = {
+  callback: (args: string) => void;
   genres: genresTV;
   languages: languagesTV;
 };
-function Filter({ genres, languages }: Props) {
+
+export type initialStateFilter = {
+  with_genres: number[];
+  minRuntime: number;
+  maxRuntime: number;
+  filterLanguage: string;
+  minCount: number;
+  minVotes: number;
+  maxVotes: number;
+  sortBy: string;
+  fromDate: string;
+  toDate: string;
+  watchProviderArray: string[];
+  genresArray: number[];
+  monetization: string[];
+  watch_region: string;
+  keywords: searchKeywordsType | object;
+  renderKeywords: searchKeywordResultsObject[];
+};
+function Filter({ genres, languages, callback }: Props) {
   const [watchProviders, setWatchProviders] = useState<MovieProvidersGeneral>();
 
-  const country = useCountry();
+  const initialState = {
+    with_genres: [],
+    minRuntime: 0,
+    maxRuntime: 400,
+    filterLanguage: "en-US",
+    minCount: 0,
+    minVotes: 0,
+    maxVotes: 10,
+    sortBy: "popularity.desc",
+    fromDate: "",
+    toDate: new Date().toISOString().split("T")[0],
+    watchProviderArray: [],
+    genresArray: [],
+    monetization: ["flatrate", "free", "ads", "rent", "buy"],
+    watch_region: "CA",
+    keywords: {},
+    renderKeywords: [],
+  };
 
+  const [filterUrs, setFilterUrs] = useState<initialStateFilter>(initialState);
+  const {
+    renderKeywords,
+    minRuntime,
+    keywords,
+    maxRuntime,
+    filterLanguage,
+    minCount,
+    minVotes,
+    maxVotes,
+    sortBy,
+    fromDate,
+    toDate,
+    watchProviderArray,
+    genresArray,
+    monetization,
+    watch_region,
+  } = filterUrs;
+
+  function filterCb() {
+    console.log(monetization.length > 0);
+    console.log(genresArray.length > 0);
+    const url = `sort_by=${sortBy}&with_runtime.gte=${minRuntime}&with_runtime.lte=${maxRuntime}&language=${filterLanguage}&vote_count.gte=${minCount}&vote_average.gte=${minVotes}&vote_average.lte=${maxVotes}${
+      fromDate ? `&first_air_date.gte=${fromDate}` : ""
+    }&first_air_date.lte=${toDate}${
+      monetization.length > 0
+        ? `&with_watch_monetization_types=${monetization
+            .map((item, index) => {
+              return index === 0 ? item : "|" + item;
+            })
+            .join("")}`
+        : ""
+    }${
+      genresArray.length > 0
+        ? `&with_genres=${genresArray
+            .map((item, index) => {
+              return index === 0 ? item : "," + item;
+            })
+            .join("")}`
+        : ""
+    }${
+      watchProviderArray.length > 0
+        ? `&with_watch_providers=${watchProviderArray
+            .map((item, index) => {
+              return index === 0 ? item : "|" + item;
+            })
+            .join("")}`
+        : ""
+    }&watch_region=${watch_region}`;
+    return url;
+  }
+  let timer: undefined;
+
+  const country = useCountry();
   const target = useRef<HTMLLIElement>(null);
   const [countries, setCountries] = useState<Countries>([]);
   const [searchTerm, setSearchTerm] = useState<{
@@ -127,9 +220,8 @@ function Filter({ genres, languages }: Props) {
   }, [country]);
 
   const [state, dispatch] = useReducer(reducer, {
-    searchFilter: "Popularity Ascending",
+    searchFilter: "Popularity Descending",
     searchOpen: false,
-    filterUrl: "",
     whereToWatchOpen: false,
     countryCode: {
       text: "",
@@ -153,8 +245,9 @@ function Filter({ genres, languages }: Props) {
       return () => clearTimeout(delayDebounceFn);
     }
   }, [searchTerm]);
+
   const memoizeFilter = useMemo(() => {
-    const play = countries.sort().filter((item) => {
+    const play = countries.filter((item) => {
       if (filter !== "") {
         return item.english_name.toLowerCase().includes(filter.toLowerCase());
       } else if (filter === "") {
@@ -166,8 +259,17 @@ function Filter({ genres, languages }: Props) {
 
   return (
     <aside className="w-64">
+      <p
+        className="fixed left-0 p-4 bg-blue-200 text-white"
+        onClick={() => {
+          console.log(filterUrs);
+        }}
+      >
+        uhe
+      </p>
       <Card title="Sort">
         <p className="mb-2">Sort Results By</p>
+
         <div
           className={
             "relative z-10 flex items-center justify-between  rounded-md bg-neutral-300 px-4 py-2 text-sm"
@@ -202,8 +304,8 @@ function Filter({ genres, languages }: Props) {
                 value: "primary_release_date.asc",
                 name: "Release Date Ascending",
               },
-              { value: "title.asc", name: "Title (A-Z)" },
-              { value: "title.desc", name: "Title (Z-A)" },
+              // { value: "title.asc", name: "Title (A-Z)" },
+              // { value: "title.desc", name: "Title (Z-A)" },
             ].map(({ value, name }, index) => {
               return (
                 <li
@@ -214,6 +316,8 @@ function Filter({ genres, languages }: Props) {
                   }
                   data-value={value}
                   onClick={() => {
+                    setFilterUrs({ ...filterUrs, sortBy: value });
+
                     dispatch({ type: "change_sort_filter", text: name });
                     target.current?.scrollIntoView({
                       behavior: "instant",
@@ -231,18 +335,15 @@ function Filter({ genres, languages }: Props) {
       </Card>
       <Card title="Where To Watch">
         <p className="mb-2">Country</p>
+
         <div
-          className="relative flex items-center justify-between rounded-md bg-neutral-300 px-4 py-2"
+          className="relative flex items-center justify-between rounded-md bg-neutral-300 px-4 py-2 cursor-pointer hover:bg-neutral-400/60"
           onClick={async function (e) {
             if (
               e.target === e.currentTarget ||
               (e.target as HTMLElement).tagName.toLowerCase() !== "input"
             ) {
               await dispatch({ type: "open_where_to_watch" });
-              // target.current?.scrollIntoView({
-              //   behavior: "auto",
-              //   block: "center",
-              // });
             }
           }}
         >
@@ -254,17 +355,11 @@ function Filter({ genres, languages }: Props) {
                 className="mr-2 w-8"
               ></img>
             )}
-            {/* geolocation Name */}
-            {/* {countryCode && */}
-            {/* new Intl.DisplayNames(undefined, { type: "region" }).of( */}
-            {/* countryCode.text */}
-            {/* )} */}
             {countryCode.engFullName}
           </div>
           <span>
             <RiArrowRightSLine />
           </span>
-
           <div
             className={
               "absolute top-full z-10 -inset-x-10  flex-col  flex transition-all " +
@@ -309,13 +404,23 @@ function Filter({ genres, languages }: Props) {
               {memoizeFilter.map((item) => {
                 return (
                   <li
-                    onClick={() => {
+                    onClick={async () => {
+                      const wProviders = await getWatchProvidersRegionTVShow(
+                        item.iso_3166_1
+                      );
+                      setWatchProviders(wProviders);
                       dispatch({
                         type: "change_country",
                         countryData: {
                           text: item.iso_3166_1,
                           engFullName: item.english_name,
                         },
+                      });
+
+                      setFilterUrs({
+                        ...filterUrs,
+                        watch_region: item.iso_3166_1,
+                        watchProviderArray: [],
                       });
                     }}
                     key={item.iso_3166_1}
@@ -362,6 +467,31 @@ function Filter({ genres, languages }: Props) {
                 <div
                   className="group relative  w-full basis-1/4 flex-wrap "
                   key={item.provider_id}
+                  onClick={(e) => {
+                    if (Array.isArray(watchProviderArray)) {
+                      e.currentTarget.classList.remove("open");
+
+                      if (
+                        watchProviderArray.includes(item.provider_id as never)
+                      ) {
+                        setFilterUrs({
+                          ...filterUrs,
+                          watchProviderArray: watchProviderArray.filter(
+                            (el) => el !== item.provider_id
+                          ) as string[],
+                        });
+                      } else {
+                        e.currentTarget.classList.add("open");
+                        setFilterUrs({
+                          ...filterUrs,
+                          watchProviderArray: [
+                            ...watchProviderArray,
+                            item.provider_id,
+                          ] as never[],
+                        });
+                      }
+                    }
+                  }}
                 >
                   <div className="m-1 basis-1/4 cursor-pointer">
                     <img
@@ -371,13 +501,13 @@ function Filter({ genres, languages }: Props) {
                     />
                   </div>
                   <div
-                    className={`absolute -inset-x-[200%] bottom-full  mx-auto  mb-2 hidden w-max rounded-lg bg-neutral-900 px-4 py-2 text-lg  text-white group-hover:block `}
+                    className={`absolute -inset-x-[200%] bottom-full mx-auto mb-2 opacity-0 w-max rounded-lg bg-neutral-900 px-4 py-2 text-sm text-white group-hover:opacity-100 pointer-events-none transition-all duration-[10] delay-150 `}
                   >
                     {item.provider_name}
                   </div>
-                  <div className="triable absolute inset-x-0 -top-3  mx-auto hidden h-0  w-0  border-[10px]  border-transparent  border-t-blue-900 group-hover:block"></div>
-                  <div className="absolute inset-0  m-auto hidden h-[calc(100%-4px)] w-[calc(100%-4px)] rounded-xl bg-sky-500/90 group-hover:block">
-                    <div className="absolute inset-0    items-center justify-center text-4xl text-white group-hover:flex">
+                  <div className="triable absolute inset-x-0 -top-3  mx-auto h-0 w-0 border-[10px] border-transparent border-t-blue-900 group-hover:opacity-100 opacity-0 pointer-events-none transition-opacity delay-150"></div>
+                  <div className="group-open:block  group-open:bg-cyan-600   absolute inset-[1px]  m-auto hidden   rounded-xl group-hover:bg-sky-500/90 group-hover:block transition-all   ">
+                    <div className="absolute inset-0  items-center justify-center text-3xl text-white flex group-hover:flex ">
                       <GiCheckMark />
                     </div>
                   </div>
@@ -389,7 +519,29 @@ function Filter({ genres, languages }: Props) {
       <Card title="Filter" padding={0} openCardProp={true}>
         <div className="    p-3.5 ">
           <h3 className="font-light mb-2.5">Avalibilities</h3>
-          <input className="peer" type="checkbox" name="main" id="main" />
+          <input
+            className="peer "
+            type="checkbox"
+            name="main"
+            id="main"
+            defaultChecked
+            onClick={(e) => {
+              const free = document.querySelector("#free");
+              const ads = document.querySelector("#ads");
+              const stream = document.querySelector("#stream");
+              const rent = document.querySelector("#rent");
+              const buy = document.querySelector("#buy");
+
+              setFilterUrs({
+                ...filterUrs,
+                monetization: ["flatrate", "free", "ads", "rent", "buy"],
+              });
+              [free, ads, stream, rent, buy].forEach((item) => {
+                if (item != null && item instanceof HTMLInputElement)
+                  item.checked = true;
+              });
+            }}
+          />
           <label
             htmlFor="main"
             className="inline-block ml-1.5  justify-start w-30 "
@@ -397,51 +549,156 @@ function Filter({ genres, languages }: Props) {
             Search all availabilities?
           </label>
           <label
-            htmlFor=""
-            className="peer-checked:flex hidden  justify-start w-20 "
+            htmlFor="stream"
+            className="peer-checked:hidden flex  justify-start w-20 "
           >
-            <input className="mr-1" type="checkbox" name="stream" id="stream" />
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="stream"
+              id="stream"
+              defaultChecked
+              onClick={(e) => {
+                if (monetization.includes("flatrate" as never)) {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [
+                      ...monetization.filter((item) => item !== "flatrate"),
+                    ],
+                  });
+                } else {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [...monetization, "flatrate"],
+                  });
+                }
+              }}
+            />
             Stream
           </label>
           <label
-            htmlFor=""
-            className="peer-checked:flex hidden  justify-start w-20 "
+            htmlFor="free"
+            className="peer-checked:hidden flex  justify-start w-20 "
           >
-            <input className="mr-1" type="checkbox" name="free" id="free" />
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="free"
+              id="free"
+              defaultChecked
+              onClick={(e) => {
+                if (monetization.includes("free")) {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [
+                      ...monetization.filter((item) => item !== "free"),
+                    ],
+                  });
+                } else {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [...monetization, "free"],
+                  });
+                }
+              }}
+            />
             Free
           </label>
           <label
-            htmlFor=""
-            className="peer-checked:flex hidden  justify-start w-20 "
+            htmlFor="ads"
+            className="peer-checked:hidden flex  justify-start w-20 "
           >
-            <input className="mr-1" type="checkbox" name="ads" id="ads" />
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="ads"
+              id="ads"
+              defaultChecked
+              onClick={(e) => {
+                if (monetization.includes("ads")) {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [
+                      ...monetization.filter((item) => item !== "ads"),
+                    ],
+                  });
+                } else {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [...monetization, "ads"],
+                  });
+                }
+              }}
+            />
             Ads
           </label>
           <label
-            htmlFor=""
-            className="peer-checked:flex hidden  justify-start w-20 "
+            htmlFor="rent"
+            className="peer-checked:hidden flex  justify-start w-20 "
           >
-            <input className="mr-1" type="checkbox" name="rent" id="rent" />
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="rent"
+              id="rent"
+              defaultChecked
+              onClick={(e) => {
+                if (monetization.includes("rent" as never)) {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [
+                      ...monetization.filter((item) => item !== "rent"),
+                    ],
+                  });
+                } else {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [...monetization, "rent"],
+                  });
+                }
+              }}
+            />
             Rent
           </label>
           <label
-            htmlFor=""
-            className="peer-checked:flex hidden  justify-start w-20 "
+            htmlFor="buy"
+            className="peer-checked:hidden flex  justify-start w-20 "
           >
-            <input className="mr-1" type="checkbox" name="buy" id="buy" />
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="buy"
+              id="buy"
+              defaultChecked
+              onClick={(e) => {
+                if (monetization.includes("buy" as never)) {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [
+                      ...monetization.filter((item) => item !== "buy"),
+                    ],
+                  });
+                } else {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [...monetization, "buy"],
+                  });
+                }
+              }}
+            />
             Buy
           </label>
           <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
         </div>
         <div className="    p-3.5 ">
-          <h3 className="font-light mb-2.5">Release Dates</h3>
-          <input type="checkbox" name="main" id="main" className="peer" />
+          <h3 className="font-light mb-2.5">Air Dates</h3>
+          {/* <input type="checkbox" name="main" id="main" className="peer" />
           <label
             htmlFor="main"
             className="inline-block ml-1.5  justify-start w-30 "
           >
             Search all releases?
-          </label>
+          </label> */}
           <label
             htmlFor=""
             className="peer-checked:flex hidden  justify-start w-30 "
@@ -523,25 +780,43 @@ function Filter({ genres, languages }: Props) {
           </label>
 
           <div className="flex justify-between items-center mt-4 ">
-            <label className="text-gray-400" htmlFor="formDate">
+            <label className="text-gray-500" htmlFor="formDate">
               form:
             </label>{" "}
             <input
               className="p-1.5 outline-none  border border-blue-200 text-sm font-normal focus:ring-1 ring-blue-300 rounded-sm"
               type="date"
+              max={new Date().toISOString().split("T")[0]}
+              onInput={(e) => {
+                e.preventDefault();
+                const value = e.currentTarget.value;
+                setFilterUrs({
+                  ...filterUrs,
+                  fromDate: value,
+                });
+              }}
               name="formDate"
               id="formDate"
             />
           </div>
           <div className="flex justify-between items-center ">
-            <label className="text-gray-400" htmlFor="toDate">
+            <label className="text-gray-500" htmlFor="toDate">
               to:
             </label>{" "}
             <input
               className="p-1.5 outline-none  border border-blue-200 text-sm font-normal focus:ring-1 ring-blue-300 rounded-sm "
               type="date"
+              max={new Date().toISOString().split("T")[0]}
               defaultValue={new Date().toISOString().split("T")[0]}
               name="toDate"
+              onInput={(e) => {
+                e.preventDefault();
+                const value = e.currentTarget.value;
+                setFilterUrs({
+                  ...filterUrs,
+                  toDate: value,
+                });
+              }}
               id="toDate"
             />
           </div>
@@ -557,8 +832,24 @@ function Filter({ genres, languages }: Props) {
                 return (
                   <li
                     key={item.id}
-                    onClick={(e) => {}}
-                    className="px-3 py-1  rounded-full text-sm ring-[0.8px] bg-white  hover:bg-cyan-500 hover:text-white hover:ring-none active:bg-cyan-800"
+                    onClick={(e) => {
+                      if (genresArray.includes(item.id as never)) {
+                        setFilterUrs({
+                          ...filterUrs,
+                          genresArray: [
+                            ...genresArray.filter((el) => el !== item.id),
+                          ] as number[],
+                        });
+                        e.currentTarget.classList.remove("active-keyword");
+                      } else {
+                        setFilterUrs({
+                          ...filterUrs,
+                          genresArray: [...genresArray, item.id] as number[],
+                        });
+                        e.currentTarget.classList.add("active-keyword");
+                      }
+                    }}
+                    className={`px-3 py-1 cursor-pointer  rounded-full text-sm ring-[0.8px] bg-white  hover:bg-cyan-500 hover:text-white hover:ring-none   [&.active-keyword]:bg-cyan-500 [&.active-keyword]:text-white active:bg-cyan-600 active:scale-105 `}
                   >
                     {item.name}
                   </li>
@@ -580,6 +871,12 @@ function Filter({ genres, languages }: Props) {
                 placeholder="Filter By Tv Networks"
                 className="peer w-full  px-3 py-1.5 rounded-sm outline-none text-sm   ring-blue-200 focus:ring-blue-400  ring-1  "
                 onKeyUp={(e) => {
+                  const debounce = () => {
+                    clearTimeout(timer);
+                  };
+                  debounce();
+                  const timer = setTimeout(() => {}, 1000);
+
                   const target = e.target as HTMLInputElement;
                   if (target.value.length !== 0) {
                     target.dataset.type = "search";
@@ -626,7 +923,7 @@ function Filter({ genres, languages }: Props) {
             onClick={(e) => {
               e.currentTarget.classList.toggle("open");
               const liElements = e.currentTarget.querySelectorAll("ul li");
-              liElements.forEach((item, index) => {
+              liElements.forEach((item) => {
                 if (item.textContent == e.currentTarget.textContent) {
                   // item.scrollIntoView(true);
                   // break;
@@ -660,10 +957,15 @@ function Filter({ genres, languages }: Props) {
                         e.currentTarget.parentElement?.previousElementSibling;
                       parent?.firstChild?.remove();
                       parent?.appendChild(liElement);
+                      setFilterUrs({
+                        ...filterUrs,
+                        filterLanguage: item.iso_639_1,
+                      });
                     }}
                   >
                     <img
-                      src={`assets/flag/${item.iso_639_1}.svg`}
+                      // src={`assets/flag/${item.iso_639_1}.svg`}
+                      src={getFlag(item.iso_639_1)}
                       className="w-4 mr-2"
                       alt=""
                     />
@@ -708,12 +1010,23 @@ function Filter({ genres, languages }: Props) {
                       maxUserScore.valueAsNumber >=
                       e.currentTarget.valueAsNumber
                     ) {
+                      setFilterUrs({
+                        ...filterUrs,
+                        minVotes: e.currentTarget.valueAsNumber,
+                      });
                       if (output) {
                         setBubble(e.currentTarget, output);
                       }
                     } else {
-                      const value = e.currentTarget.valueAsNumber;
-                      maxUserScore.value = String(value);
+                      maxUserScore.value = String(
+                        e.currentTarget.valueAsNumber
+                      );
+
+                      setFilterUrs({
+                        ...filterUrs,
+                        minVotes: e.currentTarget.valueAsNumber,
+                        maxVotes: e.currentTarget.valueAsNumber,
+                      });
                     }
                     if (output) {
                       setBubble(e.currentTarget, output);
@@ -727,15 +1040,15 @@ function Filter({ genres, languages }: Props) {
                 ></output>
                 <datalist id="markersUserScore" className="">
                   <option value="0"> 0</option>
-                  <option value="1"></option>
-                  <option value="2"></option>
-                  <option value="3"></option>
-                  <option value="4"></option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
                   <option value="5">5</option>
-                  <option value="6"></option>
-                  <option value="7"></option>
-                  <option value="8"></option>
-                  <option value="9"></option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
                   <option value="10">10</option>
                 </datalist>
               </form>
@@ -767,11 +1080,21 @@ function Filter({ genres, languages }: Props) {
                       minUserScore.valueAsNumber <=
                       e.currentTarget.valueAsNumber
                     ) {
+                      setFilterUrs({
+                        ...filterUrs,
+                        maxVotes: e.currentTarget.valueAsNumber,
+                      });
+
                       if (output) {
                         setBubble(e.currentTarget, output);
                       }
                     } else {
                       const value = e.currentTarget.valueAsNumber;
+                      setFilterUrs({
+                        ...filterUrs,
+                        maxVotes: e.currentTarget.valueAsNumber,
+                        minVotes: e.currentTarget.valueAsNumber,
+                      });
                       minUserScore.value = String(value);
                     }
                     if (output) {
@@ -786,15 +1109,15 @@ function Filter({ genres, languages }: Props) {
                 ></output>
                 <datalist id="markersUserScoreMax" className="">
                   <option value="0">0</option>
-                  <option value="1"></option>
-                  <option value="2"></option>
-                  <option value="3"></option>
-                  <option value="4"></option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
                   <option value="5">5</option>
-                  <option value="6"></option>
-                  <option value="7"></option>
-                  <option value="8"></option>
-                  <option value="9"></option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
                   <option value="10">10</option>
                 </datalist>
               </form>
@@ -817,13 +1140,16 @@ function Filter({ genres, languages }: Props) {
                   className="accent-sky-600 flex-grow w-full"
                   list="markersUserVotes"
                   defaultValue={0}
-                  max={10}
-                  step={1}
+                  max={500}
+                  step={10}
                   onInput={(e) => {
                     const output =
                       e.currentTarget.parentElement?.querySelector("output");
-                    // if (output) output.textContent = e.currentTarget.value;
-                    setBubble(e.currentTarget, output);
+                    setFilterUrs({
+                      ...filterUrs,
+                      minCount: e.currentTarget.valueAsNumber,
+                    });
+                    if (output) setBubble(e.currentTarget, output);
                   }}
                 />
                 <output
@@ -832,17 +1158,17 @@ function Filter({ genres, languages }: Props) {
                   className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5 text-sm "
                 ></output>
                 <datalist id="markersUserVotes" className="">
-                  <option value="0"> 0</option>
-                  <option value="1"></option>
-                  <option value="2"></option>
-                  <option value="3"></option>
-                  <option value="4"></option>
-                  <option value="5">5</option>
-                  <option value="6"></option>
-                  <option value="7"></option>
-                  <option value="8"></option>
-                  <option value="9"></option>
-                  <option value="10">10</option>
+                  <option value="0">0</option>
+                  {/* <option value="1"></option> */}
+                  {/* <option value="2"></option> */}
+                  {/* <option value="3"></option> */}
+                  {/* <option value="4"></option> */}
+                  {/* <option value="5">5</option> */}
+                  <option value="100">100</option>
+                  <option value="200">200</option>
+                  <option value="300">300</option>
+                  <option value="400">400</option>
+                  <option value="500">500</option>
                 </datalist>
               </form>
             </div>
@@ -868,15 +1194,28 @@ function Filter({ genres, languages }: Props) {
                   onInput={(e) => {
                     const output =
                       e.currentTarget.parentElement?.querySelector("output");
-                    // if (output) output.textContent = e.currentTarget.value;
-                    const maxRuntime = document.querySelector(
+                    const maxRuntimeelement = document.querySelector(
                       "#max-runtime"
                     ) as HTMLInputElement;
 
                     if (
-                      e.currentTarget.valueAsNumber >= maxRuntime.valueAsNumber
+                      e.currentTarget.valueAsNumber >=
+                      maxRuntimeelement.valueAsNumber
                     ) {
-                      maxRuntime.value = String(e.currentTarget.valueAsNumber);
+                      setFilterUrs({
+                        ...filterUrs,
+                        maxRuntime: e.currentTarget.valueAsNumber,
+                        minRuntime: e.currentTarget.valueAsNumber,
+                      });
+
+                      maxRuntimeelement.value = String(
+                        e.currentTarget.valueAsNumber
+                      );
+                    } else {
+                      setFilterUrs({
+                        ...filterUrs,
+                        minRuntime: e.currentTarget.valueAsNumber,
+                      });
                     }
                     if (output) {
                       setBubble(e.currentTarget, output);
@@ -922,16 +1261,24 @@ function Filter({ genres, languages }: Props) {
                     const minRuntime = document.querySelector(
                       "#min-runtime"
                     ) as HTMLInputElement;
-
                     if (
                       minRuntime.valueAsNumber <= e.currentTarget.valueAsNumber
                     ) {
                       if (output) {
+                        setFilterUrs({
+                          ...filterUrs,
+                          maxRuntime: e.currentTarget.valueAsNumber,
+                          minRuntime: minRuntime.valueAsNumber,
+                        });
                         setBubble(e.currentTarget, output);
                       }
                     } else {
                       const value = e.currentTarget.valueAsNumber;
                       minRuntime.value = String(value);
+                      setFilterUrs({
+                        ...filterUrs,
+                        minRuntime: e.currentTarget.valueAsNumber,
+                      });
                     }
                   }}
                 />
@@ -956,22 +1303,178 @@ function Filter({ genres, languages }: Props) {
 
         <div className="    p-3.5 ">
           <h3 className="font-light mb-2.5">Keywords</h3>
-          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
         </div>
         <div className="  fci  p-3.5">
-          <div className="">
-            <form action="">
+          <div className="relative">
+            <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+
+            <div className="w-full flex items-center relative peer">
               <input
                 placeholder="Filter by keywords..."
                 type="text"
                 name="keywords"
                 id="keywords"
-                className="outline-none ring-1 ring-blue-200 focus-within:ring-blue-400 p-1 rounded-sm"
+                className=" outline-none ring-1 ring-blue-200 focus-within:ring-blue-400 p-1 rounded-sm w-full placeholder:text-sm"
+                onInput={(e: React.MouseEvent<HTMLInputElement>) => {
+                  e.preventDefault();
+
+                  clearTimeout(timer);
+                  e.currentTarget.parentElement?.classList.remove("open");
+
+                  timer = setTimeout(async () => {
+                    const data: searchKeywordsType =
+                      await searchKeywords(value);
+                    if (data.results.length > 0) {
+                      setFilterUrs({
+                        ...filterUrs,
+                        keywords: data,
+                      });
+                    }
+                  }, 500);
+                  const value = e.currentTarget.value;
+
+                  if (value.length > 0) {
+                    e.currentTarget.parentElement?.classList.add("open");
+                  }
+                }}
               />
-            </form>
+              <div
+                className="peer-open:opacity-100 opacity-0  fci absolute inset-y-0 right-1 transition-opacity"
+                onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                  const inputBox = document.querySelector(
+                    "#keywords"
+                  ) as HTMLInputElement;
+                  inputBox.value = "";
+                  inputBox.parentElement?.classList.remove("open");
+                  setFilterUrs({
+                    ...filterUrs,
+                    keywords: {
+                      results: [],
+                    },
+                  });
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 256 256"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M208.49 191.51a12 12 0 0 1-17 17L128 145l-63.51 63.49a12 12 0 0 1-17-17L111 128L47.51 64.49a12 12 0 0 1 17-17L128 111l63.51-63.52a12 12 0 0 1 17 17L145 128Z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="absolute z-50 bg-white w-full" id="keywordDropdown">
+              <ul className="w-full max-h-[300px] overflow-auto scb  px-2">
+                {"results" in keywords
+                  ? keywords.results
+                      .filter((item) => {
+                        let includes;
+
+                        renderKeywords.forEach((el) => {
+                          return el.id === item.id
+                            ? (includes = true)
+                            : (includes = false);
+                        });
+
+                        return !includes;
+                      })
+                      .map((item: searchKeywordResultsObject) => {
+                        return (
+                          <li
+                            className="hover:bg-gray-200 px-1 my-1 capitalize active:bg-cyan-800 active:scal120   "
+                            key={item.id}
+                            onClick={() => {
+                              const keyboarddrop =
+                                document.querySelector("#keywordDropdown");
+                              keyboarddrop?.classList.remove("open");
+                              setTimeout(() => {
+                                setFilterUrs({
+                                  ...filterUrs,
+                                  renderKeywords: renderKeywords.includes(item)
+                                    ? {
+                                        ...renderKeywords.filter((el) => {
+                                          return el.id !== item.id;
+                                        }),
+                                      }
+                                    : [...renderKeywords, item],
+                                  keywords: {
+                                    ...keywords,
+                                    results: [],
+                                  },
+                                });
+                                keywordsInput.value = "";
+                              }, 50);
+                              const keywordsInput = document.querySelector(
+                                "#keywords"
+                              ) as HTMLInputElement;
+                            }}
+                          >
+                            {item.name}
+                          </li>
+                        );
+                      })
+                  : null}
+              </ul>
+            </div>
+            <div className="flex p-1 flex-wrap max-h-40 scb overflow-auto  mt-4 w-full gap-1">
+              {renderKeywords.map((item) => {
+                return (
+                  <div
+                    key={item.id}
+                    className="flex flex-auto items-center  bg-cyan-500 py-0.5 px-1 rounded-lg justify-between group hover:bg-cyan-600"
+                  >
+                    <p className="capitalize text-[13px] text-white">
+                      {item.name}
+                    </p>
+                    <div
+                      className="p-1 group-hover:text-white group-hover:scale-150 transition-transform hover:scale-105  cursor-pointer"
+                      onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                        setFilterUrs({
+                          ...filterUrs,
+                          keywords: {
+                            ...keywords,
+                            results: keywords.results.filter(
+                              (item) => item.id !== item.id
+                            ),
+                          },
+                          renderKeywords: renderKeywords.filter(
+                            (item) => item.id !== item.id
+                          ),
+                        });
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        // className="text-gray-950"
+                        width="10"
+                        height="10"
+                        viewBox="0 0 256 256"
+                      >
+                        <path
+                          fill="currentColor"
+                          d="M208.49 191.51a12 12 0 0 1-17 17L128 145l-63.51 63.49a12 12 0 0 1-17-17L111 128L47.51 64.49a12 12 0 0 1 17-17L128 111l63.51-63.52a12 12 0 0 1 17 17L145 128Z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </Card>
+      <button
+        className="da-btn-success da-btn-lg  da-btn-blocklg"
+        onClick={() => {
+          callback(filterCb());
+        }}
+      >
+        Search
+      </button>
     </aside>
   );
 }

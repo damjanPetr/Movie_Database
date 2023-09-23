@@ -1,8 +1,14 @@
 import { RiDeleteBack2Fill } from "react-icons/ri";
 
 export function getFlag(flagCode: string) {
-  // const flagstr = `https://flagcdn.com/24x18/${flagCode.toLowerCase()}.png`;
-  const flagstr = `./assets/flag/${flagCode.toLowerCase()}.svg`;
+  const flagstr = `https://flagcdn.com/24x18/${flagCode.toLowerCase()}.png`;
+  // const flagstr = `./assets/flag/${flagCode.toLowerCase()}.svg`;
+  return flagstr;
+}
+
+export function getFlagByLang(flagCode: string) {
+  const flagstr = `https://flagcdn.com/24x18/${flagCode.toLowerCase()}.png`;
+  // const flagstr = `./assets/flag/${flagCode.toLowerCase()}.svg`;
   return flagstr;
 }
 

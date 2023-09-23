@@ -194,6 +194,16 @@ export type MovieDetails = {
   recommendations: MovieRecommendations;
 };
 
+export type searchKeywordResultsObject = {
+  id: number;
+  name: string;
+};
+export type searchKeywordsType = {
+  page: number;
+  results: searchKeywordResultsObject[];
+  total_pages: number;
+  total_results: number;
+};
 export type MovieKeywords = {
   id: number;
   keywords: {

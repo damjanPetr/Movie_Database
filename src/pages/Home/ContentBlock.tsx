@@ -6,6 +6,8 @@ import {
   getDiscoverTV,
   getPopularTv,
   getTrending,
+  still_182,
+  still_92,
 } from "../../api/api";
 
 import { useEffect, useState, useRef } from "react";
@@ -53,6 +55,7 @@ export default function ContentBlock({
     (async () => {
       switch (change) {
         case "trendingToday": {
+          setLoading(true);
           const actionData = await getTrending();
           setState(actionData);
           setLoading(false);
@@ -60,6 +63,8 @@ export default function ContentBlock({
           break;
         }
         case "trendingWeek": {
+          setLoading(true);
+
           const actionData = await getTrending(true);
           setState(actionData);
           setLoading(false);
@@ -67,6 +72,8 @@ export default function ContentBlock({
           break;
         }
         case "in_theathers": {
+          setLoading(true);
+
           const actionData = await getDiscoverMovies(
             "region=US&with_release_type=3|2"
           );
@@ -77,6 +84,8 @@ export default function ContentBlock({
         }
 
         case "on_tv": {
+          setLoading(true);
+
           const actionData = await getPopularTv();
 
           setState(actionData);
@@ -86,6 +95,8 @@ export default function ContentBlock({
         }
 
         case "streaming": {
+          setLoading(true);
+
           const actionData = await getDiscoverMovies(
             "with_watch_monetization_types=flatrate"
           );
@@ -96,6 +107,8 @@ export default function ContentBlock({
         }
 
         case "for_rent": {
+          setLoading(true);
+
           const actionData = await getDiscoverMovies(
             "watch_region=US&with_watch_monetization_types=rent"
           );
@@ -105,6 +118,8 @@ export default function ContentBlock({
           break;
         }
         case "free_movies": {
+          setLoading(true);
+
           const actionData = await getDiscoverMovies(
             "watch_region=US&with_watch_monetization_types=free"
           );
@@ -115,10 +130,11 @@ export default function ContentBlock({
           break;
         }
         case "free_tv": {
+          setLoading(true);
+
           const actionData = await getDiscoverTV(
             "watch_region=US&with_watch_monetization_types=free"
           );
-          console.log(actionData);
           setState(actionData);
           setLoading(false);
 
@@ -126,7 +142,7 @@ export default function ContentBlock({
         }
 
         default:
-          return "huenoa";
+          return "";
       }
     })();
 
@@ -134,7 +150,11 @@ export default function ContentBlock({
   }, [change]);
 
   return (
-    <div className="shadowAside mt-4">
+    <div
+      className={`shadowAside mt-4 min-h-[370px]${
+        loading ? "bg-red-900" : "bg-blue-900"
+      }`}
+    >
       <div className=" ml-4 flex items-center justify-start gap-4 ">
         <h1 className="ml-6 p-2 text-2xl font-semibold">{title}</h1>
         <div className=" flex rounded-full border-2">
@@ -176,7 +196,7 @@ export default function ContentBlock({
       >
         <div className="spacer mr-4"></div>
 
-        <React.Suspense fallback={<div>heoauhoatn</div>}>
+        <React.Suspense fallback={<div></div>}>
           <Await
             resolve={state.results}
             errorElement={<div>Could not load reviews 😬</div>}
@@ -206,7 +226,7 @@ export default function ContentBlock({
                         <div className="hover:shadow-xl transition-shadow">
                           <div className=" w-max">
                             <img
-                              src={base_url + item.poster_path}
+                              src={still_182 + item.poster_path}
                               alt={item.title + "image"}
                               className="w-[140px] rounded-t-lg   "
                             />
@@ -283,71 +303,6 @@ export default function ContentBlock({
             }}
           />
         </React.Suspense>
-
-        {/* {state.results.map((item: Movie) => {
-          return (
-            <Link
-              key={item.id}
-              to={`/${item.id}/details`}
-              className="hover:scale-105 transition-all p-2 "
-            >
-              <div className="relative hover:ring-white/40 hover:ring-2  transition-all">
-                <div className="">
-                  <div className=" w-max">
-                    <img
-                      src={base_url + item.poster_path}
-                      alt={item.title + "image"}
-                      className="w-[140px] rounded-t-lg   "
-                    />
-                  </div>
-                </div>
-                <div
-                  className="absolute -bottom-2 right-0 h-10 w-10   rounded-full flex items-center justify-center   border-4 border-black hover:scale-105 transition-all delay-150"
-                  style={{
-                    backgroundImage: `conic-gradient(${
-                      item.vote_average > 9
-                        ? "hsl(116deg 100% 50%)"
-                        : item.vote_average > 8
-                        ? "hsl(104deg 100% 50%)"
-                        : item.vote_average > 7
-                        ? "hsl(93deg 100% 50%)"
-                        : item.vote_average > 6
-                        ? "hsl(81deg 100% 50%)"
-                        : item.vote_average > 5
-                        ? "hsl(70deg 100% 50%)"
-                        : item.vote_average > 4
-                        ? "hsl(58deg 100% 50%)"
-                        : item.vote_average > 3
-                        ? "hsl(35deg 100% 50%)"
-                        : item.vote_average > 2
-                        ? "hsl(12deg 100% 49%)"
-                        : item.vote_average > 1
-                        ? "hsl(1deg 100% 49%)"
-                        : "hsl(0deg 100% 49%)"
-                    } ${Math.round(
-                      ((item.vote_average * 10) / 100) * 360
-                    )}deg, ${0}deg, rgb(24, 18, 18))`,
-                  }}
-                >
-                  <div className="absolute text-sm   h-7 w-7 bg-black rounded-full text-white text-center  font-normal flex items-center justify-center ">
-                    {Math.round(item.vote_average * 10)}
-                    <sup>%</sup>
-                  </div>
-                </div>
-              </div>
-              <div className=" p-2 text-black ">
-                <p className="text-sm font-bold mt-2">{item.title}</p>
-                <p className="">
-                  {new Date(item.release_date).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </p>
-              </div>
-            </Link>
-          );
-        })} */}
         <div className="spacer ml-4"></div>
       </div>
     </div>
