@@ -60,7 +60,7 @@ export type initialStateFilter = {
   sortBy: string;
   fromDate: string;
   toDate: string;
-  watchProviderArray: string[];
+  watchProviderArray: number[];
   genresArray: number[];
   monetization: string[];
   watch_region: string;
@@ -140,7 +140,7 @@ function Filter({ genres, languages, callback }: Props) {
     }&watch_region=${watch_region}`;
     return url;
   }
-  let timer: undefined;
+  let timer: number;
 
   const country = useCountry();
   const target = useRef<HTMLLIElement>(null);
@@ -478,7 +478,7 @@ function Filter({ genres, languages, callback }: Props) {
                           ...filterUrs,
                           watchProviderArray: watchProviderArray.filter(
                             (el) => el !== item.provider_id
-                          ) as string[],
+                          ),
                         });
                       } else {
                         e.currentTarget.classList.add("open");
@@ -875,7 +875,7 @@ function Filter({ genres, languages, callback }: Props) {
                     clearTimeout(timer);
                   };
                   debounce();
-                  const timer = setTimeout(() => {}, 1000);
+                  // const timer = setTimeout(() => {}, 1000);
 
                   const target = e.target as HTMLInputElement;
                   if (target.value.length !== 0) {
@@ -1321,16 +1321,18 @@ function Filter({ genres, languages, callback }: Props) {
                   clearTimeout(timer);
                   e.currentTarget.parentElement?.classList.remove("open");
 
-                  timer = setTimeout(async () => {
-                    const data: searchKeywordsType =
-                      await searchKeywords(value);
-                    if (data.results.length > 0) {
-                      setFilterUrs({
-                        ...filterUrs,
-                        keywords: data,
-                      });
-                    }
-                  }, 500);
+                  if (timer != undefined) {
+                    timer = window.setTimeout(async () => {
+                      const data: searchKeywordsType =
+                        await searchKeywords(value);
+                      if (data.results.length > 0) {
+                        setFilterUrs({
+                          ...filterUrs,
+                          keywords: data,
+                        });
+                      }
+                    }, 500);
+                  }
                   const value = e.currentTarget.value;
 
                   if (value.length > 0) {
@@ -1421,6 +1423,8 @@ function Filter({ genres, languages, callback }: Props) {
               </ul>
             </div>
             <div className="flex p-1 flex-wrap max-h-40 scb overflow-auto  mt-4 w-full gap-1">
+              {/* Render keywords  (blue rounded boxes) */}
+
               {renderKeywords.map((item) => {
                 return (
                   <div
@@ -1433,18 +1437,21 @@ function Filter({ genres, languages, callback }: Props) {
                     <div
                       className="p-1 group-hover:text-white group-hover:scale-150 transition-transform hover:scale-105  cursor-pointer"
                       onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                        setFilterUrs({
-                          ...filterUrs,
-                          keywords: {
-                            ...keywords,
-                            results: keywords.results.filter(
+                        if ("results" in keywords) {
+                          setFilterUrs({
+                            ...filterUrs,
+                            keywords: {
+                              ...keywords,
+                              results: keywords.results.filter(
+                                (item: searchKeywordResultsObject) =>
+                                  item.id !== item.id
+                              ),
+                            },
+                            renderKeywords: renderKeywords.filter(
                               (item) => item.id !== item.id
                             ),
-                          },
-                          renderKeywords: renderKeywords.filter(
-                            (item) => item.id !== item.id
-                          ),
-                        });
+                          });
+                        }
                       }}
                     >
                       <svg
