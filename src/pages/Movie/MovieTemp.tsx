@@ -4,11 +4,11 @@ import ShowSection from "./Comp/ShowSection";
 
 function MovieTemp() {
   return (
-    <main className="mx-auto  w-11/12 max-w-screen-xl px-10 py-8">
+    <main className="mx-auto   max-w-screen-xl px-10 py-8">
       <h1 className="mb-6 text-2xl font-bold">Popular Movies</h1>
       <div className="flex justify-between">
-        <Filter />
-        <ShowSection />
+        {/* <Filter /> */}
+        {/* <ShowSection /> */}
       </div>
     </main>
   );

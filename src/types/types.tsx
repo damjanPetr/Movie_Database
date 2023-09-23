@@ -42,7 +42,106 @@ export type TVProps = {
   total_results: number;
 };
 
+export type genresTV = {
+  genres: {
+    id: number;
+    name: string;
+  }[];
+};
+
+export type languagesTV = {
+  english_name: string;
+  iso_639_1: string;
+  name: string;
+}[];
+
+export type TvShows = {
+  id: number;
+  results: TvDetails[];
+  total_pages: number;
+  total_results: number;
+};
+
 export type TVbase = Movie;
+
+export type TvDetails = {
+  adult: false;
+  backdrop_path: string;
+  created_by: {
+    id: number;
+    credit_id: string;
+    name: string;
+    gender: number;
+    profile_path: string;
+  };
+  credits: MovieDetails["credits"];
+  episode_run_time: number[];
+  first_air_date: string;
+  genres: MovieDetails["genres"];
+  homepage: string;
+  id: number;
+  images: MovieDetails["images"];
+  in_production: boolean;
+  keywords: Omit<MovieDetails["keywords"], "keywords"> & {
+    results: MovieDetails["keywords"]["keywords"][0][];
+  };
+  languages: string[];
+  last_air_date: string;
+  last_episode_to_air: {
+    air_date: string;
+    episode_number: number;
+    episode_type: string;
+    id: number;
+    name: string;
+    overview: string;
+    production_code: string;
+    runtime: null | any;
+    season_number: number;
+    show_id: number;
+    still_path: null | any;
+    vote_average: number;
+    vote_count: number;
+  };
+  name: string;
+  networks: {
+    id: 5369;
+    logo_path: string;
+    name: string;
+    origin_country: string;
+  }[];
+
+  next_episode_to_air: TvDetails["last_episode_to_air"];
+  number_of_episodes: number;
+  number_of_seasons: number;
+  origin_country: string[];
+  original_language: string;
+  original_name: string;
+  overview: string;
+  popularity: number;
+  poster_path: string;
+  production_companies: MovieDetails["production_companies"];
+  production_countries: MovieDetails["production_countries"];
+  recommendations: MovieDetails["recommendations"];
+  reviews: MovieDetails["reviews"];
+  seasons: {
+    air_date: string;
+    episode_count: number;
+    id: number;
+    name: string;
+    overview: string;
+  };
+  spoken_languages: {
+    english_name: string;
+    iso_639_1: string;
+    name: string;
+  }[];
+  status: string;
+  tagline: string;
+  type: string;
+  videos: MovieDetails["videos"];
+  vote_average: number;
+  vote_count: number;
+};
 
 export type MovieDetails = {
   adult: boolean;
@@ -95,6 +194,16 @@ export type MovieDetails = {
   recommendations: MovieRecommendations;
 };
 
+export type searchKeywordResultsObject = {
+  id: number;
+  name: string;
+};
+export type searchKeywordsType = {
+  page: number;
+  results: searchKeywordResultsObject[];
+  total_pages: number;
+  total_results: number;
+};
 export type MovieKeywords = {
   id: number;
   keywords: {

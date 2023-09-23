@@ -5,7 +5,7 @@ export default function Main() {
   return (
     <div className="">
       <Header />
-      <div className=" mx-auto">
+      <div className="mx-auto">
         <Outlet />
       </div>
       <Footer />

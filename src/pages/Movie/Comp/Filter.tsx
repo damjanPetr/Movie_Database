@@ -1,23 +1,30 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { BiSearch } from "react-icons/bi";
-import { RiArrowRightSLine } from "react-icons/ri";
-import { IoMdCheckbox, IoMdCheckmark } from "react-icons/io";
 import { GiCheckMark } from "react-icons/gi";
+import { RiArrowRightSLine } from "react-icons/ri";
 
 import {
   getDBCounties,
   getWatchProvidersRegionMovie,
+  getWatchProvidersRegionTVShow,
+  searchKeywords,
   still_92,
 } from "../../../api/api";
-import { Countries, MovieProvidersGeneral } from "../../../types/types";
-import { getFlag, getHighlight } from "../../../utils/func";
+import {
+  Countries,
+  MovieProvidersGeneral,
+  genresTV,
+  languagesTV,
+  searchKeywordResultsObject,
+  searchKeywordsType,
+} from "../../../types/types";
+import { getFlag, getHighlight, setBubble } from "../../../utils/func";
 import { useCountry } from "../../../utils/hooks";
 import Card from "./Card";
 
 export type stateReducer = {
   searchFilter: string;
   searchOpen: boolean;
-  filterUrl: "";
   whereToWatchOpen: boolean;
   countryCode: {
     text: string | { [key: string]: any };
@@ -36,11 +43,106 @@ export type actionReducer =
   | { type: "change_sort_filter"; text: string }
   | { type: "filtering" | ""; text: string | null; countryData?: object };
 
-function Filter() {
+export type Props = {
+  callback: (args: string) => void;
+  genres: genresTV;
+  languages: languagesTV;
+};
+
+export type initialStateFilter = {
+  with_genres: number[];
+  minRuntime: number;
+  maxRuntime: number;
+  filterLanguage: string;
+  minCount: number;
+  minVotes: number;
+  maxVotes: number;
+  sortBy: string;
+  fromDate: string;
+  toDate: string;
+  watchProviderArray: number[];
+  genresArray: number[];
+  monetization: string[];
+  watch_region: string;
+  keywords: searchKeywordsType | object;
+  renderKeywords: searchKeywordResultsObject[];
+};
+function Filter({ genres, languages, callback }: Props) {
   const [watchProviders, setWatchProviders] = useState<MovieProvidersGeneral>();
 
-  const country = useCountry();
+  const initialState = {
+    with_genres: [],
+    minRuntime: 0,
+    maxRuntime: 400,
+    filterLanguage: "en-US",
+    minCount: 0,
+    minVotes: 0,
+    maxVotes: 10,
+    sortBy: "popularity.desc",
+    fromDate: "",
+    toDate: new Date().toISOString().split("T")[0],
+    watchProviderArray: [],
+    genresArray: [],
+    monetization: ["flatrate", "free", "ads", "rent", "buy"],
+    watch_region: "CA",
+    keywords: {},
+    renderKeywords: [],
+  };
 
+  const [filterUrs, setFilterUrs] = useState<initialStateFilter>(initialState);
+  const {
+    renderKeywords,
+    minRuntime,
+    keywords,
+    maxRuntime,
+    filterLanguage,
+    minCount,
+    minVotes,
+    maxVotes,
+    sortBy,
+    fromDate,
+    toDate,
+    watchProviderArray,
+    genresArray,
+    monetization,
+    watch_region,
+  } = filterUrs;
+
+  function filterCb() {
+    console.log(monetization.length > 0);
+    console.log(genresArray.length > 0);
+    const url = `sort_by=${sortBy}&with_runtime.gte=${minRuntime}&with_runtime.lte=${maxRuntime}&language=${filterLanguage}&vote_count.gte=${minCount}&vote_average.gte=${minVotes}&vote_average.lte=${maxVotes}${
+      fromDate ? `&first_air_date.gte=${fromDate}` : ""
+    }&first_air_date.lte=${toDate}${
+      monetization.length > 0
+        ? `&with_watch_monetization_types=${monetization
+            .map((item, index) => {
+              return index === 0 ? item : "|" + item;
+            })
+            .join("")}`
+        : ""
+    }${
+      genresArray.length > 0
+        ? `&with_genres=${genresArray
+            .map((item, index) => {
+              return index === 0 ? item : "," + item;
+            })
+            .join("")}`
+        : ""
+    }${
+      watchProviderArray.length > 0
+        ? `&with_watch_providers=${watchProviderArray
+            .map((item, index) => {
+              return index === 0 ? item : "|" + item;
+            })
+            .join("")}`
+        : ""
+    }&watch_region=${watch_region}`;
+    return url;
+  }
+  let timer: number;
+
+  const country = useCountry();
   const target = useRef<HTMLLIElement>(null);
   const [countries, setCountries] = useState<Countries>([]);
   const [searchTerm, setSearchTerm] = useState<{
@@ -118,9 +220,8 @@ function Filter() {
   }, [country]);
 
   const [state, dispatch] = useReducer(reducer, {
-    searchFilter: "Popularity Ascending",
+    searchFilter: "Popularity Descending",
     searchOpen: false,
-    filterUrl: "",
     whereToWatchOpen: false,
     countryCode: {
       text: "",
@@ -144,8 +245,9 @@ function Filter() {
       return () => clearTimeout(delayDebounceFn);
     }
   }, [searchTerm]);
+
   const memoizeFilter = useMemo(() => {
-    const play = countries.sort().filter((item) => {
+    const play = countries.filter((item) => {
       if (filter !== "") {
         return item.english_name.toLowerCase().includes(filter.toLowerCase());
       } else if (filter === "") {
@@ -157,8 +259,17 @@ function Filter() {
 
   return (
     <aside className="w-64">
+      <p
+        className="fixed left-0 p-4 bg-blue-200 text-white"
+        onClick={() => {
+          console.log(filterUrs);
+        }}
+      >
+        uhe
+      </p>
       <Card title="Sort">
         <p className="mb-2">Sort Results By</p>
+
         <div
           className={
             "relative z-10 flex items-center justify-between  rounded-md bg-neutral-300 px-4 py-2 text-sm"
@@ -167,7 +278,7 @@ function Filter() {
             dispatch({
               type: "open_search",
             });
-            target.current?.scrollIntoView({ behavior: "smooth" });
+            // target.current?.scrollIntoView({ behavior: "smooth" });
           }}
         >
           <span className="">{searchFilter}</span>
@@ -193,8 +304,8 @@ function Filter() {
                 value: "primary_release_date.asc",
                 name: "Release Date Ascending",
               },
-              { value: "title.asc", name: "Title (A-Z)" },
-              { value: "title.desc", name: "Title (Z-A)" },
+              // { value: "title.asc", name: "Title (A-Z)" },
+              // { value: "title.desc", name: "Title (Z-A)" },
             ].map(({ value, name }, index) => {
               return (
                 <li
@@ -205,6 +316,8 @@ function Filter() {
                   }
                   data-value={value}
                   onClick={() => {
+                    setFilterUrs({ ...filterUrs, sortBy: value });
+
                     dispatch({ type: "change_sort_filter", text: name });
                     target.current?.scrollIntoView({
                       behavior: "instant",
@@ -222,18 +335,15 @@ function Filter() {
       </Card>
       <Card title="Where To Watch">
         <p className="mb-2">Country</p>
+
         <div
-          className="relative flex items-center justify-between rounded-md bg-neutral-300 px-4 py-2"
+          className="relative flex items-center justify-between rounded-md bg-neutral-300 px-4 py-2 cursor-pointer hover:bg-neutral-400/60"
           onClick={async function (e) {
             if (
               e.target === e.currentTarget ||
               (e.target as HTMLElement).tagName.toLowerCase() !== "input"
             ) {
               await dispatch({ type: "open_where_to_watch" });
-              target.current?.scrollIntoView({
-                behavior: "auto",
-                block: "center",
-              });
             }
           }}
         >
@@ -242,24 +352,18 @@ function Filter() {
             {countryCode.text && (
               <img
                 src={getFlag((countryCode.text as string).toLowerCase())}
-                className="mr-2"
+                className="mr-2 w-8"
               ></img>
             )}
-            {/* geolocation Name */}
-            {/* {countryCode && */}
-            {/* new Intl.DisplayNames(undefined, { type: "region" }).of( */}
-            {/* countryCode.text */}
-            {/* )} */}
             {countryCode.engFullName}
           </div>
           <span>
             <RiArrowRightSLine />
           </span>
-
           <div
             className={
-              "absolute top-full z-10 -translate-x-4 flex-col " +
-              (whereToWatchOpen ? "flex" : "hidden")
+              "absolute top-full z-10 -inset-x-10  flex-col  flex transition-all " +
+              (whereToWatchOpen ? "opacity-100" : "opacity-0 hidden")
             }
           >
             <div className=" bg-stone-50 p-4">
@@ -300,13 +404,23 @@ function Filter() {
               {memoizeFilter.map((item) => {
                 return (
                   <li
-                    onClick={() => {
+                    onClick={async () => {
+                      const wProviders = await getWatchProvidersRegionTVShow(
+                        item.iso_3166_1
+                      );
+                      setWatchProviders(wProviders);
                       dispatch({
                         type: "change_country",
                         countryData: {
                           text: item.iso_3166_1,
                           engFullName: item.english_name,
                         },
+                      });
+
+                      setFilterUrs({
+                        ...filterUrs,
+                        watch_region: item.iso_3166_1,
+                        watchProviderArray: [],
                       });
                     }}
                     key={item.iso_3166_1}
@@ -324,7 +438,7 @@ function Filter() {
                         : "")
                     }
                   >
-                    <img src={getFlag(item.iso_3166_1)}></img>
+                    <img className="w-6" src={getFlag(item.iso_3166_1)}></img>
                     {filter ? (
                       <p className="ml-2 ">
                         <span>
@@ -353,6 +467,31 @@ function Filter() {
                 <div
                   className="group relative  w-full basis-1/4 flex-wrap "
                   key={item.provider_id}
+                  onClick={(e) => {
+                    if (Array.isArray(watchProviderArray)) {
+                      e.currentTarget.classList.remove("open");
+
+                      if (
+                        watchProviderArray.includes(item.provider_id as never)
+                      ) {
+                        setFilterUrs({
+                          ...filterUrs,
+                          watchProviderArray: watchProviderArray.filter(
+                            (el) => el !== item.provider_id
+                          ),
+                        });
+                      } else {
+                        e.currentTarget.classList.add("open");
+                        setFilterUrs({
+                          ...filterUrs,
+                          watchProviderArray: [
+                            ...watchProviderArray,
+                            item.provider_id,
+                          ] as never[],
+                        });
+                      }
+                    }
+                  }}
                 >
                   <div className="m-1 basis-1/4 cursor-pointer">
                     <img
@@ -362,13 +501,13 @@ function Filter() {
                     />
                   </div>
                   <div
-                    className={`absolute -inset-x-[200%] bottom-full  mx-auto  mb-2 hidden w-max rounded-lg bg-neutral-900 px-4 py-2 text-lg  text-white group-hover:block `}
+                    className={`absolute -inset-x-[200%] bottom-full mx-auto mb-2 opacity-0 w-max rounded-lg bg-neutral-900 px-4 py-2 text-sm text-white group-hover:opacity-100 pointer-events-none transition-all duration-[10] delay-150 `}
                   >
                     {item.provider_name}
                   </div>
-                  <div className="triable absolute inset-x-0 -top-3  mx-auto hidden h-0  w-0  border-[10px]  border-transparent  border-t-blue-900 group-hover:block"></div>
-                  <div className="absolute inset-0  m-auto hidden h-[calc(100%-4px)] w-[calc(100%-4px)] rounded-xl bg-sky-500/90 group-hover:block">
-                    <div className="absolute inset-0    items-center justify-center text-4xl text-white group-hover:flex">
+                  <div className="triable absolute inset-x-0 -top-3  mx-auto h-0 w-0 border-[10px] border-transparent border-t-blue-900 group-hover:opacity-100 opacity-0 pointer-events-none transition-opacity delay-150"></div>
+                  <div className="group-open:block  group-open:bg-cyan-600   absolute inset-[1px]  m-auto hidden   rounded-xl group-hover:bg-sky-500/90 group-hover:block transition-all   ">
+                    <div className="absolute inset-0  items-center justify-center text-3xl text-white flex group-hover:flex ">
                       <GiCheckMark />
                     </div>
                   </div>
@@ -377,7 +516,972 @@ function Filter() {
             })}
         </div>
       </Card>
-      <Card title="Filter">hhhh</Card>
+      <Card title="Filter" padding={0} openCardProp={true}>
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Avalibilities</h3>
+          <input
+            className="peer "
+            type="checkbox"
+            name="main"
+            id="main"
+            defaultChecked
+            onClick={(e) => {
+              const free = document.querySelector("#free");
+              const ads = document.querySelector("#ads");
+              const stream = document.querySelector("#stream");
+              const rent = document.querySelector("#rent");
+              const buy = document.querySelector("#buy");
+
+              setFilterUrs({
+                ...filterUrs,
+                monetization: ["flatrate", "free", "ads", "rent", "buy"],
+              });
+              [free, ads, stream, rent, buy].forEach((item) => {
+                if (item != null && item instanceof HTMLInputElement)
+                  item.checked = true;
+              });
+            }}
+          />
+          <label
+            htmlFor="main"
+            className="inline-block ml-1.5  justify-start w-30 "
+          >
+            Search all availabilities?
+          </label>
+          <label
+            htmlFor="stream"
+            className="peer-checked:hidden flex  justify-start w-20 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="stream"
+              id="stream"
+              defaultChecked
+              onClick={(e) => {
+                if (monetization.includes("flatrate" as never)) {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [
+                      ...monetization.filter((item) => item !== "flatrate"),
+                    ],
+                  });
+                } else {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [...monetization, "flatrate"],
+                  });
+                }
+              }}
+            />
+            Stream
+          </label>
+          <label
+            htmlFor="free"
+            className="peer-checked:hidden flex  justify-start w-20 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="free"
+              id="free"
+              defaultChecked
+              onClick={(e) => {
+                if (monetization.includes("free")) {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [
+                      ...monetization.filter((item) => item !== "free"),
+                    ],
+                  });
+                } else {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [...monetization, "free"],
+                  });
+                }
+              }}
+            />
+            Free
+          </label>
+          <label
+            htmlFor="ads"
+            className="peer-checked:hidden flex  justify-start w-20 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="ads"
+              id="ads"
+              defaultChecked
+              onClick={(e) => {
+                if (monetization.includes("ads")) {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [
+                      ...monetization.filter((item) => item !== "ads"),
+                    ],
+                  });
+                } else {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [...monetization, "ads"],
+                  });
+                }
+              }}
+            />
+            Ads
+          </label>
+          <label
+            htmlFor="rent"
+            className="peer-checked:hidden flex  justify-start w-20 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="rent"
+              id="rent"
+              defaultChecked
+              onClick={(e) => {
+                if (monetization.includes("rent" as never)) {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [
+                      ...monetization.filter((item) => item !== "rent"),
+                    ],
+                  });
+                } else {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [...monetization, "rent"],
+                  });
+                }
+              }}
+            />
+            Rent
+          </label>
+          <label
+            htmlFor="buy"
+            className="peer-checked:hidden flex  justify-start w-20 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="buy"
+              id="buy"
+              defaultChecked
+              onClick={(e) => {
+                if (monetization.includes("buy" as never)) {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [
+                      ...monetization.filter((item) => item !== "buy"),
+                    ],
+                  });
+                } else {
+                  setFilterUrs({
+                    ...filterUrs,
+                    monetization: [...monetization, "buy"],
+                  });
+                }
+              }}
+            />
+            Buy
+          </label>
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Air Dates</h3>
+          {/* <input type="checkbox" name="main" id="main" className="peer" />
+          <label
+            htmlFor="main"
+            className="inline-block ml-1.5  justify-start w-30 "
+          >
+            Search all releases?
+          </label> */}
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-30 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="countries"
+              id="countries"
+            />
+            Search All Countries?
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-30 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="premiere"
+              id="premiere"
+            />
+            Premiere
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-30 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="theatrical-limited"
+              id="theatrical-limited"
+            />
+            Theatrical (Limited)
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-30 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="theatrical"
+              id="theatrical"
+            />
+            Theatrical
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-30 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="digital"
+              id="digital "
+            />
+            Digital
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-30 "
+          >
+            <input
+              className="mr-1"
+              type="checkbox"
+              name="physical"
+              id="physical"
+            />
+            Physical
+          </label>
+          <label
+            htmlFor=""
+            className="peer-checked:flex hidden  justify-start w-30 "
+          >
+            <input className="mr-1" type="checkbox" name="tv" id="tv" />
+            TV
+          </label>
+
+          <div className="flex justify-between items-center mt-4 ">
+            <label className="text-gray-500" htmlFor="formDate">
+              form:
+            </label>{" "}
+            <input
+              className="p-1.5 outline-none  border border-blue-200 text-sm font-normal focus:ring-1 ring-blue-300 rounded-sm"
+              type="date"
+              max={new Date().toISOString().split("T")[0]}
+              onInput={(e) => {
+                e.preventDefault();
+                const value = e.currentTarget.value;
+                setFilterUrs({
+                  ...filterUrs,
+                  fromDate: value,
+                });
+              }}
+              name="formDate"
+              id="formDate"
+            />
+          </div>
+          <div className="flex justify-between items-center ">
+            <label className="text-gray-500" htmlFor="toDate">
+              to:
+            </label>{" "}
+            <input
+              className="p-1.5 outline-none  border border-blue-200 text-sm font-normal focus:ring-1 ring-blue-300 rounded-sm "
+              type="date"
+              max={new Date().toISOString().split("T")[0]}
+              defaultValue={new Date().toISOString().split("T")[0]}
+              name="toDate"
+              onInput={(e) => {
+                e.preventDefault();
+                const value = e.currentTarget.value;
+                setFilterUrs({
+                  ...filterUrs,
+                  toDate: value,
+                });
+              }}
+              id="toDate"
+            />
+          </div>
+
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Genres</h3>
+
+          <ul className="flex flex-wrap gap-2 p-1">
+            {genres &&
+              genres.genres.map((item) => {
+                return (
+                  <li
+                    key={item.id}
+                    onClick={(e) => {
+                      if (genresArray.includes(item.id as never)) {
+                        setFilterUrs({
+                          ...filterUrs,
+                          genresArray: [
+                            ...genresArray.filter((el) => el !== item.id),
+                          ] as number[],
+                        });
+                        e.currentTarget.classList.remove("active-keyword");
+                      } else {
+                        setFilterUrs({
+                          ...filterUrs,
+                          genresArray: [...genresArray, item.id] as number[],
+                        });
+                        e.currentTarget.classList.add("active-keyword");
+                      }
+                    }}
+                    className={`px-3 py-1 cursor-pointer  rounded-full text-sm ring-[0.8px] bg-white  hover:bg-cyan-500 hover:text-white hover:ring-none   [&.active-keyword]:bg-cyan-500 [&.active-keyword]:text-white active:bg-cyan-600 active:scale-105 `}
+                  >
+                    {item.name}
+                  </li>
+                );
+              })}
+          </ul>
+
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Network</h3>
+          <div className="fci mb-4">
+            <div className="inner flex items-center relative ">
+              <input
+                type="text"
+                name=" "
+                id=""
+                placeholder="Filter By Tv Networks"
+                className="peer w-full  px-3 py-1.5 rounded-sm outline-none text-sm   ring-blue-200 focus:ring-blue-400  ring-1  "
+                onKeyUp={(e) => {
+                  const debounce = () => {
+                    clearTimeout(timer);
+                  };
+                  debounce();
+                  // const timer = setTimeout(() => {}, 1000);
+
+                  const target = e.target as HTMLInputElement;
+                  if (target.value.length !== 0) {
+                    target.dataset.type = "search";
+                  } else {
+                    target.dataset.type = "";
+                  }
+                }}
+              />
+              <div className="flex-1  peer-data-[type=search]:opacity-100 transition-opacity opacity-0 absolute right-1 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-800">
+                <svg
+                  onClick={function (e: React.MouseEvent) {
+                    const input =
+                      e.currentTarget.parentElement?.parentElement?.querySelector(
+                        "input"
+                      ) as HTMLInputElement;
+                    input.value = "";
+                    input.dataset.type = "";
+                  }}
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  className="w-full"
+                  height="18"
+                  viewBox="0 0 256 256"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M205.66 194.34a8 8 0 0 1-11.32 11.32L128 139.31l-66.34 66.35a8 8 0 0 1-11.32-11.32L116.69 128L50.34 61.66a8 8 0 0 1 11.32-11.32L128 116.69l66.34-66.35a8 8 0 0 1 11.32 11.32L139.31 128Z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Certification</h3>
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Language</h3>
+          <div
+            className="w-full bg-stone-50 group relative text-sm  "
+            onClick={(e) => {
+              e.currentTarget.classList.toggle("open");
+              const liElements = e.currentTarget.querySelectorAll("ul li");
+              liElements.forEach((item) => {
+                if (item.textContent == e.currentTarget.textContent) {
+                  // item.scrollIntoView(true);
+                  // break;
+                }
+              });
+            }}
+          >
+            <div className="py-2 px-4 bg-stone-100">
+              {languages.find((item) => (item.english_name = "English"))
+                ?.english_name ?? "No selected language"}
+            </div>
+            <ul className="hidden group-open:block flex-col w-full absolute blur-0 bg-white  z-10 max-h-40 overflow-auto scb p-2 rounded-sm mt-1">
+              {languages.map((item) => {
+                return (
+                  <li
+                    key={item.iso_639_1}
+                    className="px-2 py-1 hover:bg-gray-200 flex items-center  "
+                    onClick={(e) => {
+                      e.currentTarget?.parentElement
+                        ?.querySelectorAll("li")
+                        .forEach((item) => {
+                          item.classList.remove("bg-violet-200");
+                        });
+                      e.currentTarget.classList.add("bg-violet-200");
+                      const liElement = e.currentTarget.cloneNode(
+                        true
+                      ) as HTMLLIElement;
+                      liElement.className =
+                        " hover:bg-gray-200 flex items-center  ";
+                      const parent =
+                        e.currentTarget.parentElement?.previousElementSibling;
+                      parent?.firstChild?.remove();
+                      parent?.appendChild(liElement);
+                      setFilterUrs({
+                        ...filterUrs,
+                        filterLanguage: item.iso_639_1,
+                      });
+                    }}
+                  >
+                    <img
+                      // src={`assets/flag/${item.iso_639_1}.svg`}
+                      src={getFlag(item.iso_639_1)}
+                      className="w-4 mr-2"
+                      alt=""
+                    />
+
+                    {item.english_name}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+        </div>
+        <div className="">
+          <div className="p-3.5">
+            <h3 className="font-light mb-2.5">User Score</h3>
+            <div className="flex  items-center h-10">
+              <label htmlFor="min-user-score" className="mr-2 w-10">
+                Min
+              </label>
+              <form action="" className="relative  flex-grow">
+                <input
+                  type="range"
+                  name="min-user-score"
+                  id="min-user-score"
+                  list="markersUserScore"
+                  min={0}
+                  className="accent-sky-600  w-full"
+                  max={10}
+                  step={1}
+                  defaultValue={0}
+                  autoComplete="on"
+                  onInput={(e) => {
+                    const output =
+                      e.currentTarget.parentElement?.querySelector("output");
+
+                    const maxUserScore = document.querySelector(
+                      "#max-user-score"
+                    ) as HTMLInputElement;
+
+                    if (
+                      maxUserScore.valueAsNumber >=
+                      e.currentTarget.valueAsNumber
+                    ) {
+                      setFilterUrs({
+                        ...filterUrs,
+                        minVotes: e.currentTarget.valueAsNumber,
+                      });
+                      if (output) {
+                        setBubble(e.currentTarget, output);
+                      }
+                    } else {
+                      maxUserScore.value = String(
+                        e.currentTarget.valueAsNumber
+                      );
+
+                      setFilterUrs({
+                        ...filterUrs,
+                        minVotes: e.currentTarget.valueAsNumber,
+                        maxVotes: e.currentTarget.valueAsNumber,
+                      });
+                    }
+                    if (output) {
+                      setBubble(e.currentTarget, output);
+                    }
+                  }}
+                />
+                <output
+                  htmlFor="min-runtime"
+                  name="bubble"
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5 text-sm"
+                ></output>
+                <datalist id="markersUserScore" className="">
+                  <option value="0"> 0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                </datalist>
+              </form>
+            </div>
+            <div className="flex  items-center h-10 mt-4">
+              <label htmlFor="max-user-score" className="mr-2 w-10">
+                Max
+              </label>
+              <form action="" className="relative  flex-grow">
+                <input
+                  type="range"
+                  name="max-user-score"
+                  id="max-user-score"
+                  min={0}
+                  defaultValue={10}
+                  list="markersUserScoreMax"
+                  className="accent-sky-600  w-full"
+                  max={10}
+                  step={1}
+                  onInput={(e) => {
+                    const output =
+                      e.currentTarget.parentElement?.querySelector("output");
+
+                    const minUserScore = document.querySelector(
+                      "#min-user-score"
+                    ) as HTMLInputElement;
+
+                    if (
+                      minUserScore.valueAsNumber <=
+                      e.currentTarget.valueAsNumber
+                    ) {
+                      setFilterUrs({
+                        ...filterUrs,
+                        maxVotes: e.currentTarget.valueAsNumber,
+                      });
+
+                      if (output) {
+                        setBubble(e.currentTarget, output);
+                      }
+                    } else {
+                      const value = e.currentTarget.valueAsNumber;
+                      setFilterUrs({
+                        ...filterUrs,
+                        maxVotes: e.currentTarget.valueAsNumber,
+                        minVotes: e.currentTarget.valueAsNumber,
+                      });
+                      minUserScore.value = String(value);
+                    }
+                    if (output) {
+                      setBubble(e.currentTarget, output);
+                    }
+                  }}
+                />
+                <output
+                  htmlFor="min-runtime"
+                  name="bubble"
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5 text-sm  "
+                ></output>
+                <datalist id="markersUserScoreMax" className="">
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                </datalist>
+              </form>
+            </div>
+            <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+          </div>
+          <div className="p-3.5 ">
+            <h3 className="font-light mb-2.5">Minimum User Votes</h3>
+
+            <div className="flex  items-center h-10">
+              <label htmlFor="min-user-vote" className="mr-2 w-10">
+                Min
+              </label>
+              <form action="" className="relative flex-grow ">
+                <input
+                  type="range"
+                  name="min-user-vote"
+                  id="min-user-vote"
+                  min={0}
+                  className="accent-sky-600 flex-grow w-full"
+                  list="markersUserVotes"
+                  defaultValue={0}
+                  max={500}
+                  step={10}
+                  onInput={(e) => {
+                    const output =
+                      e.currentTarget.parentElement?.querySelector("output");
+                    setFilterUrs({
+                      ...filterUrs,
+                      minCount: e.currentTarget.valueAsNumber,
+                    });
+                    if (output) setBubble(e.currentTarget, output);
+                  }}
+                />
+                <output
+                  htmlFor="min-runtime"
+                  name="bubble"
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5 text-sm "
+                ></output>
+                <datalist id="markersUserVotes" className="">
+                  <option value="0">0</option>
+                  {/* <option value="1"></option> */}
+                  {/* <option value="2"></option> */}
+                  {/* <option value="3"></option> */}
+                  {/* <option value="4"></option> */}
+                  {/* <option value="5">5</option> */}
+                  <option value="100">100</option>
+                  <option value="200">200</option>
+                  <option value="300">300</option>
+                  <option value="400">400</option>
+                  <option value="500">500</option>
+                </datalist>
+              </form>
+            </div>
+            <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+          </div>
+          <div className="    p-3.5 ">
+            <h3 className="font-light mb-2.5">Runtime</h3>
+            <div className="flex  items-center h-10">
+              <label htmlFor="min-runtime" className="mr-2 w-10">
+                Min
+              </label>
+              <form action="" className="relative flex-grow ">
+                <input
+                  type="range"
+                  name="min-runtime"
+                  id="min-runtime"
+                  min={0}
+                  className="accent-sky-600 w-full"
+                  defaultValue={0}
+                  max={400}
+                  list="markersRuntime"
+                  step={10}
+                  onInput={(e) => {
+                    const output =
+                      e.currentTarget.parentElement?.querySelector("output");
+                    const maxRuntimeelement = document.querySelector(
+                      "#max-runtime"
+                    ) as HTMLInputElement;
+
+                    if (
+                      e.currentTarget.valueAsNumber >=
+                      maxRuntimeelement.valueAsNumber
+                    ) {
+                      setFilterUrs({
+                        ...filterUrs,
+                        maxRuntime: e.currentTarget.valueAsNumber,
+                        minRuntime: e.currentTarget.valueAsNumber,
+                      });
+
+                      maxRuntimeelement.value = String(
+                        e.currentTarget.valueAsNumber
+                      );
+                    } else {
+                      setFilterUrs({
+                        ...filterUrs,
+                        minRuntime: e.currentTarget.valueAsNumber,
+                      });
+                    }
+                    if (output) {
+                      setBubble(e.currentTarget, output);
+                    }
+                  }}
+                />
+                <output
+                  htmlFor="min-runtime"
+                  name="bubble"
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5 text-sm "
+                ></output>
+                <datalist id="markersRuntime" className="">
+                  <option value="0">0</option>
+
+                  <option value="100">100</option>
+
+                  <option value="200">200</option>
+
+                  <option value="300">300</option>
+
+                  <option value="400">400</option>
+                </datalist>
+              </form>
+            </div>
+            <div className="flex  items-center h-10 mt-4 ">
+              <label htmlFor="max-runtime" className="mr-2 w-10">
+                Max
+              </label>
+              <form action="" className="relative  flex-grow">
+                <input
+                  type="range"
+                  name="max-runtime"
+                  id="max-runtime"
+                  min={0}
+                  className="accent-sky-600 w-full"
+                  list="markersRuntime"
+                  max={400}
+                  defaultValue={400}
+                  step={10}
+                  onInputCapture={(e) => {
+                    const output =
+                      e.currentTarget.parentElement?.querySelector("output");
+                    const minRuntime = document.querySelector(
+                      "#min-runtime"
+                    ) as HTMLInputElement;
+                    if (
+                      minRuntime.valueAsNumber <= e.currentTarget.valueAsNumber
+                    ) {
+                      if (output) {
+                        setFilterUrs({
+                          ...filterUrs,
+                          maxRuntime: e.currentTarget.valueAsNumber,
+                          minRuntime: minRuntime.valueAsNumber,
+                        });
+                        setBubble(e.currentTarget, output);
+                      }
+                    } else {
+                      const value = e.currentTarget.valueAsNumber;
+                      minRuntime.value = String(value);
+                      setFilterUrs({
+                        ...filterUrs,
+                        minRuntime: e.currentTarget.valueAsNumber,
+                      });
+                    }
+                  }}
+                />
+                <output
+                  htmlFor="min-runtime"
+                  name="bubble"
+                  className="absolute -top-5 bg-blue-500 text-white rounded-lg px-0.5  text-sm opacity-0"
+                ></output>
+                <datalist id="markersRuntime" className="">
+                  <option value="0">0</option>
+                  <option value="100">100</option>
+                  <option value="200">200</option>
+                  <option value="300">300</option>
+                  <option value="400">400</option>
+                </datalist>
+              </form>
+            </div>
+
+            <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+          </div>
+        </div>
+
+        <div className="    p-3.5 ">
+          <h3 className="font-light mb-2.5">Keywords</h3>
+        </div>
+        <div className="  fci  p-3.5">
+          <div className="relative">
+            <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+
+            <div className="w-full flex items-center relative peer">
+              <input
+                placeholder="Filter by keywords..."
+                type="text"
+                name="keywords"
+                id="keywords"
+                className=" outline-none ring-1 ring-blue-200 focus-within:ring-blue-400 p-1 rounded-sm w-full placeholder:text-sm"
+                onInput={(e: React.MouseEvent<HTMLInputElement>) => {
+                  e.preventDefault();
+
+                  clearTimeout(timer);
+                  e.currentTarget.parentElement?.classList.remove("open");
+
+                  if (timer != undefined) {
+                    timer = window.setTimeout(async () => {
+                      const data: searchKeywordsType =
+                        await searchKeywords(value);
+                      if (data.results.length > 0) {
+                        setFilterUrs({
+                          ...filterUrs,
+                          keywords: data,
+                        });
+                      }
+                    }, 500);
+                  }
+                  const value = e.currentTarget.value;
+
+                  if (value.length > 0) {
+                    e.currentTarget.parentElement?.classList.add("open");
+                  }
+                }}
+              />
+              <div
+                className="peer-open:opacity-100 opacity-0  fci absolute inset-y-0 right-1 transition-opacity"
+                onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                  const inputBox = document.querySelector(
+                    "#keywords"
+                  ) as HTMLInputElement;
+                  inputBox.value = "";
+                  inputBox.parentElement?.classList.remove("open");
+                  setFilterUrs({
+                    ...filterUrs,
+                    keywords: {
+                      results: [],
+                    },
+                  });
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 256 256"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M208.49 191.51a12 12 0 0 1-17 17L128 145l-63.51 63.49a12 12 0 0 1-17-17L111 128L47.51 64.49a12 12 0 0 1 17-17L128 111l63.51-63.52a12 12 0 0 1 17 17L145 128Z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="absolute z-50 bg-white w-full" id="keywordDropdown">
+              <ul className="w-full max-h-[300px] overflow-auto scb  px-2">
+                {"results" in keywords
+                  ? keywords.results
+                      .filter((item) => {
+                        let includes;
+
+                        renderKeywords.forEach((el) => {
+                          return el.id === item.id
+                            ? (includes = true)
+                            : (includes = false);
+                        });
+
+                        return !includes;
+                      })
+                      .map((item: searchKeywordResultsObject) => {
+                        return (
+                          <li
+                            className="hover:bg-gray-200 px-1 my-1 capitalize active:bg-cyan-800 active:scal120   "
+                            key={item.id}
+                            onClick={() => {
+                              const keyboarddrop =
+                                document.querySelector("#keywordDropdown");
+                              keyboarddrop?.classList.remove("open");
+                              setTimeout(() => {
+                                setFilterUrs({
+                                  ...filterUrs,
+                                  renderKeywords: renderKeywords.includes(item)
+                                    ? {
+                                        ...renderKeywords.filter((el) => {
+                                          return el.id !== item.id;
+                                        }),
+                                      }
+                                    : [...renderKeywords, item],
+                                  keywords: {
+                                    ...keywords,
+                                    results: [],
+                                  },
+                                });
+                                keywordsInput.value = "";
+                              }, 50);
+                              const keywordsInput = document.querySelector(
+                                "#keywords"
+                              ) as HTMLInputElement;
+                            }}
+                          >
+                            {item.name}
+                          </li>
+                        );
+                      })
+                  : null}
+              </ul>
+            </div>
+            <div className="flex p-1 flex-wrap max-h-40 scb overflow-auto  mt-4 w-full gap-1">
+              {/* Render keywords  (blue rounded boxes) */}
+
+              {renderKeywords.map((item) => {
+                return (
+                  <div
+                    key={item.id}
+                    className="flex flex-auto items-center  bg-cyan-500 py-0.5 px-1 rounded-lg justify-between group hover:bg-cyan-600"
+                  >
+                    <p className="capitalize text-[13px] text-white">
+                      {item.name}
+                    </p>
+                    <div
+                      className="p-1 group-hover:text-white group-hover:scale-150 transition-transform hover:scale-105  cursor-pointer"
+                      onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                        if ("results" in keywords) {
+                          setFilterUrs({
+                            ...filterUrs,
+                            keywords: {
+                              ...keywords,
+                              results: keywords.results.filter(
+                                (item: searchKeywordResultsObject) =>
+                                  item.id !== item.id
+                              ),
+                            },
+                            renderKeywords: renderKeywords.filter(
+                              (item) => item.id !== item.id
+                            ),
+                          });
+                        }
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        // className="text-gray-950"
+                        width="10"
+                        height="10"
+                        viewBox="0 0 256 256"
+                      >
+                        <path
+                          fill="currentColor"
+                          d="M208.49 191.51a12 12 0 0 1-17 17L128 145l-63.51 63.49a12 12 0 0 1-17-17L111 128L47.51 64.49a12 12 0 0 1 17-17L128 111l63.51-63.52a12 12 0 0 1 17 17L145 128Z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </Card>
+      <button
+        className="da-btn-success da-btn-lg  da-btn-blocklg"
+        onClick={() => {
+          callback(filterCb());
+        }}
+      >
+        Search
+      </button>
     </aside>
   );
 }

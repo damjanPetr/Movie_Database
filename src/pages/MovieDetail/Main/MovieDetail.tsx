@@ -247,7 +247,7 @@ export default function MovieDetail() {
               recommendations={movieDetail.recommendations.results}
             />
           </section>
-          <MovieDetailAside movieDetail={movieDetail} />
+          <MovieDetailAside itemDetail={movieDetail} />
         </article>
       </main>
     </div>

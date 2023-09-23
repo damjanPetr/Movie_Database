@@ -1,15 +1,9 @@
-import { useEffect, useState, useReducer, useRef } from "react";
-import { base_url, getImages, getVideos } from "../../../../api/api";
-import {
-  MovieDetails,
-  MovieImages,
-  MovieVideos,
-} from "../../../../types/types";
-import LoadMoreBtn from "./mediaBarComp/LoadMoreBtn";
+import { useEffect, useReducer, useRef, useState } from "react";
+import { MovieDetails, TvDetails } from "../../../../types/types";
 import BackdropTab from "./mediaBarComp/BackdropTab";
-import MovieDetail, { movieDetailLoader } from "../MovieDetail";
-import VideoTab from "./mediaBarComp/VideoTab";
+import LoadMoreBtn from "./mediaBarComp/LoadMoreBtn";
 import PosterTab from "./mediaBarComp/PosterTab";
+import VideoTab from "./mediaBarComp/VideoTab";
 
 /* reducer types */
 export type State =
@@ -45,7 +39,11 @@ export type Actions =
       type: "backdrops";
     };
 
-export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
+export default function MediaBar({
+  movieData,
+}: {
+  movieData: MovieDetails | TvDetails;
+}) {
   /**
    *
    */
@@ -63,15 +61,25 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
     }
   }
 
-  function handelClick() {
+  function handelClick(e: MouseEvent) {
     setLoadNumber(loadNumber + 5);
+
+    setTimeout(() => {
+      if (e.target instanceof HTMLButtonElement && e.target !== null) {
+        e.target?.parentElement?.parentElement?.scrollBy({
+          left: 600,
+          top: 0,
+          behavior: "smooth",
+        });
+      }
+    }, 180);
   }
 
   const [loadNumber, setLoadNumber] = useState(5);
 
   //change use state to load more items
 
-  const [data, setData] = useState<MovieDetails>();
+  const [data, setData] = useState<MovieDetails | TvDetails>();
 
   const content = useRef<HTMLDivElement>(null);
 
@@ -89,7 +97,11 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
   useEffect(() => {
     (async () => {
       // const movieData = await movieDetailLoader(movieId);
-      setData(movieData);
+      if ("first_air_date" in movieData) {
+        setData(movieData);
+      } else {
+        setData(movieData);
+      }
     })();
   }, [movieData]);
 
@@ -103,6 +115,7 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
           <ul className="ml-auto flex gap-4">
             <li>Most Popular</li>
             <li
+              className="text-base font-semibold"
               onClick={() => {
                 setLoadNumber(5);
                 console.log("video");
@@ -110,9 +123,13 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
                 dispatch({ type: "video" });
               }}
             >
-              Videos
+              Videos{" "}
+              <span className="text-gray-500 ml-1 ">
+                {movieData.videos.results.length}
+              </span>
             </li>
             <li
+              className="text-base font-semibold"
               onClick={() => {
                 console.log("backdrops");
                 setLoadNumber(5);
@@ -123,8 +140,12 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
               }}
             >
               Backdrops
+              <span className="text-gray-500 ml-1 ">
+                {movieData.images.backdrops.length}
+              </span>
             </li>
             <li
+              className="text-base font-semibold"
               onClick={() => {
                 console.log("posters");
                 setLoadNumber(5);
@@ -135,13 +156,16 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
               }}
             >
               Posters
+              <span className="text-gray-500 ml-1 ">
+                {movieData.images.posters.length}
+              </span>
             </li>
           </ul>
         </nav>
       </header>
 
-      {/* videos */}
-      <div className="h-[300px]   bg-gray-200  " ref={content}>
+      <div className="h-[300px] " ref={content}>
+        {/* videos */}
         {data && state.video === true ? (
           <div
             id="videos"
@@ -156,6 +180,9 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
               .map((item) => (
                 <VideoTab item={item} key={item.id} />
               ))}
+            {data.videos.results.length > loadNumber ? (
+              <LoadMoreBtn func={(e) => handelClick(e)} />
+            ) : null}
           </div>
         ) : null}
 
@@ -165,6 +192,9 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
             {data.images.backdrops.slice(0, loadNumber).map((item) => {
               return <BackdropTab item={item} key={item.file_path} />;
             })}
+            {data.images.posters.length > loadNumber ? (
+              <LoadMoreBtn func={(e) => handelClick(e)} />
+            ) : null}
           </div>
         ) : null}
 
@@ -175,24 +205,30 @@ export default function MediaBar({ movieData }: { movieData: MovieDetails }) {
             {data.images.posters.slice(0, loadNumber).map((item) => {
               return <PosterTab item={item} key={item.file_path} />;
             })}
+            {data.images.posters.length > loadNumber ? (
+              <LoadMoreBtn func={(e) => handelClick(e)} />
+            ) : null}
           </div>
         ) : null}
 
         {state.video === true &&
         data &&
-        loadNumber < data?.videos.results.length ? (
-          <LoadMoreBtn func={handelClick} />
-        ) : null}
+        loadNumber < data?.videos.results.length
+          ? // <LoadMoreBtn func={handelClick} />
+            null
+          : null}
         {state.backdrops === true &&
         data &&
-        loadNumber < data?.images.backdrops.length ? (
-          <LoadMoreBtn func={handelClick} />
-        ) : null}
+        loadNumber < data?.images.backdrops.length
+          ? // <LoadMoreBtn func={handelClick} />
+            null
+          : null}
         {state.poster === true &&
         data &&
-        loadNumber < data?.images.posters.length ? (
-          <LoadMoreBtn func={handelClick} />
-        ) : null}
+        loadNumber < data?.images.posters.length
+          ? // <LoadMoreBtn func={handelClick} />
+            null
+          : null}
       </div>
       <hr className="mt-10" />
     </div>

@@ -1,10 +1,11 @@
-import { createBrowserRouter, createHashRouter, defer } from "react-router-dom";
+import { createHashRouter, defer } from "react-router-dom";
 import ErrorPage from "./ErrorPage.tsx";
 import {
   getAltTitles,
-  getChanges,
   getCredits,
+  getGenres,
   getImages,
+  getLanguages,
   getMovieReleaseDate,
   getMovieReviews,
   getPopularMovies,
@@ -13,6 +14,7 @@ import {
   getTrending,
   getVideos,
   movieDetailLoader,
+  tvDetailLoader,
 } from "./api/api.ts";
 import { AuthProvider } from "./context/Auth.tsx";
 import Main from "./layouts/Main.tsx";
@@ -27,6 +29,7 @@ import Videos from "./pages/Media/Videos/Videos.tsx";
 import AlternativeTitles from "./pages/MovieDetail/AlternativeTitles/AlternativeTitles.tsx";
 import CastCrew from "./pages/MovieDetail/CastCrew/CastCrew.tsx";
 // import Changes from "./pages/MovieDetail/Changes/Changes.tsx";
+import MovieTemp from "./pages/Movie/MovieTemp.tsx";
 import Edit from "./pages/MovieDetail/Edit/Edit.tsx";
 import MovieDetail from "./pages/MovieDetail/Main/MovieDetail.tsx";
 import ReleaseDate from "./pages/MovieDetail/ReleaseDate/ReleaseDate.tsx";
@@ -34,9 +37,9 @@ import Report from "./pages/MovieDetail/Report/Report.tsx";
 import Translations from "./pages/MovieDetail/Translations/Translations.tsx";
 import People from "./pages/People/People.tsx";
 import Reviews from "./pages/Reviews/Reviews.tsx";
-import { MovieAltTitles, MovieDetails } from "./types/types.tsx";
-import MovieTemp from "./pages/Movie/MovieTemp.tsx";
-import TVShowTemp from "./pages/TVShow/TVShowTemp.tsx";
+import TVShowDetail from "./pages/TVShowDetail/TVShowDetail.tsx";
+import { MovieAltTitles, MovieDetails, TvDetails } from "./types/types.tsx";
+import TvTemp from "./pages/Movie/TvTemp.tsx";
 
 const router = createHashRouter([
   {
@@ -75,7 +78,28 @@ const router = createHashRouter([
           },
           {
             path: "/tvshow",
-            element: <TVShowTemp />,
+            element: <TvTemp />,
+            loader: async () => {
+              const data = await getGenres();
+              const data2 = await getLanguages();
+              const tvShows = await getPopularTv();
+
+              return {
+                genres: data,
+                languages: data2,
+                tvShows: tvShows,
+              };
+            },
+          },
+          {
+            path: "/:tvId/tv/details",
+            element: <TVShowDetail />,
+            loader: async ({ params }) => {
+              const tvDetail = (await tvDetailLoader(params.tvId)) as TvDetails;
+              return defer({
+                tvDetail,
+              });
+            },
           },
           {
             path: "/:movieId",

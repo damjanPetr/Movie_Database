@@ -1,7 +1,8 @@
 /* eslint-disable no-undef */
 /** @type {import('tailwindcss').Config} */
 
-import plugin from "tailwindcss";
+import plugin from "tailwindcss/plugin";
+
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
@@ -32,7 +33,7 @@ export default {
           800: "#846358",
           900: "#43302b",
         },
-        primary: "#FF69b4", // Can always use CSS variables too e.g. "var(--color-primary)",
+        primary: "#FF69b4",
         secondary: "#333333",
         brand: "#243c5a",
       },
@@ -42,17 +43,19 @@ export default {
     require("@tailwindcss/typography/src/index"),
     require("daisyui"),
 
-    plugin(function ({ addVariant, addComponents }) {
-      addComponents({
-        ".button": { padding: "0.5rem 1rem" },
-      });
-
+    plugin(function ({ addComponents, addUtilities, addVariant }) {
       addVariant("optional", "&:optional");
-
       addVariant("hocus", ["&:hover", "&:focus"]);
       addVariant("dirChildren", ["& > *"]);
       addVariant("group-open", [":merge(.group).open &"]);
       addVariant("peer-open", [":merge(.peer).open &"]);
+      addUtilities({
+        ".fci": {
+          display: "flex",
+          "justify-content": "center",
+          "align-items": "center",
+        },
+      });
     }),
   ],
   daisyui: {

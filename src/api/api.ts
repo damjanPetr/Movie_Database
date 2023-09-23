@@ -32,6 +32,28 @@ export async function movieDetailLoader<T>(id: T) {
   return response.json();
 }
 
+export async function tvDetailLoader<T>(id: T) {
+  const response = await fetch(
+    apiURL +
+      `/tv/${id}?append_to_response=videos,images,reviews,credits,recommendations,keywords,collections`,
+    apiFetchOptions
+  );
+  return response.json();
+}
+
+export async function getGenres() {
+  const response = await fetch(apiURL + `/genre/tv/list`, apiFetchOptions);
+  return response.json();
+}
+
+export async function getLanguages() {
+  const response = await fetch(
+    apiURL + `/configuration/languages`,
+    apiFetchOptions
+  );
+  return response.json();
+}
+
 export async function movieCollection<T>(id: T) {
   const response = await fetch(apiURL + `/collection/${id}`, apiFetchOptions);
   return response.json();
@@ -47,7 +69,15 @@ export async function getDBCounties(): Promise<Countries> {
 }
 
 export async function getPopularTv() {
-  const response = await fetch(apiURL + `/tv/popular`, apiFetchOptions);
+  const response = await fetch(
+    apiURL +
+      `/tv/popular?air_date.lte=${
+        new Date().toISOString().split("T")[0]
+      }&language=${
+        navigator.language
+      }&page=1&sort_by=popularity.desc&watch_region=CA&with_runtime.gte=0&with_runtime.lte=400&with_watch_monetization_types=flatrate|free|ads|rent|buy`,
+    apiFetchOptions
+  );
   const data = await response.json();
   return data;
 }
@@ -64,7 +94,6 @@ export async function getDiscoverMovies(arg: string) {
 export async function getDiscoverTV(arg: string) {
   const response = await fetch(apiURL + `/discover/tv?${arg}`, apiFetchOptions);
   const data = await response.json();
-  console.log(data);
   return data;
 }
 
@@ -144,7 +173,15 @@ export async function getTopRated(page?: number) {
   }
 }
 
-/* Fetch FUNCITOs */
+/* Fetch Functions */
+
+export async function searchKeywords(query: string) {
+  const response = await fetch(
+    apiURL + `/search/keyword?query=${query}`,
+    apiFetchOptions
+  );
+  return response.json();
+}
 
 export async function getKeywords<T>(id: T) {
   const response = await fetch(

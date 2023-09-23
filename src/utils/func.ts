@@ -1,6 +1,14 @@
+import { RiDeleteBack2Fill } from "react-icons/ri";
+
 export function getFlag(flagCode: string) {
-  // const flagstr = `https://flagcdn.com/24x18/${flagCode.toLowerCase()}.png`;
-  const flagstr = `./assets/flag/${flagCode.toLowerCase()}.svg`;
+  const flagstr = `https://flagcdn.com/24x18/${flagCode.toLowerCase()}.png`;
+  // const flagstr = `./assets/flag/${flagCode.toLowerCase()}.svg`;
+  return flagstr;
+}
+
+export function getFlagByLang(flagCode: string) {
+  const flagstr = `https://flagcdn.com/24x18/${flagCode.toLowerCase()}.png`;
+  // const flagstr = `./assets/flag/${flagCode.toLowerCase()}.svg`;
   return flagstr;
 }
 
@@ -66,3 +74,23 @@ export const convertLinks = (videoId: string) => {
   const imageUrl = `https://i.ytimg.com/vi/${videoId}/${"hq"}${"default"}.jpg`;
   return imageUrl;
 };
+export function setBubble(range: any, bubble: HTMLOutputElement) {
+  const val = parseInt(range.value);
+  const min = range.min ? range.min : 0;
+  const max = range.max ? range.max : 100;
+  const newVal = Number(((val - min) * 100) / (max - min));
+  bubble.innerHTML = String(val);
+  let timer;
+  clearTimeout(timer);
+
+  function debounce() {
+    bubble.classList.add("opacity-0", "transition-opacity");
+    return;
+  }
+  timer = setTimeout(debounce, 1200);
+
+  bubble.classList.remove("opacity-0", "transition-opacity");
+
+  // Sorta magic numbers based on size of the native UI thumb
+  bubble.style.left = `calc(${newVal}% + (${8 - newVal * 0.3}px))`;
+}

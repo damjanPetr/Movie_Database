@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
+import { still_182 } from "../../../../api/api";
 import { MovieReviews } from "../../../../types/types";
-import { still_182, still_300 } from "../../../../api/api";
 
 type Props = {
   reviews: MovieReviews["results"];
@@ -26,7 +26,7 @@ function Social({ reviews }: Props) {
   const reviewsTab = useRef<HTMLDivElement>(null);
   const discussionTab = useRef<HTMLDivElement>(null);
 
-  async function handelClick(e: MouseEvent, index: number) {
+  async function handelClick(e: React.MouseEvent, index: number) {
     if (ul.current) {
       const listItems = ul.current.querySelectorAll("li");
       listItems.forEach((item) => {
@@ -65,7 +65,7 @@ function Social({ reviews }: Props) {
                 <li
                   key={index}
                   className="p-2"
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent<HTMLLIElement>) => {
                     handelClick(e, index);
                   }}
                 >
@@ -177,7 +177,7 @@ function Social({ reviews }: Props) {
                     }
                   })()
                 ) : (
-                  <p> There are no reviews</p>
+                  <p> There are no reviews </p>
                 )}
               </div>
               <span className="inline text-sm underline">
