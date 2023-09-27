@@ -10,12 +10,7 @@ import { TvShows, genresTV, languagesTV } from "../../types/types";
 import Filter from "../Movie/Comp/Filter";
 import ShowSection from "../Movie/Comp/ShowSection";
 
-function TvTemp({
-  todayDateFilter,
-}: {
-  todayDateFilter?: boolean;
-  load?: string;
-}) {
+function TvTemp({ todayDateFilter }: { todayDateFilter?: boolean }) {
   const { genres, languages, tvShows } = useLoaderData() as {
     genres: genresTV;
     languages: languagesTV;
@@ -26,7 +21,7 @@ function TvTemp({
   const [pages, setPages] = useState(2);
   const [startFiltering, setstartFiltering] = useState(false);
   const [twShowFilterData, setTwShowFilterData] = useState<TvShows>(tvShows);
-
+  console.log("%c utouhtnoea", "background: cyan", twShowFilterData);
   const loc = useLocation();
 
   useEffect(() => {
@@ -110,8 +105,9 @@ function TvTemp({
           callback={filterCallback}
           todayDateFilter={todayDateFilter}
         />
-        {twShowFilterData ? <ShowSection tvShows={twShowFilterData} /> : null}
-        {/* <ShowSection tvShows={twShowFilterData} /> */}
+        {twShowFilterData ? (
+          <ShowSection cardData={twShowFilterData} movies={false} />
+        ) : null}
       </div>
     </main>
   );

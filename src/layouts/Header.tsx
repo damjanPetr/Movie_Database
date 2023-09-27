@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink, useLocation, useNavigation } from "react-router-dom";
+import { Link, useLocation, useNavigation } from "react-router-dom";
 import { useAuth } from "../context/Auth";
 function Switch() {
   const [progress, setProgress] = useState(false);
@@ -16,19 +16,22 @@ function Switch() {
   }, [nav.state]);
 
   return (
-    <div className="loadingBar fixed top-0 w-full">
-      {progress && <div className="h-1.5 bg-blue-500/80"></div>}
+    <div className="fixed top-0 w-full ">
+      {progress && (
+        <div className="h-2 bg-cyan-600 loadingBar rounded-r-full z-[9999]"></div>
+      )}
     </div>
   );
 }
+
 export default function Header() {
   const user = useAuth();
   const loc = useLocation();
   return (
     <header className=" bg-[#032541]   text-white ">
-      <div className="mx-auto max-w-screen-xl flex items-center text-lg">
-        <Switch />
+      <Switch />
 
+      <div className="mx-auto max-w-screen-xl flex items-center text-lg px-6 py-1">
         <div className="logo ml-4 ">
           <Link to="/">
             <img
@@ -40,9 +43,9 @@ export default function Header() {
         </div>
         <div className="right-side flex items-center">
           <nav className="flex w-full items-center justify-start px-5">
-            <div className="group relative p-4">
-              Movies
-              <ul className="absolute -left-3 top-[calc(100%+10px)] -mt-3 hidden flex-col items-center rounded-lg bg-gray-100 group-hover:flex">
+            <div className="group  text-base relative p-4 ">
+              <div className="font-semibold">Movies</div>
+              <ul className="absolute z-50 left-2 top-[calc(100%+3px)] -mt-3 hidden flex-col items-center rounded-lg py-2 bg-white  border group-hover:flex">
                 {[
                   { place: "/movie", name: "Popular" },
                   { place: "/movie/now-playing", name: "Now Playing" },
@@ -53,7 +56,7 @@ export default function Header() {
                     <Link
                       key={index}
                       to={place}
-                      className="w-full whitespace-nowrap p-4 text-base text-neutral-700"
+                      className="w-full  hover:bg-gray-100  z-50 bg-white pl-6 pr-12   whitespace-nowrap py-1 text-base text-neutral-700"
                     >
                       {name}
                     </Link>
@@ -61,9 +64,9 @@ export default function Header() {
                 })}
               </ul>
             </div>
-            <div className="group relative p-4">
-              TV Shows
-              <ul className="absolute z-10 -left-3 top-[calc(100%+10px)] -mt-3 hidden flex-col items-center rounded-lg bg-gray-100 group-hover:flex">
+            <div className="group  text-base relative p-4">
+              <div className="font-semibold">Shows TV</div>
+              <ul className="absolute z-50 left-2 top-[calc(100%+3px)] -mt-3 hidden flex-col items-center rounded-lg py-2 bg-white  border group-hover:flex">
                 {[
                   { place: "/tvshow", name: "Popular" },
                   { place: "/tvshow/airing-today", name: "Airing Today" },
@@ -73,7 +76,7 @@ export default function Header() {
                   return (
                     <Link
                       to={place}
-                      className="w-full whitespace-nowrap p-4 text-base text-neutral-700"
+                      className="w-full hover:bg-gray-100  z-50 bg-white pl-6 pr-12   whitespace-nowrap py-1 text-base text-neutral-700"
                       key={index}
                     >
                       {name}
@@ -82,15 +85,15 @@ export default function Header() {
                 })}
               </ul>
             </div>
-            <div className="group relative p-4">
-              People
-              <ul className="absolute -left-3 top-[calc(100%+10px)] -mt-3 hidden flex-col items-center rounded-lg bg-gray-100 group-hover:flex">
+            <div className="group  text-base relative p-4">
+              <div className="font-semibold">People</div>
+              <ul className="absolute z-50 left-2 top-[calc(100%+3px)] -mt-3 hidden flex-col items-center rounded-lg py-2 bg-white  border group-hover:flex">
                 {[{ place: "people", name: "Popular People" }].map(
                   ({ place, name }, index) => {
                     return (
                       <Link
                         to={place}
-                        className="w-full whitespace-nowrap p-4 text-base text-neutral-700"
+                        className="w-full hover:bg-gray-100  z-50 bg-white pl-6 pr-12   whitespace-nowrap py-1 text-base text-neutral-700"
                         key={index}
                       >
                         {name}
