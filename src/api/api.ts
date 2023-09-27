@@ -5,6 +5,7 @@ import {
   MovieProvidersGeneral,
   MovieRecommendations,
 } from "../types/types";
+import { useCountry } from "../utils/hooks";
 
 // dotenv.config();
 export const apiFetchOptions = {
@@ -68,23 +69,85 @@ export async function getDBCounties(): Promise<Countries> {
   return data;
 }
 
-export async function getPopularTv() {
+export async function getPopularTv(
+  arg: "popularTv" | "airingToday" | "topRated" | "onTheAir",
+  page_number: string
+) {
+  const popularTv = `/tv/popular?air_date.lte=${
+    new Date().toISOString().split("T")[0]
+  }&language=${navigator.language}&page=${
+    page_number ?? "1"
+  }&sort_by=popularity.desc&watch_region=${
+    window.localStorage.getItem("loc") ?? "US"
+  }&with_runtime.gte=0&with_runtime.lte=400&with_watch_monetization_types=flatrate|free|ads|rent|buy`;
+
+  const airingToday = `/tv/popular?air_date.lte=${
+    new Date().toISOString().split("T")[0]
+  }&air_date.gte=${new Date().toISOString().split("T")[0]}&language=${
+    navigator.language
+  }&page=${page_number ?? "1"}&sort_by=popularity.desc&watch_region=${
+    window.localStorage.getItem("loc") ?? "US"
+  }&with_runtime.gte=0&with_runtime.lte=400&with_watch_monetization_types=flatrate|free|ads|rent|buy`;
+
+  const onTheAir = `/tv/popular?air_date.lte=${
+    new Date().toISOString().split("T")[0]
+  }&language=${
+    navigator.language
+  }&page=1&sort_by=popularity.desc&watch_region=${
+    window.localStorage.getItem("loc") ?? "US"
+  }&with_runtime.gte=0&with_runtime.lte=400&with_watch_monetization_types=flatrate|free|ads|rent|buy`;
+
+  const topRated = `/tv/popular?air_date.lte=${
+    new Date().toISOString().split("T")[0]
+  }&language=${
+    navigator.language
+  }&page=1&sort_by=popularity.desc&watch_region=${
+    window.localStorage.getItem("loc") ?? "US"
+  }&with_runtime.gte=0&with_runtime.lte=400&with_watch_monetization_types=flatrate|free|ads|rent|buy`;
+
+  console.log(arg);
+
   const response = await fetch(
     apiURL +
-      `/tv/popular?air_date.lte=${
-        new Date().toISOString().split("T")[0]
-      }&language=${
-        navigator.language
-      }&page=1&sort_by=popularity.desc&watch_region=CA&with_runtime.gte=0&with_runtime.lte=400&with_watch_monetization_types=flatrate|free|ads|rent|buy`,
+      `${
+        arg === "popularTv"
+          ? popularTv
+          : arg === "topRated"
+          ? topRated
+          : arg === "onTheAir"
+          ? onTheAir
+          : arg === "airingToday"
+          ? airingToday
+          : ""
+      }`,
     apiFetchOptions
   );
+
   const data = await response.json();
+
   return data;
 }
 
 export async function getDiscoverMovies(arg: string) {
   const response = await fetch(
     apiURL + `/discover/movie?${arg}`,
+    apiFetchOptions
+  );
+  const data = await response.json();
+  return data;
+}
+export async function getOnTheAirTV(page_number: string) {
+  const response = await fetch(
+    apiURL + `/tv/on_the_air?page=${page_number}`,
+    apiFetchOptions
+  );
+  const data = await response.json();
+  return data;
+}
+
+export async function getTopratedTV(page_number = "1") {
+  const response = await fetch(
+    apiURL + `/tv/top_rated?page=${page_number}`,
     apiFetchOptions
   );
   const data = await response.json();

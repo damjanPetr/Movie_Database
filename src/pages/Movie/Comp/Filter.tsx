@@ -1,6 +1,13 @@
-import { useEffect, useMemo, useReducer, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import { BiSearch } from "react-icons/bi";
-import { GiCheckMark } from "react-icons/gi";
+import { GiCheckMark, GiCottonFlower } from "react-icons/gi";
 import { RiArrowRightSLine } from "react-icons/ri";
 
 import {
@@ -21,6 +28,12 @@ import {
 import { getFlag, getHighlight, setBubble } from "../../../utils/func";
 import { useCountry } from "../../../utils/hooks";
 import Card from "./Card";
+import {
+  useLocation,
+  useMatch,
+  useNavigation,
+  useSearchParams,
+} from "react-router-dom";
 
 export type stateReducer = {
   searchFilter: string;
@@ -44,9 +57,10 @@ export type actionReducer =
   | { type: "filtering" | ""; text: string | null; countryData?: object };
 
 export type Props = {
-  callback: (args: string) => void;
+  callback: (args: string, scroll: string, filtering: boolean) => void;
   genres: genresTV;
   languages: languagesTV;
+  todayDateFilter?: boolean;
 };
 
 export type initialStateFilter = {
@@ -62,19 +76,20 @@ export type initialStateFilter = {
   toDate: string;
   watchProviderArray: number[];
   genresArray: number[];
+  page: number;
   monetization: string[];
   watch_region: string;
   keywords: searchKeywordsType | object;
   renderKeywords: searchKeywordResultsObject[];
 };
-function Filter({ genres, languages, callback }: Props) {
+function Filter({ genres, languages, callback, todayDateFilter }: Props) {
   const [watchProviders, setWatchProviders] = useState<MovieProvidersGeneral>();
 
   const initialState = {
     with_genres: [],
     minRuntime: 0,
     maxRuntime: 400,
-    filterLanguage: "en-US",
+    // filterLanguage: "en-US",
     minCount: 0,
     minVotes: 0,
     maxVotes: 10,
@@ -84,7 +99,7 @@ function Filter({ genres, languages, callback }: Props) {
     watchProviderArray: [],
     genresArray: [],
     monetization: ["flatrate", "free", "ads", "rent", "buy"],
-    watch_region: "CA",
+    watch_region: "",
     keywords: {},
     renderKeywords: [],
   };
@@ -108,12 +123,30 @@ function Filter({ genres, languages, callback }: Props) {
     watch_region,
   } = filterUrs;
 
-  function filterCb() {
-    console.log(monetization.length > 0);
-    console.log(genresArray.length > 0);
-    const url = `sort_by=${sortBy}&with_runtime.gte=${minRuntime}&with_runtime.lte=${maxRuntime}&language=${filterLanguage}&vote_count.gte=${minCount}&vote_average.gte=${minVotes}&vote_average.lte=${maxVotes}${
-      fromDate ? `&first_air_date.gte=${fromDate}` : ""
-    }&first_air_date.lte=${toDate}${
+  const [page, setPage] = useState(1);
+  const [normalScroll, setNormalScroll] = useState(true);
+  const filterCb = useCallback(filterCbmh, [
+    filterLanguage,
+    minRuntime,
+    maxRuntime,
+    minCount,
+    minVotes,
+    fromDate,
+    toDate,
+    watchProviderArray,
+    genresArray,
+    monetization,
+    watch_region,
+    page,
+    maxVotes,
+    sortBy,
+  ]);
+  function filterCbmh() {
+    const url = `page=${page}&sort_by=${sortBy}&with_runtime.gte=${minRuntime}&with_runtime.lte=${maxRuntime}&language=${
+      filterLanguage ?? ""
+    }&vote_count.gte=${minCount}&vote_average.gte=${minVotes}&vote_average.lte=${maxVotes}${
+      fromDate ? `&air_date.gte=${fromDate}` : ""
+    }&air_date.lte=${toDate}${
       monetization.length > 0
         ? `&with_watch_monetization_types=${monetization
             .map((item, index) => {
@@ -140,7 +173,36 @@ function Filter({ genres, languages, callback }: Props) {
     }&watch_region=${watch_region}`;
     return url;
   }
+
+  useEffect(() => {
+    let timerScroll: ReturnType<typeof setTimeout>;
+    const debounce = () => {
+      clearTimeout(timerScroll);
+    };
+    const infinitiveScroll = () => {
+      debounce();
+      timerScroll = setTimeout(() => {
+        if (
+          document.documentElement.scrollHeight -
+            document.documentElement.clientHeight -
+            document.documentElement.scrollHeight / 5 <=
+          window.scrollY
+        ) {
+          setPage((page) => page + 1);
+
+          callback(filterCb(), "scroll");
+        }
+      }, 300);
+    };
+    window.addEventListener("scroll", infinitiveScroll);
+    return () => {
+      window.removeEventListener("scroll", infinitiveScroll);
+    };
+  }, [page, callback, filterCb]);
+  const url = useLocation();
   let timer: number;
+
+  const match = useMatch("/tvshow/top-rated");
 
   const country = useCountry();
   const target = useRef<HTMLLIElement>(null);
@@ -152,7 +214,7 @@ function Filter({ genres, languages, callback }: Props) {
     type: "",
     text: "",
   });
-
+  console.log(url.pathname);
   const reducer = (
     state: stateReducer,
     action: actionReducer
@@ -246,6 +308,7 @@ function Filter({ genres, languages, callback }: Props) {
     }
   }, [searchTerm]);
 
+  const nav = useNavigation();
   const memoizeFilter = useMemo(() => {
     const play = countries.filter((item) => {
       if (filter !== "") {
@@ -258,14 +321,14 @@ function Filter({ genres, languages, callback }: Props) {
   }, [countries, filter]);
 
   return (
-    <aside className="w-64">
+    <aside className="w-64 flex-none">
       <p
         className="fixed left-0 p-4 bg-blue-200 text-white"
         onClick={() => {
           console.log(filterUrs);
         }}
       >
-        uhe
+        {JSON.stringify(nav.state)}
       </p>
       <Card title="Sort">
         <p className="mb-2">Sort Results By</p>
@@ -333,6 +396,9 @@ function Filter({ genres, languages, callback }: Props) {
           </ul>
         </div>
       </Card>
+
+      {/* Countries */}
+
       <Card title="Where To Watch">
         <p className="mb-2">Country</p>
 
@@ -419,7 +485,7 @@ function Filter({ genres, languages, callback }: Props) {
 
                       setFilterUrs({
                         ...filterUrs,
-                        watch_region: item.iso_3166_1,
+                        // watch_region: item.iso_3166_1,
                         watchProviderArray: [],
                       });
                     }}
@@ -516,6 +582,9 @@ function Filter({ genres, languages, callback }: Props) {
             })}
         </div>
       </Card>
+
+      {/* Monetization types */}
+
       <Card title="Filter" padding={0} openCardProp={true}>
         <div className="    p-3.5 ">
           <h3 className="font-light mb-2.5">Avalibilities</h3>
@@ -781,11 +850,16 @@ function Filter({ genres, languages, callback }: Props) {
 
           <div className="flex justify-between items-center mt-4 ">
             <label className="text-gray-500" htmlFor="formDate">
-              form:
+              from:
             </label>{" "}
             <input
               className="p-1.5 outline-none  border border-blue-200 text-sm font-normal focus:ring-1 ring-blue-300 rounded-sm"
               type="date"
+              defaultValue={(() => {
+                if (todayDateFilter) {
+                  return new Date().toISOString().split("T")[0];
+                }
+              })()}
               max={new Date().toISOString().split("T")[0]}
               onInput={(e) => {
                 e.preventDefault();
@@ -916,6 +990,7 @@ function Filter({ genres, languages, callback }: Props) {
           <h3 className="font-light mb-2.5">Certification</h3>
           <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
         </div>
+        {/* Languages */}
         <div className="    p-3.5 ">
           <h3 className="font-light mb-2.5">Language</h3>
           <div
@@ -932,10 +1007,43 @@ function Filter({ genres, languages, callback }: Props) {
             }}
           >
             <div className="py-2 px-4 bg-stone-100">
-              {languages.find((item) => (item.english_name = "English"))
-                ?.english_name ?? "No selected language"}
+              {/* {languages.find((item) => (item.english_name = "English")) */}
+              {/* ?.english_name ?? "No selected language"} */}
+              No Selected Language
             </div>
             <ul className="hidden group-open:block flex-col w-full absolute blur-0 bg-white  z-10 max-h-40 overflow-auto scb p-2 rounded-sm mt-1">
+              <li
+                className="px-2 py-1 hover:bg-gray-200 flex items-center  "
+                onClick={(e) => {
+                  e.currentTarget?.parentElement
+                    ?.querySelectorAll("li")
+                    .forEach((item) => {
+                      item.classList.remove("bg-violet-200");
+                    });
+                  e.currentTarget.classList.add("bg-violet-200");
+                  const liElement = e.currentTarget.cloneNode(
+                    true
+                  ) as HTMLLIElement;
+                  liElement.className =
+                    " hover:bg-gray-200 flex items-center  ";
+                  const parent =
+                    e.currentTarget.parentElement?.previousElementSibling;
+                  parent?.firstChild?.remove();
+                  parent?.appendChild(liElement);
+                  setFilterUrs({
+                    ...filterUrs,
+                    filterLanguage: null,
+                  });
+                }}
+              >
+                {/* <img
+                  // src={`assets/flag/${item.iso_639_1}.svg`}
+                  src={getFlag(item.iso_639_1)}
+                  className="w-4 mr-2"
+                  alt=""
+                /> */}
+                No Selected Language
+              </li>
               {languages.map((item) => {
                 return (
                   <li
@@ -1139,7 +1247,9 @@ function Filter({ genres, languages, callback }: Props) {
                   min={0}
                   className="accent-sky-600 flex-grow w-full"
                   list="markersUserVotes"
-                  defaultValue={0}
+                  defaultValue={
+                    match?.pathnameBase === "/tvshow/top-rated" ? 200 : 0
+                  }
                   max={500}
                   step={10}
                   onInput={(e) => {
@@ -1475,9 +1585,11 @@ function Filter({ genres, languages, callback }: Props) {
         </div>
       </Card>
       <button
-        className="da-btn-success da-btn-lg  da-btn-blocklg"
+        className=" bg-cyan-500 rounded-xl w-full text-lg text-white py-4 active:scale-105  active:bg-cyan-600o transition-transform duration-0   mx-auto"
         onClick={() => {
-          callback(filterCb());
+          console.log("%c search url", "background: yellow", filterCb());
+          setPage(1);
+          callback(filterCb(), "normal", true);
         }}
       >
         Search

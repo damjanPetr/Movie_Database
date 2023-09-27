@@ -8,8 +8,10 @@ import {
   getLanguages,
   getMovieReleaseDate,
   getMovieReviews,
+  getOnTheAirTV,
   getPopularMovies,
   getPopularTv,
+  getTopratedTV,
   getTranslations,
   getTrending,
   getVideos,
@@ -39,7 +41,7 @@ import People from "./pages/People/People.tsx";
 import Reviews from "./pages/Reviews/Reviews.tsx";
 import TVShowDetail from "./pages/TVShowDetail/TVShowDetail.tsx";
 import { MovieAltTitles, MovieDetails, TvDetails } from "./types/types.tsx";
-import TvTemp from "./pages/Movie/TvTemp.tsx";
+import TvTemp from "./pages/TV/TvTemp.tsx";
 
 const router = createHashRouter([
   {
@@ -67,7 +69,7 @@ const router = createHashRouter([
             loader: async () => {
               const popular = await getPopularMovies(1);
               const trending = await getTrending();
-              const getPTV = await getPopularTv();
+              const getPTV = await getPopularTv("popularTv");
 
               return { popular, trending, getPTV };
             },
@@ -77,12 +79,79 @@ const router = createHashRouter([
             element: <MovieTemp />,
           },
           {
-            path: "/tvshow",
+            path: "/movie/now-playing",
+            element: <MovieTemp />,
+          },
+          {
+            path: "/movie/upcoming",
+            element: <MovieTemp />,
+          },
+          {
+            path: "/movie/top-rated",
+            element: <MovieTemp />,
+          },
+          {
+            path: "/tvshow/:page_number?",
             element: <TvTemp />,
-            loader: async () => {
+            loader: async ({ params }) => {
               const data = await getGenres();
               const data2 = await getLanguages();
-              const tvShows = await getPopularTv();
+              const tvShows = await getPopularTv(
+                "popularTv",
+                params.page_number ? params.page_number : ""
+              );
+              return {
+                genres: data,
+                languages: data2,
+                tvShows: tvShows,
+              };
+            },
+          },
+          {
+            path: "/tvshow/airing-today/:page_number?",
+            element: <TvTemp todayDateFilter={true} />,
+            loader: async ({ params }) => {
+              console.log("airing today");
+              const data = await getGenres();
+              const data2 = await getLanguages();
+              const tvShows = await getPopularTv(
+                "airingToday",
+                params.page_number ? params.page_number : ""
+              );
+              return {
+                genres: data,
+                languages: data2,
+                tvShows: tvShows,
+              };
+            },
+          },
+          {
+            path: "/tvshow/on-the-air/:page_number?",
+            element: <TvTemp />,
+            loader: async ({ params }) => {
+              const data = await getGenres();
+              const data2 = await getLanguages();
+              const tvShows = await getOnTheAirTV(
+                params.page_number ? params.page_number : ""
+              );
+              return {
+                genres: data,
+                languages: data2,
+                tvShows: tvShows,
+              };
+            },
+          },
+          {
+            path: "/tvshow/top-rated/:page_number?",
+            element: <TvTemp />,
+
+            loader: async ({ params }) => {
+              const data = await getGenres();
+              const data2 = await getLanguages();
+              console.log(params.id);
+              const tvShows = await getTopratedTV(
+                params.page_number ? params.page_number : ""
+              );
 
               return {
                 genres: data,
@@ -90,6 +159,21 @@ const router = createHashRouter([
                 tvShows: tvShows,
               };
             },
+
+            // action: async ({ request }) => {
+            // const formData = await request.formData();
+            // const { pages } = Object.fromEntries(formData);
+            // console.log(
+            //   "🚀 ✔ file: Router.tsx:155 ✔ action: ✔ pages:",
+            //   pages
+            // );
+            // const data = await getTopratedTV(pages);
+            // console.log(
+            //   "🚀 ✔ file: Router.tsx:161 ✔ action: ✔ data:",
+            //   data
+            // );
+            // return data;
+            // },
           },
           {
             path: "/:tvId/tv/details",
