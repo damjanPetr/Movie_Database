@@ -23,7 +23,6 @@ function Switch() {
 }
 export default function Header() {
   const user = useAuth();
-  const nav = useNavigation();
   const loc = useLocation();
   return (
     <header className=" bg-[#032541]   text-white ">
@@ -64,11 +63,11 @@ export default function Header() {
             </div>
             <div className="group relative p-4">
               TV Shows
-              <ul className="absolute -left-3 top-[calc(100%+10px)] -mt-3 hidden flex-col items-center rounded-lg bg-gray-100 group-hover:flex">
+              <ul className="absolute z-10 -left-3 top-[calc(100%+10px)] -mt-3 hidden flex-col items-center rounded-lg bg-gray-100 group-hover:flex">
                 {[
                   { place: "/tvshow", name: "Popular" },
-                  { place: "/tvshow/now-playing", name: "Now Playing" },
-                  { place: "/tvshow/upcoming", name: "Upcoming" },
+                  { place: "/tvshow/airing-today", name: "Airing Today" },
+                  { place: "/tvshow/on-the-air", name: "On TV" },
                   { place: "/tvshow/top-rated", name: "Top Rated" },
                 ].map(({ place, name }, index) => {
                   return (
