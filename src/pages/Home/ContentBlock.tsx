@@ -1,17 +1,14 @@
-import { Await, Link } from "react-router-dom";
 import {} from "react";
+import { Await, Link } from "react-router-dom";
 import {
-  base_url,
   getDiscoverMovies,
   getDiscoverTV,
+  getMovieTrending,
   getPopularTv,
-  getTrending,
   still_182,
-  still_92,
 } from "../../api/api";
 
-import { useEffect, useState, useRef } from "react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 export type MovieProps = {
   page: number;
   results: Movie[];
@@ -56,7 +53,7 @@ export default function ContentBlock({
       switch (change) {
         case "trendingToday": {
           setLoading(true);
-          const actionData = await getTrending();
+          const actionData = await getMovieTrending();
           setState(actionData);
           setLoading(false);
 
@@ -65,7 +62,7 @@ export default function ContentBlock({
         case "trendingWeek": {
           setLoading(true);
 
-          const actionData = await getTrending(true);
+          const actionData = await getMovieTrending(true);
           setState(actionData);
           setLoading(false);
 
@@ -86,7 +83,7 @@ export default function ContentBlock({
         case "on_tv": {
           setLoading(true);
 
-          const actionData = await getPopularTv();
+          const actionData = await getPopularTv("popularTv", "1");
 
           setState(actionData);
           setLoading(false);
@@ -145,8 +142,6 @@ export default function ContentBlock({
           return "";
       }
     })();
-
-    return () => {};
   }, [change]);
 
   return (
@@ -204,9 +199,30 @@ export default function ContentBlock({
               return resolvedResuts.map((item: Movie) => {
                 if (loading) {
                   return (
-                    <div className=" w-[150px] h-[350px] p-2  flex-none ">
-                      <div className="bg-gray-100 w-full h-3/4 rounded-lg border border-gray-300 "></div>
-                      <div className="h-auto"></div>
+                    <div className=" h-[340px] p-2  flex-none flex flex-col  ">
+                      <div className="bg-gray-100 w-[140px]  rounded-lg border border-gray-300 h-[280px] ">
+                        <div className="fci h-3/4 opacity-20">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            color="gray"
+                            width="50"
+                            height="50"
+                            viewBox="0 0 256 256"
+                          >
+                            <g fill="currentColor">
+                              <path
+                                d="M224 56v122.06l-39.72-39.72a8 8 0 0 0-11.31 0L147.31 164l-49.65-49.66a8 8 0 0 0-11.32 0L32 168.69V56a8 8 0 0 1 8-8h176a8 8 0 0 1 8 8Z"
+                                opacity=".2"
+                              />
+                              <path d="M216 40H40a16 16 0 0 0-16 16v144a16 16 0 0 0 16 16h176a16 16 0 0 0 16-16V56a16 16 0 0 0-16-16Zm0 16v102.75l-26.07-26.06a16 16 0 0 0-22.63 0l-20 20l-44-44a16 16 0 0 0-22.62 0L40 149.37V56ZM40 172l52-52l80 80H40Zm176 28h-21.37l-36-36l20-20L216 181.38V200Zm-72-100a12 12 0 1 1 12 12a12 12 0 0 1-12-12Z" />
+                            </g>
+                          </svg>
+                        </div>
+                        <div className=" p-2 text-black mt-auto">
+                          <p className="text-sm p-1  mt-2 h-2 rounded-full w-11/12 mx-auto bg-gray-200"></p>
+                          <p className="text-sm p-1 mt-2 h-2 rounded-full w-11/12 mx-auto bg-gray-200"></p>
+                        </div>
+                      </div>
                     </div>
                   );
                 } else {
@@ -215,8 +231,8 @@ export default function ContentBlock({
                       key={item.id}
                       to={
                         item.first_air_date
-                          ? `/${item.id}/tv/details`
-                          : `/${item.id}/details`
+                          ? `/tv/${item.id}/details`
+                          : `/movie/${item.id}/details`
                       }
                       className={`hover:scale-105 transition-all p-2 duration-200 ease-linear    ${
                         loading ? "opacity-0" : "opacity-100"
@@ -224,7 +240,7 @@ export default function ContentBlock({
                     >
                       <div className="relative transition-all ">
                         <div className="hover:shadow-xl transition-shadow">
-                          <div className=" w-max">
+                          <div className="min-h-[200px] w-max">
                             <img
                               src={still_182 + item.poster_path}
                               alt={item.title + "image"}

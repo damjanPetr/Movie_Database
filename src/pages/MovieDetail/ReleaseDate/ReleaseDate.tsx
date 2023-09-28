@@ -33,7 +33,7 @@ export default function ReleaseDate() {
   });
   return (
     <>
-      <Banner movieDetail={details} />
+      <Banner data={details} />
       <main className="mx-auto grid w-10/12 grid-cols-[30%_70%] p-4">
         <Aside asideTitle="Relase Dates" data={dataFilter} />
         <Table data={dataFilter} />

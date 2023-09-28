@@ -105,9 +105,9 @@ function TVShowDetail() {
               <div className="flex items-center">
                 {/* Circular Progress Meter */}
 
-                <div className="flex justify-between gap-2 items-center">
+                <div className="flex justify-between gap-2 items-center ">
                   <div
-                    className="relative h-16 w-16   rounded-full flex items-center justify-center   border-4 border-black hover:scale-105 transition-all "
+                    className="relative h-16 w-16 rounded-full flex items-center justify-center border-4 border-black hover:scale-105 transition-all isolation-auto "
                     style={{
                       backgroundImage: `conic-gradient(${
                         tvDetail.vote_average > 9

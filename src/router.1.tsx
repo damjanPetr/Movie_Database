@@ -16,11 +16,10 @@ import {
   getOnTheAirTV,
   getPopularTv,
   getTVAltTitles,
-  getTVReviews,
   getTVTranslations,
   getTVVideos,
   getTopratedTV,
-  getTvEpisodeGroups,
+  getTvReleaseDate,
   movieDetailLoader,
   movieGetCredits,
   movieGetImages,
@@ -40,7 +39,6 @@ import Posters from "./pages/Media/Posters/Posters.tsx";
 import Videos from "./pages/Media/Videos/Videos.tsx";
 import AlternativeTitles from "./pages/MovieDetail/AlternativeTitles/AlternativeTitles.tsx";
 import CastCrew from "./pages/MovieDetail/CastCrew/CastCrew.tsx";
-// import Changes from "./pages/MovieDetail/Changes/Changes.tsx";
 import MovieTemp from "./pages/Movie/MovieTemp.tsx";
 import Edit from "./pages/MovieDetail/Edit/Edit.tsx";
 import MovieDetail from "./pages/MovieDetail/Main/MovieDetail.tsx";
@@ -49,12 +47,11 @@ import Report from "./pages/MovieDetail/Report/Report.tsx";
 import Translations from "./pages/MovieDetail/Translations/Translations.tsx";
 import People from "./pages/People/People.tsx";
 import Reviews from "./pages/Reviews/Reviews.tsx";
-import EpisodeTypes from "./pages/TV/EpisodeTypes/EpisodeGroups.tsx";
 import TvTemp from "./pages/TV/TvTemp.tsx";
 import TVShowDetail from "./pages/TVShowDetail/TVShowDetail.tsx";
 import { MovieAltTitles, MovieDetails } from "./types/types.tsx";
 
-const router = createHashRouter([
+export const router = createHashRouter([
   {
     element: <AuthProvider />,
     children: [
@@ -219,7 +216,6 @@ const router = createHashRouter([
                 tvShows: tvShows,
               };
             },
-
             // action: async ({ request }) => {
             // const formData = await request.formData();
             // const { pages } = Object.fromEntries(formData);
@@ -280,9 +276,9 @@ const router = createHashRouter([
               },
               {
                 path: "release-date",
-                element: <EpisodeTypes />,
+                element: <EpisodeGroups />,
                 loader: async ({ params }) => {
-                  const data = await getTvEpisodeGroups(params.tvId);
+                  const data = await getTvReleaseDate(params.tvId);
                   const details = await tvDetailLoader(params.tvId);
 
                   return { data, details };
@@ -374,7 +370,7 @@ const router = createHashRouter([
                 path: "reviews",
                 element: <Reviews />,
                 loader: async ({ params }) => {
-                  const data = await getTVReviews(params.tvId);
+                  const data = await getTvReleaseDate(params.tvId);
                   const details = await tvDetailLoader(params.tvId);
 
                   return { details, data };
@@ -539,5 +535,3 @@ const router = createHashRouter([
     ],
   },
 ]);
-
-export default router;

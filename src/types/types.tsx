@@ -64,6 +64,7 @@ export type TvShows = {
 
 export type TVbase = Movie;
 
+export type episodeGroups = {};
 export type TvDetails = {
   adult: false;
   backdrop_path: string;
@@ -248,6 +249,14 @@ export type MovieImages<
 export type MovieAltTitles = {
   id: number;
   titles: {
+    iso_3166_1: string;
+    title: string;
+    type: string;
+  }[];
+};
+export type tvAltTitles = {
+  id: number;
+  results: {
     iso_3166_1: string;
     title: string;
     type: string;

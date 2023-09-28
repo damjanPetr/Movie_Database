@@ -1,5 +1,5 @@
 import {} from "react";
-import { useLoaderData } from "react-router-dom";
+import { ScrollRestoration, useLoaderData } from "react-router-dom";
 import { base_url, base_urlBg } from "../../../api/api";
 import { MovieDetails } from "../../../types/types";
 import { toHoursAndMinutes } from "../../../utils/func";
@@ -22,6 +22,8 @@ export default function MovieDetail() {
     <div className=" ">
       <Nav />
       <main className="">
+        <ScrollRestoration />
+
         <section
           className="bg-black/40 bg-cover bg-center  bg-blend-darken"
           style={{
@@ -56,11 +58,12 @@ export default function MovieDetail() {
                         year: "numeric",
                       }
                     )}
-                    {" (" +
-                      movieDetail.production_countries[
-                        movieDetail.production_countries.length - 1
-                      ].iso_3166_1 +
-                      ")"}
+                    {movieDetail.production_countries.length > 0 &&
+                      " (" +
+                        movieDetail.production_countries[
+                          movieDetail.production_countries.length - 1
+                        ].iso_3166_1 +
+                        ")"}
                   </span>
                   <span>
                     <svg
@@ -75,12 +78,13 @@ export default function MovieDetail() {
                       />
                     </svg>
                   </span>
-                  {movieDetail.genres.map((item, index) => (
-                    <span key={item.id}>
-                      {item.name}
-                      {index !== movieDetail.genres.length - 1 ? "," : null}
-                    </span>
-                  ))}
+                  {movieDetail.genres.length > 0 &&
+                    movieDetail.genres.slice(0, 6).map((item, index) => (
+                      <span key={item.id}>
+                        {item.name}
+                        {index !== movieDetail.genres.length - 1 ? "," : null}
+                      </span>
+                    ))}
                   <span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -190,42 +194,44 @@ export default function MovieDetail() {
               </div>
               {movieDetail.homepage && <a href={movieDetail.homepage}></a>}
 
-              <dialog id="trailer_modal" className="modal">
-                <div className="modal-box bg-black w-[80vw] h-[80vh]">
-                  <form method="dialog">
-                    <button
-                      className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white p-2 "
-                      onClick={() => {
-                        const dialogIframe = document.querySelector(
-                          "#trailer_modal iframe"
-                        ) as HTMLIFrameElement;
+              {movieDetail.video && (
+                <dialog id="trailer_modal" className="modal">
+                  <div className="modal-box bg-black w-[80vw] h-[80vh]">
+                    <form method="dialog">
+                      <button
+                        className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white p-2 "
+                        onClick={() => {
+                          const dialogIframe = document.querySelector(
+                            "#trailer_modal iframe"
+                          ) as HTMLIFrameElement;
 
-                        if (dialogIframe.contentWindow !== null) {
-                          dialogIframe.contentWindow.postMessage(
-                            `
+                          if (dialogIframe.contentWindow !== null) {
+                            dialogIframe.contentWindow.postMessage(
+                              `
                           {"event":"command", "func":"stopVideo","args":""}`,
-                            "*"
+                              "*"
+                            );
+                          }
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </form>
+                    <iframe
+                      allow="autoplay;"
+                      allowFullScreen
+                      className="w-full h-full rounded-lg"
+                      src={`https://youtube.com/embed/${
+                        movieDetail.videos.results.filter((item) => {
+                          return (
+                            item.official === true && item.type === "Trailer"
                           );
-                        }
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </form>
-                  <iframe
-                    allow=" autoplay;"
-                    allowFullScreen
-                    className="w-full h-full rounded-lg"
-                    src={`https://youtube.com/embed/${
-                      movieDetail.videos.results.filter((item) => {
-                        return (
-                          item.official === true && item.type === "Trailer"
-                        );
-                      })[0].key
-                    }?enablejsapi=1&version=3&playerapiid=ytplayer`}
-                  ></iframe>
-                </div>
-              </dialog>
+                        })[0].key
+                      }?enablejsapi=1&version=3&playerapiid=ytplayer`}
+                    ></iframe>
+                  </div>
+                </dialog>
+              )}
             </section>
           </div>
         </section>

@@ -22,7 +22,7 @@ export default function Videos() {
 
   return (
     <>
-      <Banner movieDetail={details} />
+      <Banner data={details} />
       <main className="mx-auto flex w-11/12">
         <aside className="w-[30%] border p-4">
           <AsideVideo data={dataFilterBytitle} type="trailers" />

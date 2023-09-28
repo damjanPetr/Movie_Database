@@ -14,7 +14,7 @@ export default function Backdrops() {
   return (
     <>
       <Nav />
-      <Banner movieDetail={details} />
+      <Banner data={details} />
 
       <main className="mx-auto flex w-11/12 max-w-screen-2xl">
         <aside className="w-[25%]  p-4">

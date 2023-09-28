@@ -40,7 +40,7 @@ export default function Translations() {
   );
   return (
     <>
-      <Banner movieDetail={details} />
+      <Banner data={details} />
 
       <main className="mx-auto grid w-10/12 grid-cols-[30%_70%] p-4">
         <Aside asideTitle="Translations" data={dataObject} />

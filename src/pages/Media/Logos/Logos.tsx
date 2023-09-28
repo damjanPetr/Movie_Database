@@ -13,7 +13,7 @@ export default function Logos() {
   return (
     <>
       <Nav />
-      <Banner movieDetail={details} />
+      <Banner data={details} />
       <main className="mx-auto flex w-11/12">
         <aside className="w-[30%] p-4">
           <AsideMedia data={data} details={details} type="logos" />

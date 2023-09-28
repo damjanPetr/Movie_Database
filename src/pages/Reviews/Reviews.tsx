@@ -13,7 +13,7 @@ export default function Reviews() {
   return (
     <div>
       <Nav />
-      <Banner movieDetail={details} />
+      <Banner data={details} />
       <main className="mx-auto flex w-11/12 max-w-screen-xl">
         <div className="w-[30%]"></div>
         <div className=" mt-4 w-[70%]">

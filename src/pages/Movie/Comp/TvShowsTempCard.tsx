@@ -1,30 +1,33 @@
-import { Link } from "react-router-dom";
-import { base_url, still_182, still_300 } from "../../../api/api";
 import { useState } from "react";
-import { TvDetails, TvShows } from "../../../types/types";
+import { Link } from "react-router-dom";
+import { still_300 } from "../../../api/api";
+import { TvDetails } from "../../../types/types";
+import { Movie } from "../../Home/ContentBlock";
 
 type Props = {
-  tvShow: TvDetails;
+  cardData: TvDetails | Movie;
 };
-function TvShowsTempCard({ tvShow }: Props) {
+function TvShowsTempCard({ cardData }: Props) {
   const [loading, setLoading] = useState();
 
   return (
     <Link
-      key={tvShow.id}
-      to={
-        tvShow.first_air_date
-          ? `/${tvShow.id}/tv/details`
-          : `/${tvShow.id}/details`
-      }
-      className={`hover:scale-105 transition-all duration-200 ease-linear  min-[700px]:max-[820px]:flex-auto  w-[170px] shadow-lg rounded-lg border mb-7  ${
+      key={cardData.id}
+      to={(() => {
+        if ("release_date" in cardData) {
+          return cardData.release_date ? `/movie/${cardData.id}/details` : "";
+        } else {
+          return cardData.first_air_date ? `/tv/${cardData.id}/details` : "";
+        }
+      })()}
+      className={` hover:scale-105 transition-all duration-200 ease-linear  min-[700px]:max-[820px]:flex-auto  w-[170px] shadow-lg rounded-lg border mb-7   ${
         loading ? "opacity-0" : "opacity-100"
       } `}
     >
       <div className="relative transition-all ">
         <div className="hover:shadow-xl transition-shadow">
           <div className=" ">
-            {tvShow.poster_path == null ? (
+            {cardData.poster_path == null ? (
               <div className="flex items-center justify-center bg-gray-300 w-full rounded-md h-[252px]">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -42,17 +45,22 @@ function TvShowsTempCard({ tvShow }: Props) {
                   </g>
                 </svg>
                 <div className="hidden group-hover:block">
-                  {new Date(tvShow.first_air_date).toLocaleDateString(
-                    navigator.language,
-                    { day: "numeric", month: "long" }
-                  )}
+                  {"release_date" in cardData
+                    ? new Date(cardData.release_date).toLocaleDateString(
+                        navigator.language,
+                        { day: "numeric", month: "long" }
+                      )
+                    : new Date(cardData.first_air_date).toLocaleDateString(
+                        navigator.language,
+                        { day: "numeric", month: "long" }
+                      )}
                 </div>
               </div>
             ) : (
               <img
-                src={still_300 + tvShow.poster_path}
-                alt={tvShow.name + "image"}
-                className="w-full rounded-t-lg   "
+                src={still_300 + cardData.poster_path}
+                alt={cardData.name + "image"}
+                className="w-full rounded-t-lg min-h-[250px]  "
               />
             )}
           </div>
@@ -61,36 +69,36 @@ function TvShowsTempCard({ tvShow }: Props) {
           className="absolute -bottom-2 right-0 h-10 w-10   rounded-full flex items-center justify-center   border-4 border-black hover:scale-105 transition-all delay-150"
           style={{
             backgroundImage: `conic-gradient(${
-              tvShow.vote_average > 9
+              cardData.vote_average > 9
                 ? "hsl(116deg 100% 50%)"
-                : tvShow.vote_average > 8
+                : cardData.vote_average > 8
                 ? "hsl(104deg 100% 50%)"
-                : tvShow.vote_average > 7
+                : cardData.vote_average > 7
                 ? "hsl(93deg 100% 50%)"
-                : tvShow.vote_average > 6
+                : cardData.vote_average > 6
                 ? "hsl(81deg 100% 50%)"
-                : tvShow.vote_average > 5
+                : cardData.vote_average > 5
                 ? "hsl(70deg 100% 50%)"
-                : tvShow.vote_average > 4
+                : cardData.vote_average > 4
                 ? "hsl(58deg 100% 50%)"
-                : tvShow.vote_average > 3
+                : cardData.vote_average > 3
                 ? "hsl(35deg 100% 50%)"
-                : tvShow.vote_average > 2
+                : cardData.vote_average > 2
                 ? "hsl(12deg 100% 49%)"
-                : tvShow.vote_average > 1
+                : cardData.vote_average > 1
                 ? "hsl(1deg 100% 49%)"
                 : "hsl(0deg 100% 49%)"
             } ${Math.round(
-              ((tvShow.vote_average * 10) / 100) * 360
+              ((cardData.vote_average * 10) / 100) * 360
             )}deg, ${0}deg, rgb(24, 18, 18))`,
           }}
         >
           <div className="absolute text-sm   h-7 w-7 bg-black rounded-full text-white text-center  font-normal flex items-center justify-center ">
-            {tvShow.vote_average == 0 ? (
+            {cardData.vote_average == 0 ? (
               "NR"
             ) : (
               <>
-                {Math.round(tvShow.vote_average * 10)}
+                {Math.round(cardData.vote_average * 10)}
                 <sup>%</sup>
               </>
             )}
@@ -99,17 +107,21 @@ function TvShowsTempCard({ tvShow }: Props) {
       </div>
       <div className=" p-2 text-black w-full ">
         <p className="text-sm font-bold mt-2  ">
-          {tvShow.name ? tvShow.name : "----"}
+          {"release_date" in cardData
+            ? cardData.original_title
+            : cardData.name
+            ? cardData.name
+            : "----"}
         </p>
         <p className="text-gray-500">
-          {tvShow.first_air_date != null
-            ? new Date(tvShow.first_air_date).toLocaleDateString("en-US", {
+          {"release_date" in cardData
+            ? new Date(cardData.release_date).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
                 year: "numeric",
               })
-            : tvShow.first_air_date
-            ? new Date(tvShow.first_air_date).toLocaleDateString("en-US", {
+            : cardData.first_air_date
+            ? new Date(cardData.first_air_date).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
                 year: "numeric",

@@ -1,19 +1,20 @@
 import {
+  useCallback,
   useEffect,
   useMemo,
   useReducer,
   useRef,
   useState,
-  useCallback,
 } from "react";
 import { BiSearch } from "react-icons/bi";
-import { GiCheckMark, GiCottonFlower } from "react-icons/gi";
+import { GiCheckMark } from "react-icons/gi";
 import { RiArrowRightSLine } from "react-icons/ri";
 
+import { useLocation, useMatch, useNavigation } from "react-router-dom";
 import {
   getDBCounties,
-  getWatchProvidersRegionMovie,
   getWatchProvidersRegionTVShow,
+  movieGetWatchProvidersRegion,
   searchKeywords,
   still_92,
 } from "../../../api/api";
@@ -28,12 +29,6 @@ import {
 import { getFlag, getHighlight, setBubble } from "../../../utils/func";
 import { useCountry } from "../../../utils/hooks";
 import Card from "./Card";
-import {
-  useLocation,
-  useMatch,
-  useNavigation,
-  useSearchParams,
-} from "react-router-dom";
 
 export type stateReducer = {
   searchFilter: string;
@@ -56,13 +51,6 @@ export type actionReducer =
   | { type: "change_sort_filter"; text: string }
   | { type: "filtering" | ""; text: string | null; countryData?: object };
 
-export type Props = {
-  callback: (args: string, scroll: string, filtering: boolean) => void;
-  genres: genresTV;
-  languages: languagesTV;
-  todayDateFilter?: boolean;
-};
-
 export type initialStateFilter = {
   with_genres: number[];
   minRuntime: number;
@@ -76,20 +64,39 @@ export type initialStateFilter = {
   toDate: string;
   watchProviderArray: number[];
   genresArray: number[];
-  page: number;
+  // page: number;
   monetization: string[];
   watch_region: string;
   keywords: searchKeywordsType | object;
   renderKeywords: searchKeywordResultsObject[];
 };
-function Filter({ genres, languages, callback, todayDateFilter }: Props) {
+
+export type Props = {
+  renderMovies: boolean;
+  callback: (
+    args: string,
+    scroll: string,
+    discoverScroll?: boolean
+  ) => Promise<void>;
+  genres: genresTV;
+  languages: languagesTV;
+  todayDateFilter?: boolean;
+};
+
+function Filter({
+  genres,
+  languages,
+  callback,
+  todayDateFilter,
+  renderMovies,
+}: Props) {
   const [watchProviders, setWatchProviders] = useState<MovieProvidersGeneral>();
 
   const initialState = {
     with_genres: [],
     minRuntime: 0,
     maxRuntime: 400,
-    // filterLanguage: "en-US",
+    filterLanguage: "",
     minCount: 0,
     minVotes: 0,
     maxVotes: 10,
@@ -105,6 +112,9 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
   };
 
   const [filterUrs, setFilterUrs] = useState<initialStateFilter>(initialState);
+  const [page, setPage] = useState(1);
+  const [normalScroll, setNormalScroll] = useState(true);
+
   const {
     renderKeywords,
     minRuntime,
@@ -123,9 +133,7 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
     watch_region,
   } = filterUrs;
 
-  const [page, setPage] = useState(1);
-  const [normalScroll, setNormalScroll] = useState(true);
-  const filterCb = useCallback(filterCbmh, [
+  const filterCb = useCallback(filterCallback, [
     filterLanguage,
     minRuntime,
     maxRuntime,
@@ -141,8 +149,8 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
     maxVotes,
     sortBy,
   ]);
-  function filterCbmh() {
-    const url = `page=${page}&sort_by=${sortBy}&with_runtime.gte=${minRuntime}&with_runtime.lte=${maxRuntime}&language=${
+  function filterCallback() {
+    const urlTv = `page=${page}&sort_by=${sortBy}&with_runtime.gte=${minRuntime}&with_runtime.lte=${maxRuntime}&language=${
       filterLanguage ?? ""
     }&vote_count.gte=${minCount}&vote_average.gte=${minVotes}&vote_average.lte=${maxVotes}${
       fromDate ? `&air_date.gte=${fromDate}` : ""
@@ -171,7 +179,40 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
             .join("")}`
         : ""
     }&watch_region=${watch_region}`;
-    return url;
+    if (renderMovies) {
+      const url = `page=${page}&sort_by=${sortBy}&with_runtime.gte=${minRuntime}&with_runtime.lte=${maxRuntime}&language=${
+        filterLanguage ?? ""
+      }&vote_count.gte=${minCount}&vote_average.gte=${minVotes}&vote_average.lte=${maxVotes}${
+        fromDate ? `&release_date.gte=${fromDate}` : ""
+      }&release_date.lte=${toDate}${
+        monetization.length > 0
+          ? `&with_watch_monetization_types=${monetization
+              .map((item, index) => {
+                return index === 0 ? item : "|" + item;
+              })
+              .join("")}`
+          : ""
+      }${
+        genresArray.length > 0
+          ? `&with_genres=${genresArray
+              .map((item, index) => {
+                return index === 0 ? item : "," + item;
+              })
+              .join("")}`
+          : ""
+      }${
+        watchProviderArray.length > 0
+          ? `&with_watch_providers=${watchProviderArray
+              .map((item, index) => {
+                return index === 0 ? item : "|" + item;
+              })
+              .join("")}`
+          : ""
+      }&watch_region=${watch_region}`;
+      return url;
+    } else {
+      return urlTv;
+    }
   }
 
   useEffect(() => {
@@ -275,7 +316,7 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
         }
       });
       if (country) {
-        const regions = await getWatchProvidersRegionMovie(country);
+        const regions = await movieGetWatchProvidersRegion(country);
         setWatchProviders(regions);
       }
     })();
@@ -586,7 +627,7 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
       {/* Monetization types */}
 
       <Card title="Filter" padding={0} openCardProp={true}>
-        <div className="    p-3.5 ">
+        <div className="    px-3.5 py-1 ">
           <h3 className="font-light mb-2.5">Avalibilities</h3>
           <input
             className="peer "
@@ -757,9 +798,9 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
             />
             Buy
           </label>
-          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+          <div className="relative w-[calc(100%+28px);] top-0 m-2 h-[0.2px] -left-[22px]  bg-gray-200"></div>
         </div>
-        <div className="    p-3.5 ">
+        <div className="    px-3.5 py-1 ">
           <h3 className="font-light mb-2.5">Air Dates</h3>
           {/* <input type="checkbox" name="main" id="main" className="peer" />
           <label
@@ -849,7 +890,7 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
           </label>
 
           <div className="flex justify-between items-center mt-4 ">
-            <label className="text-gray-500" htmlFor="formDate">
+            <label className="text-gray-500 " htmlFor="formDate">
               from:
             </label>{" "}
             <input
@@ -873,8 +914,8 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
               id="formDate"
             />
           </div>
-          <div className="flex justify-between items-center ">
-            <label className="text-gray-500" htmlFor="toDate">
+          <div className="flex justify-between items-center mt-1 ">
+            <label className="text-gray-500 " htmlFor="toDate">
               to:
             </label>{" "}
             <input
@@ -895,9 +936,9 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
             />
           </div>
 
-          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+          <div className="relative w-[calc(100%+28px);] top-0 m-2 h-[0.2px] -left-[22px]  bg-gray-200"></div>
         </div>
-        <div className="    p-3.5 ">
+        <div className="    px-3.5 py-1 ">
           <h3 className="font-light mb-2.5">Genres</h3>
 
           <ul className="flex flex-wrap gap-2 p-1">
@@ -931,10 +972,10 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
               })}
           </ul>
 
-          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+          <div className="relative w-[calc(100%+28px);] top-0 m-2 h-[0.2px] -left-[22px]  bg-gray-200"></div>
         </div>
 
-        <div className="    p-3.5 ">
+        <div className="    px-3.5 py-1 ">
           <h3 className="font-light mb-2.5">Network</h3>
           <div className="fci mb-4">
             <div className="inner flex items-center relative ">
@@ -983,15 +1024,15 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
               </div>
             </div>
           </div>
-          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+          <div className="relative w-[calc(100%+28px);] top-0 m-2 h-[0.2px] -left-[22px]  bg-gray-200"></div>
         </div>
 
-        <div className="    p-3.5 ">
+        <div className="    px-3.5 py-1 ">
           <h3 className="font-light mb-2.5">Certification</h3>
-          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+          <div className="relative w-[calc(100%+28px);] top-0 m-2 h-[0.2px] -left-[22px]  bg-gray-200"></div>
         </div>
         {/* Languages */}
-        <div className="    p-3.5 ">
+        <div className="    px-3.5 py-1 ">
           <h3 className="font-light mb-2.5">Language</h3>
           <div
             className="w-full bg-stone-50 group relative text-sm  "
@@ -1032,7 +1073,7 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
                   parent?.appendChild(liElement);
                   setFilterUrs({
                     ...filterUrs,
-                    filterLanguage: null,
+                    filterLanguage: "",
                   });
                 }}
               >
@@ -1085,10 +1126,10 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
             </ul>
           </div>
 
-          <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+          <div className="relative w-[calc(100%+28px);] top-0 m-2 h-[0.2px] -left-[22px]  bg-gray-200"></div>
         </div>
         <div className="">
-          <div className="p-3.5">
+          <div className="px-3.5 py-1">
             <h3 className="font-light mb-2.5">User Score</h3>
             <div className="flex  items-center h-10">
               <label htmlFor="min-user-score" className="mr-2 w-10">
@@ -1230,9 +1271,9 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
                 </datalist>
               </form>
             </div>
-            <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+            <div className="relative w-[calc(100%+28px);] top-0 m-2 h-[0.2px] -left-[22px]  bg-gray-200"></div>
           </div>
-          <div className="p-3.5 ">
+          <div className="px-3.5 py-1">
             <h3 className="font-light mb-2.5">Minimum User Votes</h3>
 
             <div className="flex  items-center h-10">
@@ -1282,9 +1323,9 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
                 </datalist>
               </form>
             </div>
-            <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+            <div className="relative w-[calc(100%+28px);] top-0 m-2 h-[0.2px] -left-[22px]  bg-gray-200"></div>
           </div>
-          <div className="    p-3.5 ">
+          <div className="    px-3.5 py-1 ">
             <h3 className="font-light mb-2.5">Runtime</h3>
             <div className="flex  items-center h-10">
               <label htmlFor="min-runtime" className="mr-2 w-10">
@@ -1407,16 +1448,16 @@ function Filter({ genres, languages, callback, todayDateFilter }: Props) {
               </form>
             </div>
 
-            <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+            <div className="relative w-[calc(100%+28px);] top-0 m-2 h-[0.2px] -left-[22px]  bg-gray-200"></div>
           </div>
         </div>
 
-        <div className="    p-3.5 ">
+        <div className="    px-3.5 py-1 ">
           <h3 className="font-light mb-2.5">Keywords</h3>
         </div>
-        <div className="  fci  p-3.5">
+        <div className="  fci  px-3.5 py-1">
           <div className="relative">
-            <div className="relative w-[calc(100%+4rem);] top-0 h-[0.2px] -left-8 bg-gray-100"></div>
+            <div className="relative w-[calc(100%+28px);] top-0 m-2 h-[0.2px] -left-[22px]  bg-gray-200"></div>
 
             <div className="w-full flex items-center relative peer">
               <input
