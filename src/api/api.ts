@@ -33,6 +33,28 @@ export async function movieDetailLoader<T>(id: T) {
   return response.json();
 }
 
+export async function getTvSeason(tvId: string, season_number: string) {
+  const response = await fetch(
+    apiURL + `/tv/${tvId}/season/${season_number}?append_to_response=images`,
+    apiFetchOptions
+  );
+  return response.json();
+}
+
+export async function getTvSeasonImages(
+  tvId: number,
+  season_number: number,
+  episode_number: number
+) {
+  console.log(tvId, season_number, episode_number);
+  const response = await fetch(
+    apiURL +
+      `/tv/${tvId}/season/${season_number}/episode/${episode_number}/images`,
+    apiFetchOptions
+  );
+  return response.json();
+}
+
 export async function tvDetailLoader<T>(id: T) {
   const response = await fetch(
     apiURL +
