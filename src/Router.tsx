@@ -295,8 +295,8 @@ const router = createHashRouter([
                   const details = await tvDetailLoader(params.tvId);
 
                   const season = await getTvSeason(
-                    params.tvId,
-                    params.season_number
+                    params.tvId as string,
+                    params.season_number as string
                   );
 
                   return { details, season };
