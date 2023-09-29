@@ -1,5 +1,5 @@
 import { TvShows } from "../../../types/types";
-import { Movie, MovieProps } from "../../Home/ContentBlock";
+import { Movie, MovieProps } from "../../Home/comp/ContentBlock";
 import TvShowsTempCard from "./TvShowsTempCard";
 
 type Props = {

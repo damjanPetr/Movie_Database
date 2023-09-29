@@ -1,4 +1,4 @@
-import { Movie } from "../pages/Home/ContentBlock";
+import { Movie } from "../pages/Home/comp/ContentBlock";
 
 type collectionPart = {
   adult: boolean;
@@ -64,6 +64,17 @@ export type TvShows = {
 
 export type TVbase = Movie;
 
+export type TvSeason = {
+  air_date: string;
+  episode_count: number;
+  id: number;
+  name: string;
+  overview: string;
+  poster_path: string;
+  season_number: number;
+  vote_average: number;
+};
+
 export type episodeGroups = {};
 export type TvDetails = {
   adult: false;
@@ -124,13 +135,9 @@ export type TvDetails = {
   production_countries: MovieDetails["production_countries"];
   recommendations: MovieDetails["recommendations"];
   reviews: MovieDetails["reviews"];
-  seasons: {
-    air_date: string;
-    episode_count: number;
-    id: number;
-    name: string;
-    overview: string;
-  };
+
+  seasons: TvSeason[];
+
   spoken_languages: {
     english_name: string;
     iso_639_1: string;

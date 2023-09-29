@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { still_300 } from "../../../api/api";
 import { TvDetails } from "../../../types/types";
-import { Movie } from "../../Home/ContentBlock";
+import { Movie } from "../../Home/comp/ContentBlock";
 
 type Props = {
   cardData: TvDetails | Movie;

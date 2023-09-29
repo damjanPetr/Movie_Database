@@ -36,7 +36,7 @@ export async function movieDetailLoader<T>(id: T) {
 export async function tvDetailLoader<T>(id: T) {
   const response = await fetch(
     apiURL +
-      `/tv/${id}?append_to_response=videos,images,reviews,credits,recommendations,keywords,collections`,
+      `/tv/${id}?append_to_response=videos,images,reviews,credits,recommendations,keywords,collections,seasons`,
     apiFetchOptions
   );
   return response.json();

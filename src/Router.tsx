@@ -53,6 +53,7 @@ import EpisodeTypes from "./pages/TV/EpisodeTypes/EpisodeGroups.tsx";
 import TvTemp from "./pages/TV/TvTemp.tsx";
 import TVShowDetail from "./pages/TVShowDetail/TVShowDetail.tsx";
 import { MovieAltTitles, MovieDetails } from "./types/types.tsx";
+import Seasons from "./pages/TV/Seasons/Seasons.tsx";
 
 const router = createHashRouter([
   {
@@ -286,6 +287,16 @@ const router = createHashRouter([
                   const details = await tvDetailLoader(params.tvId);
 
                   return { data, details };
+                },
+              },
+
+              {
+                path: "seasons",
+                element: <Seasons />,
+                loader: async ({ params }) => {
+                  const details = await tvDetailLoader(params.tvId);
+
+                  return { details };
                 },
               },
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useFetcher, useLoaderData, useLocation } from "react-router-dom";
 import { getDiscoverMovies } from "../../api/api";
 import { TvShows, genresTV, languagesTV } from "../../types/types";
-import { Movie, MovieProps } from "../Home/ContentBlock";
+import { Movie, MovieProps } from "../Home/comp/ContentBlock";
 import Filter from "./Comp/Filter";
 import ShowSection from "./Comp/ShowSection";
 

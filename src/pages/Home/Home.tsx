@@ -1,9 +1,8 @@
 /* eslint-disable react-refresh/only-export-components */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useActionData, useLoaderData } from "react-router-dom";
-import ContentBlock, { MovieProps } from "./ContentBlock";
-import { MovieWithMedaType, TVProps } from "../../types/types";
-import { base_url } from "../../api/api";
+import { TVProps } from "../../types/types";
+import ContentBlock, { MovieProps } from "./comp/ContentBlock";
 
 export default function Home() {
   let bgPicture = null;

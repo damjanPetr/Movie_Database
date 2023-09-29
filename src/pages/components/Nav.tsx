@@ -1,7 +1,11 @@
-import { Link } from "react-router-dom";
 import { BiSolidRightArrow } from "react-icons/bi";
+import { Link, useMatch } from "react-router-dom";
 
 function Nav() {
+  const match = useMatch("/tv/*");
+
+  console.log("🚀 ✔ file: Nav.tsx:7 ✔ Nav ✔ match:", match);
+
   return (
     <nav className="flex items-center justify-center p-2">
       <ul className="blue flex gap-4 capitalize z-10">
@@ -26,12 +30,22 @@ function Nav() {
             >
               Cast & Crew
             </Link>
-            <Link
-              to={"../release-date"}
-              className="w-full px-2 py-1 hover:bg-stone-300/50"
-            >
-              Release Date
-            </Link>
+            {match?.pathnameBase !== "/tv" && (
+              <Link
+                to={"../release-date"}
+                className="w-full px-2 py-1 hover:bg-stone-300/50"
+              >
+                Release Date
+              </Link>
+            )}
+            {match?.pathnameBase === "/tv" && (
+              <Link
+                to={"../seasons"}
+                className="w-full px-2 py-1 hover:bg-stone-300/50"
+              >
+                Seasons
+              </Link>
+            )}
             <Link
               to={"../translations"}
               className="w-full px-2 py-1 hover:bg-stone-300/50"

@@ -18,12 +18,10 @@ export default function Banner({ data, tv }: Props) {
           <h1 className="mb-4 text-3xl font-bold">
             {"release_date" in data ? data.title : data.name}{" "}
             <span className="text-gray-300">
-              (
               {("release_date" in data
                 ? data.release_date
                 : data.first_air_date
               ).slice(0, 4)}
-              )
             </span>
           </h1>
           <Link
@@ -39,9 +37,9 @@ export default function Banner({ data, tv }: Props) {
               <path
                 fill="none"
                 stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.5"
                 d="M20 12H4m0 0l6-6m-6 6l6 6"
               />
             </svg>
