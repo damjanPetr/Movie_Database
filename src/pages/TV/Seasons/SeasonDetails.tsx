@@ -9,7 +9,7 @@ import { getTvSeasonImages, still_182, still_92 } from "../../../api/api";
 import { useState } from "react";
 
 function SeasonDetails() {
-  const [seasonImages, setSeasonImages] = useState<episodeImages>([]);
+  const [seasonImages, setSeasonImages] = useState<episodeImages | null>(null);
   const { details, season } = useLoaderData() as {
     details: TvDetails;
     season: TvSeasonDetails;
@@ -234,11 +234,11 @@ function SeasonDetails() {
                   <h2 className="text-base font-semibold  ">
                     Episode Images{" "}
                     <span className="text-gray-400 ml-1 ">
-                      {seasonImages.length}
+                      {seasonImages && seasonImages.stills.length}
                     </span>
                   </h2>
                   <div className="flex overflow-auto py-2 gap-2 scb  ">
-                    {seasonImages.stills &&
+                    {seasonImages &&
                       seasonImages.stills.map((item) => {
                         return (
                           <div
