@@ -21,6 +21,7 @@ import {
   getTVVideos,
   getTopratedTV,
   getTvEpisodeGroups,
+  getTvSeason,
   movieDetailLoader,
   movieGetCredits,
   movieGetImages,
@@ -54,6 +55,8 @@ import TvTemp from "./pages/TV/TvTemp.tsx";
 import TVShowDetail from "./pages/TVShowDetail/TVShowDetail.tsx";
 import { MovieAltTitles, MovieDetails } from "./types/types.tsx";
 import Seasons from "./pages/TV/Seasons/Seasons.tsx";
+import SeasonDetails from "./pages/TV/Seasons/SeasonDetails.tsx";
+import { GiCottonFlower } from "react-icons/gi";
 
 const router = createHashRouter([
   {
@@ -224,15 +227,7 @@ const router = createHashRouter([
             // action: async ({ request }) => {
             // const formData = await request.formData();
             // const { pages } = Object.fromEntries(formData);
-            // console.log(
-            //   "🚀 ✔ file: Router.tsx:155 ✔ action: ✔ pages:",
-            //   pages
-            // );
             // const data = await getTopratedTV(pages);
-            // console.log(
-            //   "🚀 ✔ file: Router.tsx:161 ✔ action: ✔ data:",
-            //   data
-            // );
             // return data;
             // },
           },
@@ -256,12 +251,6 @@ const router = createHashRouter([
                   const altTitles = await getTVAltTitles(params.tvId);
 
                   const details = await tvDetailLoader(params.tvId);
-
-                  console.log(
-                    "🚀 ✔ file: Router.tsx:262 ✔ loader: ✔ details:",
-                    details
-                  );
-
                   return { details, altTitles };
                 },
               },
@@ -297,6 +286,20 @@ const router = createHashRouter([
                   const details = await tvDetailLoader(params.tvId);
 
                   return { details };
+                },
+              },
+              {
+                path: "season/:season_number",
+                element: <SeasonDetails />,
+                loader: async ({ params }) => {
+                  const details = await tvDetailLoader(params.tvId);
+
+                  const season = await getTvSeason(
+                    params.tvId as string,
+                    params.season_number as string
+                  );
+
+                  return { details, season };
                 },
               },
 
@@ -415,12 +418,6 @@ const router = createHashRouter([
                   const altTitles = (await getMovieAltTitles(
                     params.movieId
                   )) as MovieAltTitles;
-
-                  console.log(
-                    "🚀 ✔ file: Router.tsx:411 ✔ loader: ✔ altTitles:",
-                    altTitles
-                  );
-
                   const details = (await movieDetailLoader(
                     params.movieId
                   )) as MovieDetails;

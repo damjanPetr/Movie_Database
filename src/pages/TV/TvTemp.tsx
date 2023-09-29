@@ -51,7 +51,7 @@ function TvTemp({ todayDateFilter }: { todayDateFilter?: boolean }) {
   async function filterCallback(
     args: string,
     scroll: string,
-    discoverScroll: true
+    discoverScroll?: boolean
   ) {
     if (scroll === "scroll" && startFiltering) {
       const tvShowData: TvShows = await getDiscoverTV(args);
@@ -100,6 +100,7 @@ function TvTemp({ todayDateFilter }: { todayDateFilter?: boolean }) {
       <h1 className="mb-6 text-2xl font-semibold">Popular TV Shows</h1>
       <div className="flex justify-between max-[480px]:flex-col max-[480px]:items-center   ">
         <Filter
+          renderMovies={false}
           genres={genres}
           languages={languages}
           callback={filterCallback}

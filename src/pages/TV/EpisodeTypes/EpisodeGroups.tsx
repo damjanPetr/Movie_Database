@@ -1,11 +1,11 @@
 import { useLoaderData } from "react-router-dom";
-import { TvDetails, episodeGroups } from "../../../types/types";
+import { TvDetails } from "../../../types/types";
 import Banner from "../../components/Banner";
 
 function EpisodeGroups() {
-  const { details, episodeGroups } = useLoaderData() as {
+  const { details } = useLoaderData() as {
     details: TvDetails;
-    episodeGroups: episodeGroups;
+    // episodeGroups: episodeGroups;
   };
 
   return (

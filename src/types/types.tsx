@@ -75,7 +75,62 @@ export type TvSeason = {
   vote_average: number;
 };
 
-export type episodeGroups = {};
+export type episodeImages = {
+  id: number;
+  stills: {
+    aspect_ratio: number;
+    height: number;
+    iso_639_1: null | string;
+    file_path: string;
+    vote_average: number;
+    vote_count: number;
+    width: number;
+  }[];
+};
+export type episodes = {
+  air_date: null | string;
+  crew: castCrew[];
+  episode_number: number;
+  episode_type: "standard";
+  guest_stars: castCrew[];
+  id: number;
+  name: string;
+  overview: string;
+  production_code: "";
+  runtime: number;
+  season_number: number;
+  show_id: number;
+  still_path: string;
+  vote_average: number;
+  vote_count: number;
+};
+
+export type TvSeasonDetails = {
+  air_date: string | null;
+  episodes: episodes[];
+  images: {
+    posters: {
+      width: number;
+      aspect_ratio: number;
+      file_path: string;
+      height: number;
+      iso_639_1: string;
+      vote_average: number;
+      vote_count: number;
+    }[];
+  };
+
+  id: number;
+  name: string;
+  overview: string;
+  poster_path: string | null;
+  season_number: number;
+  vote_average: number;
+  _id: string;
+};
+
+// export type episodeGroups = {};
+
 export type TvDetails = {
   adult: false;
   backdrop_path: string;
@@ -384,22 +439,22 @@ export type MovieExternalId = {
   twitter_id: null | string;
 };
 
-export type MovieCredits<
-  T = {
-    adult: false;
-    gender: 1;
-    id: number;
-    known_for_department: string;
-    name: string;
-    original_name: string;
-    popularity: number;
-    profile_path: string;
-    cast_id: number;
-    character: string;
-    credit_id: string;
-    order: number;
-  },
-> = {
+export type castCrew = {
+  adult: false;
+  job?: string;
+  gender: 1;
+  id: number;
+  known_for_department: string;
+  name: string;
+  original_name: string;
+  popularity: number;
+  profile_path: string;
+  cast_id: number;
+  character: string;
+  credit_id: string;
+  order: number;
+};
+export type MovieCredits<T = castCrew> = {
   id: number;
   cast: T[];
   crew: T[];
