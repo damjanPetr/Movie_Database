@@ -1,12 +1,11 @@
-import { Link, useLoaderData } from "react-router-dom";
+import { useState } from "react";
+import { useLoaderData } from "react-router-dom";
+import { getTvSeasonImages, still_182, still_92 } from "../../../api/api";
 import {
   TvDetails,
-  TvSeason,
   TvSeasonDetails,
   episodeImages,
 } from "../../../types/types";
-import { getTvSeasonImages, still_182, still_92 } from "../../../api/api";
-import { useState } from "react";
 
 function SeasonDetails() {
   const [seasonImages, setSeasonImages] = useState<episodeImages | null>(null);
