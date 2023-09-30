@@ -1,200 +1,76 @@
-import { useState } from "react";
 import { AiFillLock } from "react-icons/ai";
+import { Link } from "react-router-dom";
 import { base_url, base_urlBg } from "../../../api/api";
-import { MovieImages, MovieVideos } from "../../../types/types";
-import { getFullCountryName } from "../../../utils/func";
-import { useSearchParams } from "react-router-dom";
+import { MovieImages } from "../../../types/types";
 
 type Props = {
-  data: MovieImages | MovieVideos;
+  data: MovieImages;
   type: "backdrops" | "posters" | "logos";
 };
 
 function MainMedia({ data, type }: Props) {
-  console.log("🚀 ~ file: AsideMedia.tsx:7 ~ data:", data);
-  const [items, setItems] = useState(data);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const imagesArray: MovieImages["backdrops"] = [];
+  //place all images in same array
+  // const key = "logos" && "posters" && "backdrops";
+  const key = type;
+  if (key in data) {
+    data[key].forEach((item) => {
+      imagesArray.push(item);
+    });
+  }
 
-  const filterLanguage = searchParams.get("image_lang");
-  const filterSearchFunction = (item: any) => {
-    if (filterLanguage === "null") {
-      return item.iso_639_1 === null;
+  //sort by iso_639_1 and put into object
+  const sortingImages: { [x: string]: MovieImages["backdrops"] } = {};
+  imagesArray.forEach((item) => {
+    if (!sortingImages[item.iso_639_1]) {
+      sortingImages[item.iso_639_1] = [];
     }
-    return item.iso_639_1 === filterLanguage;
-  };
+    sortingImages[item.iso_639_1].push(item);
+  });
+
   return (
-    <div className="mx-auto flex max-w-7xl flex-wrap content-center items-start justify-start gap-4 p-4">
-      {type === "backdrops"
-        ? (items as MovieImages).backdrops
-            .filter(filterSearchFunction)
-            .map((item) => {
-              return (
-                <div className="box-shadow: 10px 5px 5px black; max-w-[250px] flex-initial basis-1/4 rounded-lg shadow-slate-400  ">
-                  <a
-                    href={base_urlBg + item.file_path}
-                    className="hover:underline"
-                    id={`linkTarget ${item.iso_639_1}`}
-                  >
-                    <img
-                      src={base_url + item.file_path}
-                      alt="pic"
-                      className="aspect-video rounded-t-lg"
-                    />
-                  </a>
-                  <div className="">
-                    <div className="flex items-center justify-between pr-4">
-                      <h3 className="mb-1 border-b p-3 text-base">Info</h3>
-                      <AiFillLock />
-                    </div>
-                    <div className="space-y-2 p-4">
-                      <label
-                        htmlFor="linkTarget "
-                        className="mb-2 block text-sm"
-                      >
-                        Size:
-                      </label>
-                      <a
-                        href={base_urlBg + item.file_path}
-                        className="hover:underline"
-                        id="linkTarget"
-                      >
-                        {item.height}x {item.width} ✓
-                      </a>
-                      <label
-                        htmlFor="lgOption"
-                        className="my-2 block rounded-md text-sm"
-                      >
-                        Language:
-                      </label>
-                      {item.iso_639_1 ? (
-                        <span className="block rounded-md bg-neutral-200 p-2">
-                          {getFullCountryName(item.iso_639_1)}
-                        </span>
-                      ) : (
-                        <span className="block rounded-md bg-neutral-200 p-2">
-                          No Language
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })
-        : null}
-      {type === "logos"
-        ? (items as MovieImages).logos
-            .filter(filterSearchFunction)
-            .map((item, index) => {
-              return (
-                <div className="box-shadow: 10px 5px 5px black; min-w-[300px] flex-1 rounded-lg shadow-slate-400  ">
-                  <a
-                    href={base_urlBg + item.file_path}
-                    className="hover:underline"
-                    id={`linkTarget ${item.iso_639_1}`}
-                  >
-                    <img
-                      src={base_url + item.file_path}
-                      alt="pic"
-                      className="aspect-video rounded-t-lg"
-                    />
-                  </a>
-                  <div className="">
-                    <div className="flex items-center justify-between pr-4">
-                      <h3 className="mb-1 border-b p-3 text-base">Info</h3>
-                      <AiFillLock />
-                    </div>
-                    <div className="space-y-2 p-4">
-                      <label
-                        htmlFor="linkTarget "
-                        className="mb-2 block text-sm"
-                      >
-                        Size:
-                      </label>
-                      <a
-                        href={base_urlBg + item.file_path}
-                        className="hover:underline"
-                        id="linkTarget"
-                      >
-                        {item.height}x {item.width} ✓
-                      </a>
-                      <label
-                        htmlFor="lgOption"
-                        className="my-2 block rounded-md text-sm"
-                      >
-                        Language:
-                      </label>
-                      {item.iso_639_1 ? (
-                        <span className="block rounded-md bg-neutral-200 p-2">
-                          {getFullCountryName(item.iso_639_1)}
-                        </span>
-                      ) : (
-                        <span className="block rounded-md bg-neutral-200 p-2">
-                          No Language
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })
-        : null}
-      {type === "posters"
-        ? (items as MovieImages).posters
-            .filter(filterSearchFunction)
-            .map((item, index) => {
-              return (
-                <div className="box-shadow: 10px 5px 5px black; flex-initial basis-1/5 rounded-lg shadow-slate-400  ">
-                  <a
-                    href={base_urlBg + item.file_path}
-                    className="hover:underline"
-                    id={`linkTarget ${item.iso_639_1}`}
-                  >
-                    <img
-                      src={base_url + item.file_path}
-                      alt="pic"
-                      className="aspect-square   rounded-t-lg"
-                    />
-                  </a>
-                  <div className="">
-                    <div className="flex items-center justify-between pr-4">
-                      <h3 className="mb-1 border-b p-3 text-base">Info</h3>
-                      <AiFillLock />
-                    </div>
-                    <div className="space-y-2 p-4">
-                      <label
-                        htmlFor="linkTarget "
-                        className="mb-2 block text-sm"
-                      >
-                        Size:
-                      </label>
-                      <a
-                        href={base_urlBg + item.file_path}
-                        className="hover:underline"
-                        id="linkTarget"
-                      >
-                        {item.height}x {item.width} ✓
-                      </a>
-                      <label
-                        htmlFor="lgOption"
-                        className="my-2 block rounded-md text-sm"
-                      >
-                        Language:
-                      </label>
-                      {item.iso_639_1 ? (
-                        <span className="block rounded-md bg-neutral-200 p-2">
-                          {getFullCountryName(item.iso_639_1)}
-                        </span>
-                      ) : (
-                        <span className="block rounded-md bg-neutral-200 p-2">
-                          No Language
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })
-        : null}
+    <div className="mx-auto flex max-w-7xl flex-wrap content-center items-start justify-start gap-4 pl-7 py-4">
+      {imagesArray.map((item) => {
+        return (
+          <div
+            key={item.id}
+            className="shadow-md flex-initial  rounded-lg w-40 "
+          >
+            <Link
+              to={base_urlBg + item.file_path}
+              className="hover:underline"
+              id={`linkTarget ${item.iso_639_1}`}
+            >
+              <img
+                src={base_url + item.file_path}
+                alt="pic"
+                className={` rounded-t-lg ${
+                  type == "logos"
+                    ? "p-4 object-fill h-[100px] object-center "
+                    : ""
+                }`}
+              />
+            </Link>
+            <div className="py-2.5 ">
+              <div className="flex items-center justify-between px-3.5 mb-2   border-b">
+                <h3 className="mb-1 ">Info</h3>
+                <AiFillLock />
+              </div>
+              <div className="space-y-2 p-4">
+                <p className="mb-2  ">Size:</p>
+                <a
+                  href={base_urlBg + item.file_path}
+                  className="hover:underline"
+                  id="linkTarget"
+                >
+                  {item.height}x {item.width} ✓
+                </a>
+                <div className=""></div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
