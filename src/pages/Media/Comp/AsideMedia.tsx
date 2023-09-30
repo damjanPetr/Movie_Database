@@ -12,21 +12,6 @@ type Props = {
 };
 
 function AsideMedia({ data, details, type }: Props) {
-  //this is the data that's used for figuring out the number of different objcets in the data
-  // const dataForLanguageNumbers: {
-  //   [x: string]:
-  //     | MovieImages["backdrops"]
-  //     | MovieImages["logos"]
-  //     | MovieImages["posters"];
-  // } = {};
-  // function getNumber(arg: MovieImages["backdrops" | "posters" | "logos"]) {
-  // dataForLanguageNumbers.forEach((item) => {
-  // if (!dataForLanguageNumbers[item.iso_639_1]) {
-  // dataForLanguageNumbers[item.iso_639_1] = [];
-  // }
-  // dataForLanguageNumbers[item.iso_639_1].push(item);
-  // });
-
   const imagesArray: MovieImages["backdrops"] = [];
   //place all images in same array
   const key = "logos" || "posters" || "backdrops";
@@ -44,10 +29,6 @@ function AsideMedia({ data, details, type }: Props) {
     }
     sortingImages[item.iso_639_1].push(item);
   });
-
-  console.log("%c ", "background: pink", imagesArray);
-
-  console.log("%c play", "background: blue", sortingImages);
 
   return (
     <aside className="">
