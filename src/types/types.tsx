@@ -293,6 +293,7 @@ export type MovieVideos = {
 
 export type MovieImages<
   T = {
+    id: number;
     aspect_ratio: number;
     height: number;
     iso_639_1: string;
@@ -410,7 +411,7 @@ export type SingularMovieWatchProviders = {
 };
 export type MovieRecommendations = {
   page: number;
-  results: Movie[];
+  results: (Movie & { media_type: "movie" | "tv" })[];
   total_pages: number;
   total_results: number;
 };

@@ -29,14 +29,14 @@ export default function CastCrew() {
   return (
     <>
       <Banner data={details} />
-      <div className="mx-auto flex w-11/12 ">
+      <div className="mx-auto flex  px-20   flex-col item-center sm:items-start  sm:flex-row max-w-screen-xl">
         {
-          <div className="cast w-1/2">
+          <div className="cast w-1/2 mx-auto">
             <h2 className="ml-2 p-2 text-2xl font-medium">
               Cast:{" "}
               <span className="text-gray-400">{castCrew.cast.length}</span>
             </h2>
-            <div className="space-y-2.5">
+            <div className="space-y-2.5  fle">
               {castSorted.map((item, index) => {
                 return (
                   <div className="flex " key={index}>

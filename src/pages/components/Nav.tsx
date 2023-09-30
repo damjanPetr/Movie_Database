@@ -52,12 +52,12 @@ function Nav() {
             >
               Translations
             </Link>
-            <Link
+            {/* <Link
               to={"../changes"}
               className="w-full px-2 py-1 hover:bg-stone-300/50"
             >
               Changes
-            </Link>
+            </Link> */}
             {/* <Link
                   to={"../report"}
                   relative="path"

@@ -1,40 +1,89 @@
+import { Link } from "react-router-dom";
 import { getFullCountryName } from "../../utils/func";
-import { filterArrayTitles } from "../MovieDetail/AlternativeTitles/AlternativeTitles";
+import {
+  filterArrayTitles,
+  minaltTitles,
+} from "../MovieDetail/AlternativeTitles/AlternativeTitles";
 import { FilteredReleaseDate } from "../MovieDetail/ReleaseDate/ReleaseDate";
-import { filteredTranslations } from "../MovieDetail/Translations/Translations";
+import {
+  filteredTranslations,
+  minTranslations,
+} from "../MovieDetail/Translations/Translations";
+import {
+  MovieAltTitles,
+  MovieTranslations,
+  tvAltTitles,
+} from "../../types/types";
 
 type Props = {
   asideTitle: string;
-  data: filterArrayTitles | FilteredReleaseDate | filteredTranslations;
+  data: MovieAltTitles | tvAltTitles | MovieTranslations;
+  // forMovies: boolean;
 };
 function Aside({ data, asideTitle }: Props) {
-  const dataObject = Object.entries(data);
+  const saveData: {
+    [index: string]: minaltTitles[] & MovieTranslations["translations"];
+  } = {};
+
+  if ("results" in data) {
+    data.results.forEach((item) => {
+      if (!saveData[item.iso_3166_1]) {
+        saveData[item.iso_3166_1] = [];
+      }
+      saveData[item.iso_3166_1].push(item);
+    });
+  } else if ("titles" in data) {
+    data.titles.forEach((item) => {
+      if (!saveData[item.iso_3166_1]) {
+        saveData[item.iso_3166_1] = [];
+      }
+      saveData[item.iso_3166_1].push(item);
+    });
+  } else if ("translations" in data) {
+    data.translations.forEach((item) => {
+      if (!saveData[item.iso_3166_1]) {
+        saveData[item.iso_3166_1] = [];
+      }
+      saveData[item.iso_3166_1].push(item);
+    });
+  }
+
+  Object.keys(saveData).forEach((item) => {
+    console.log(saveData[item]);
+  });
 
   return (
-    <aside className="p-4">
-      <section className="rounded-xl">
-        <div className="flex w-full items-center justify-between bg-slate-900 px-4 py-2 text-center text-white">
-          <h1 className=" text-xl">{asideTitle + " " + dataObject.length}</h1>
-          <span className="p-2 text-xl text-gray-400 "></span>
+    <aside className="">
+      <section className="rounded-xl shadow-md">
+        <div className="flex w-full items-center justify-between bg-slate-900   text-center text-white p-5 text-xl font-bold rounded-t-xl ">
+          <h3 className=" text-xl">{asideTitle + " "}</h3>
+          <span className="p-2 text-xl text-gray-300 ">
+            {"results" in data
+              ? data.results.length
+              : "titles" in data
+              ? data.titles.length
+              : null}
+          </span>
         </div>
-        <div className=" shadow-md">
-          {dataObject.sort().map((start, index) => {
-            const item = start[1];
-
-            // const newArray = altTitles.titles.filter(
-            // (element) => element.title === item.title
-            // );
+        <div className=" py-2  rounded-b-xl ">
+          {Object.keys(saveData).map((item, index) => {
             return (
-              <div
-                key={`sidebar-key ${index}`}
-                className="justify-center p-2 hover:bg-slate-200"
-              >
-                <a href={`#goLink${start[0]}`}>
-                  <div className="flex items-center justify-between px-6">
-                    <p>{getFullCountryName(start[0])}</p>
-                    <p>{item.length}</p>
-                  </div>
-                </a>
+              <div key={item}>
+                <div
+                  key={`sidebar-key ${item}`}
+                  className="justify-center p-2 hover:bg-slate-200"
+                >
+                  <Link to={`#goLink${item}`}>
+                    <div className="flex items-center justify-between px-6">
+                      <p>
+                        {`${new Intl.DisplayNames(["en"], {
+                          type: "region",
+                        }).of(item)}`}
+                      </p>
+                      <p>{saveData[item].length}</p>
+                    </div>
+                  </Link>
+                </div>
               </div>
             );
           })}

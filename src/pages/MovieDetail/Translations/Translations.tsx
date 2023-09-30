@@ -27,24 +27,31 @@ export default function Translations() {
     data: MovieTranslations;
   };
 
-  const dataObject: filteredTranslations = {};
-  data.translations.forEach((item) => {
-    if (!dataObject[item.iso_3166_1]) {
-      dataObject[item.iso_3166_1] = [];
-    }
-    dataObject[item.iso_3166_1].push(item);
-  });
-  console.log(
-    "🚀 ~ file: Translations.tsx:15 ~ Translations ~ dataObject:",
-    dataObject
-  );
+  // if ("results" in data) {
+  //   data.results.forEach((item) => {
+  //     if (!saveData[item.iso_3166_1]) {
+  //       saveData[item.iso_3166_1] = [];
+  //     }
+  //     saveData[item.iso_3166_1].push(item);
+  //   });
+  // } else if ("titles" in data) {
+  //   data.titles.forEach((item) => {
+  //     if (!saveData[item.iso_3166_1]) {
+  //       saveData[item.iso_3166_1] = [];
+  //     }
+  //     saveData[item.iso_3166_1].push(item);
+  //   });
+  // }
+  // Object.keys(saveData).forEach((item) => {
+  //   console.log(saveData[item]);
+  // });
+
   return (
     <>
       <Banner data={details} />
-
-      <main className="mx-auto grid w-10/12 grid-cols-[30%_70%] p-4">
-        <Aside asideTitle="Translations" data={dataObject} />
-        <Table data={dataObject} />
+      <main className="mx-auto grid px-10 py-7 grid-cols-[30%_70%] p-4 max-w-screen-xl ">
+        <Aside asideTitle="Translations" data={data} />
+        <Table data={data} purpose="translations" />
       </main>
     </>
   );

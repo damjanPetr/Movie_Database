@@ -51,12 +51,11 @@ import Translations from "./pages/MovieDetail/Translations/Translations.tsx";
 import People from "./pages/People/People.tsx";
 import Reviews from "./pages/Reviews/Reviews.tsx";
 import EpisodeTypes from "./pages/TV/EpisodeTypes/EpisodeGroups.tsx";
+import SeasonDetails from "./pages/TV/Seasons/SeasonDetails.tsx";
+import Seasons from "./pages/TV/Seasons/Seasons.tsx";
 import TvTemp from "./pages/TV/TvTemp.tsx";
 import TVShowDetail from "./pages/TVShowDetail/TVShowDetail.tsx";
 import { MovieAltTitles, MovieDetails } from "./types/types.tsx";
-import Seasons from "./pages/TV/Seasons/Seasons.tsx";
-import SeasonDetails from "./pages/TV/Seasons/SeasonDetails.tsx";
-import { GiCottonFlower } from "react-icons/gi";
 
 const router = createHashRouter([
   {
@@ -74,10 +73,7 @@ const router = createHashRouter([
           //     return null;
           //   },
           // },
-          {
-            path: "/people",
-            element: <People />,
-          },
+
           {
             path: "/",
             element: <Home />,
@@ -88,6 +84,10 @@ const router = createHashRouter([
 
               return { popular, trending, getPTV };
             },
+          },
+          {
+            path: "/people",
+            element: <People />,
           },
           {
             path: "/movie/:page_number?",
@@ -153,6 +153,156 @@ const router = createHashRouter([
                 movies: movies,
               };
             },
+          },
+          {
+            path: "/movie/:movieId",
+            children: [
+              {
+                path: "details",
+                element: <MovieDetail />,
+                loader: async ({ params }) => {
+                  const movieDetail = (await movieDetailLoader(
+                    params.movieId
+                  )) as MovieDetails;
+                  return defer({
+                    movieDetail,
+                  });
+                },
+              },
+              {
+                path: "alternative-titles",
+                element: <AlternativeTitles />,
+                loader: async ({ params }) => {
+                  const altTitles = await getMovieAltTitles(params.movieId);
+
+                  console.log(
+                    "🚀 ✔ file: Router.tsx:178 ✔ loader: ✔ altTitles:",
+                    altTitles
+                  );
+
+                  const details = await movieDetailLoader(params.movieId);
+                  return { details, altTitles };
+                },
+              },
+              {
+                path: "cast-crew",
+                element: <CastCrew />,
+                loader: async ({ params }) => {
+                  const castCrew = await movieGetCredits(params.movieId);
+                  const details = await movieDetailLoader(params.movieId);
+                  return {
+                    castCrew,
+                    details,
+                  };
+                },
+              },
+              {
+                path: "release-date",
+                element: <ReleaseDate />,
+                loader: async ({ params }) => {
+                  const data = await getMovieReleaseDate(params.movieId);
+                  const details = await movieDetailLoader(params.movieId);
+                  return { data, details };
+                },
+              },
+
+              {
+                path: "translations",
+                element: <Translations />,
+                loader: async ({ params }) => {
+                  const details = await movieDetailLoader(params.movieId);
+                  const data = await getMovieTranslations(params.movieId);
+
+                  console.log(
+                    "🚀 ✔ file: Router.tsx:216 ✔ loader: ✔ data:",
+                    data
+                  );
+
+                  return { data, details };
+                },
+              },
+              // {
+              //   path: "/:movieId/changes",
+              //   element: <Changes />,
+              //   loader: async ({ params }) => {
+              //     const data = await getChanges(params.movieId);
+              //     const details = await movieDetailLoader(params.movieId);
+              //     return { data, details };
+              //   },
+              // },
+              {
+                path: "report",
+                element: <Report />,
+              },
+              {
+                path: "edit",
+                element: <Edit />,
+              },
+              //end of main Movie Detail
+              {
+                path: "images/backdrops",
+                element: <Backdrops />,
+                loader: async ({ params }) => {
+                  const data = await movieGetImages(params.movieId);
+                  const details = await movieDetailLoader(params.movieId);
+                  return { details, data };
+                },
+              },
+              {
+                path: "images/logos",
+                element: <Logos />,
+                loader: async ({ params }) => {
+                  const data = await movieGetImages(params.movieId);
+                  const details = await movieDetailLoader(params.movieId);
+
+                  return { details, data };
+                },
+              },
+              {
+                path: "images/posters",
+                element: <Posters />,
+                loader: async ({ params }) => {
+                  const data = await movieGetImages(params.movieId);
+                  const details = await movieDetailLoader(params.movieId);
+
+                  return { details, data };
+                },
+              },
+
+              {
+                path: "videos/",
+                element: <Videos />,
+                loader: async ({ params }) => {
+                  const data = await getMovieVideos(params.movieId);
+                  const details = await movieDetailLoader(params.movieId);
+
+                  return { details, data };
+                },
+              },
+
+              //fandom
+              {
+                path: "fandom/discuss/",
+                element: <Overview />,
+              },
+              {
+                path: "fandom/general",
+                element: <General />,
+              },
+              {
+                path: "fandom/content-issues",
+                element: <ContentIssues />,
+              },
+              {
+                path: "reviews",
+                element: <Reviews />,
+                loader: async ({ params }) => {
+                  const data = await getMovieReviews(params.movieId);
+                  const details = await movieDetailLoader(params.movieId);
+                  return { details, data };
+                },
+              },
+            ],
           },
           {
             path: "/tvshow/:page_number?",
@@ -250,6 +400,11 @@ const router = createHashRouter([
                 loader: async ({ params }) => {
                   const altTitles = await getTVAltTitles(params.tvId);
 
+                  console.log(
+                    "🚀 ✔ file: Router.tsx:397 ✔ loader: ✔ altTitles:",
+                    altTitles
+                  );
+
                   const details = await tvDetailLoader(params.tvId);
                   return { details, altTitles };
                 },
@@ -309,6 +464,7 @@ const router = createHashRouter([
                 loader: async ({ params }) => {
                   const details = await tvDetailLoader(params.tvId);
                   const data = await getTVTranslations(params.tvId);
+
                   return { data, details };
                 },
               },
@@ -390,152 +546,6 @@ const router = createHashRouter([
                 loader: async ({ params }) => {
                   const data = await getTVReviews(params.tvId);
                   const details = await tvDetailLoader(params.tvId);
-
-                  return { details, data };
-                },
-              },
-            ],
-          },
-          {
-            path: "/movie/:movieId",
-            children: [
-              {
-                path: "details",
-                element: <MovieDetail />,
-                loader: async ({ params }) => {
-                  const movieDetail = (await movieDetailLoader(
-                    params.movieId
-                  )) as MovieDetails;
-                  return defer({
-                    movieDetail,
-                  });
-                },
-              },
-              {
-                path: "alternative-titles",
-                element: <AlternativeTitles />,
-                loader: async ({ params }) => {
-                  const altTitles = (await getMovieAltTitles(
-                    params.movieId
-                  )) as MovieAltTitles;
-                  const details = (await movieDetailLoader(
-                    params.movieId
-                  )) as MovieDetails;
-                  return { details, altTitles };
-                },
-              },
-              {
-                path: "cast-crew",
-                element: <CastCrew />,
-                loader: async ({ params }) => {
-                  const castCrew = await movieGetCredits(params.movieId);
-
-                  const details = await movieDetailLoader(params.movieId);
-
-                  return {
-                    castCrew,
-                    details,
-                  };
-                },
-              },
-              {
-                path: "release-date",
-                element: <ReleaseDate />,
-                loader: async ({ params }) => {
-                  const data = await getMovieReleaseDate(params.movieId);
-                  const details = await movieDetailLoader(params.movieId);
-
-                  return { data, details };
-                },
-              },
-
-              {
-                path: "translations",
-                element: <Translations />,
-                loader: async ({ params }) => {
-                  const details = await movieDetailLoader(params.movieId);
-                  const data = await getMovieTranslations(params.movieId);
-                  return { data, details };
-                },
-              },
-              // {
-              //   path: "/:movieId/changes",
-              //   element: <Changes />,
-              //   loader: async ({ params }) => {
-              //     const data = await getChanges(params.movieId);
-              //     const details = await movieDetailLoader(params.movieId);
-              //     return { data, details };
-              //   },
-              // },
-              {
-                path: "report",
-                element: <Report />,
-              },
-              {
-                path: "edit",
-                element: <Edit />,
-              },
-              //end of main Movied Detail
-              {
-                path: "images/backdrops",
-                element: <Backdrops />,
-                loader: async ({ params }) => {
-                  const data = await movieGetImages(params.movieId);
-                  const details = await movieDetailLoader(params.movieId);
-                  return { details, data };
-                },
-              },
-              {
-                path: "images/logos",
-                element: <Logos />,
-                loader: async ({ params }) => {
-                  const data = await movieGetImages(params.movieId);
-                  const details = await movieDetailLoader(params.movieId);
-
-                  return { details, data };
-                },
-              },
-              {
-                path: "images/posters",
-                element: <Posters />,
-                loader: async ({ params }) => {
-                  const data = await movieGetImages(params.movieId);
-                  const details = await movieDetailLoader(params.movieId);
-
-                  return { details, data };
-                },
-              },
-
-              {
-                path: "videos/",
-                element: <Videos />,
-                loader: async ({ params }) => {
-                  const data = await getMovieVideos(params.movieId);
-                  const details = await movieDetailLoader(params.movieId);
-
-                  return { details, data };
-                },
-              },
-
-              //fandom
-              {
-                path: "fandom/discuss/",
-                element: <Overview />,
-              },
-              {
-                path: "fandom/general",
-                element: <General />,
-              },
-              {
-                path: "fandom/content-issues",
-                element: <ContentIssues />,
-              },
-              {
-                path: "reviews",
-                element: <Reviews />,
-                loader: async ({ params }) => {
-                  const data = await getMovieReviews(params.movieId);
-                  const details = await movieDetailLoader(params.movieId);
 
                   return { details, data };
                 },

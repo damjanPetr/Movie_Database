@@ -14,7 +14,7 @@ function Seasons() {
 
       {details.seasons.map((item) => {
         return (
-          <div key={item.id} className="py-5    ">
+          <div key={item.id} className="py-5  max-w-screen-xl mx-auto    ">
             <section className="px-10 flex items-center md:px-20  ">
               {item.air_date ? (
                 <img

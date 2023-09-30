@@ -1,8 +1,8 @@
 import { useLoaderData } from "react-router-dom";
 import { MovieDetails, MovieReleaseDate } from "../../../types/types";
 import Banner from "../../components/Banner";
-import Aside from "../../components/Aside";
-import Table from "../../components/Table";
+import AsideRelease from "./AsideRelease";
+import TableRelease from "./TableRelease";
 
 export type minReleaseDate = {
   certification: string;
@@ -31,12 +31,14 @@ export default function ReleaseDate() {
       dataFilter[item.iso_3166_1].push(item2);
     });
   });
+
+  console.log(dataFilter);
   return (
     <>
       <Banner data={details} />
-      <main className="mx-auto grid w-10/12 grid-cols-[30%_70%] p-4">
-        <Aside asideTitle="Relase Dates" data={dataFilter} />
-        <Table data={dataFilter} />
+      <main className="mx-auto grid grid-cols-[30%_70%] px-10 py-7 max-w-screen-xl ">
+        <AsideRelease asideTitle="Release Dates" data={dataFilter} />
+        <TableRelease data={dataFilter} />
       </main>
     </>
   );

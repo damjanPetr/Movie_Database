@@ -1,130 +1,76 @@
-import { AiFillPlusCircle, AiFillQuestionCircle } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { MovieDetails, MovieImages, MovieVideos } from "../../../types/types";
-import { getCountryLanguage } from "../../../utils/func";
+import {
+  MovieDetails,
+  MovieImages,
+  MovieVideos,
+  TvDetails,
+} from "../../../types/types";
 type Props = {
   data: MovieImages | MovieVideos;
-  details: MovieDetails;
+  details: MovieDetails | TvDetails;
   type: "backdrops" | "posters" | "logos";
 };
 
 function AsideMedia({ data, details, type }: Props) {
-  //this is the data that's used for figuring out the number of different objcets in the data
-  const dataForLanguageNumbers: {
-    [x: string]:
-      | MovieImages["backdrops"]
-      | MovieImages["logos"]
-      | MovieImages["posters"];
-  } = {};
-  function getNumber(arg: MovieImages["backdrops" | "posters" | "logos"]) {
-    arg.forEach((item) => {
-      if (!dataForLanguageNumbers[item.iso_639_1]) {
-        dataForLanguageNumbers[item.iso_639_1] = [];
-      }
-      dataForLanguageNumbers[item.iso_639_1].push(item);
+  const imagesArray: MovieImages["backdrops"] = [];
+  //place all images in same array
+  const key = "logos" || "posters" || "backdrops";
+  if (key in data) {
+    data[key].forEach((item) => {
+      imagesArray.push(item);
     });
+  }
 
-    return;
-  }
-  switch (type) {
-    case "backdrops":
-      if ("backdrops" in data) {
-        getNumber(data.backdrops);
-      }
-      break;
-    case "logos":
-      if ("logos" in data) {
-        getNumber(data.logos);
-      }
-      break;
-    case "posters":
-      if ("posters" in data) {
-        getNumber(data.posters);
-      }
-      break;
-    default:
-      return;
-  }
-  const obKeys = Object.keys(dataForLanguageNumbers);
-  const dataList = obKeys.map((item) => {
-    console.log("🚀 ~ file: AsideMedia.tsx:49 ~ dataList ~ item:", typeof item);
-    const propertyValue = dataForLanguageNumbers[item];
-    const arrayLength = propertyValue.length;
-    const language = getCountryLanguage(item);
-    return { arrayLength, language, item };
+  //sort by iso_639_1 and put into object
+  const sortingImages: { [x: string]: MovieImages["backdrops"] } = {};
+  imagesArray.forEach((item) => {
+    if (!sortingImages[item.iso_639_1]) {
+      sortingImages[item.iso_639_1] = [];
+    }
+    sortingImages[item.iso_639_1].push(item);
   });
 
   return (
-    <div className="ml-auto max-w-[200px] rounded-lg text-sm shadow-lg">
-      <div className="mb-2 flex items-center justify-between rounded-t-lg bg-stone-900 p-4 text-white shadow-inner ">
-        <p className="flex-shrink text-xl font-bold capitalize">{type}</p>
-        <div className="flex gap-1">
-          <AiFillPlusCircle />
-          <AiFillQuestionCircle />
+    <aside className="">
+      <section className="rounded-xl shadow-md">
+        <div className="flex w-full items-center justify-between bg-slate-900   text-center text-white p-5 text-xl font-bold rounded-t-xl ">
+          <h3 className=" text-xl">{type + " "}</h3>
+          <span className="p-2 text-xl text-gray-300 ">
+            {/* {"results" in data
+              ? data.results.length
+              : "titles" in data
+              ? data.titles.length
+              : null} */}
+          </span>
         </div>
-      </div>
-      {/* Content */}
-      {type === "backdrops" ? (
-        <ul>
-          {dataList
-            .sort((a, b) => {
-              return a.item.localeCompare(b.item);
-            })
-            .map((item) => {
+        <div className=" py-2  rounded-b-xl">
+          <>
+            {Object.keys(sortingImages).map((item, index) => {
+              console.log("%c ", "background: pink", sortingImages[item]);
               return (
-                <Link to={"?image_lang=" + item.item}>
-                  <li className="group flex items-center justify-between p-1 px-4 hover:bg-gray-200">
-                    <p className="text-gray-600 group-hover:text-black">
-                      {item.language}
-                    </p>
-                    <span className="ml-auto rounded-lg bg-gray-100 p-1 px-2 text-sm font-light text-gray-500 group-hover:text-black">
-                      {item.arrayLength}
-                    </span>
-                  </li>
-                </Link>
+                <div key={item}>
+                  <div
+                    key={`sidebar-key ${item}`}
+                    className="justify-center p-2 hover:bg-slate-200"
+                  >
+                    <Link to={`#goLink${item}`}>
+                      <div className="flex items-center justify-between px-6">
+                        <p>
+                          {`${new Intl.DisplayNames(navigator.language, {
+                            type: "language",
+                          }).of(item)}`}
+                        </p>
+                        <p>{sortingImages[item].length}</p>
+                      </div>
+                    </Link>
+                  </div>
+                </div>
               );
             })}
-        </ul>
-      ) : null}
-      {type === "logos" ? (
-        <ul>
-          {dataList
-            .sort((a, b) => {
-              return a.item.localeCompare(b.item);
-            })
-            .map((item) => {
-              return (
-                <Link to={"?image_lang=" + item.item}>
-                  <li className="flex justify-between p-2">
-                    <p>{item.language}</p>
-                    <p>{item.arrayLength}</p>
-                  </li>
-                </Link>
-              );
-            })}
-        </ul>
-      ) : null}
-      {type === "posters" ? (
-        <ul>
-          {dataList
-            .sort((a, b) => {
-              return a.item.localeCompare(b.item);
-            })
-            .map((item) => {
-              return (
-                <Link to={"?image_lang=" + item.item}>
-                  <li className="flex justify-between p-2 px-4 hover:bg-gray-200">
-                    <p>{item.language}</p>
-                    <span className="ml-auto rounded-lg bg-gray-100 p-1 px-2 text-sm">
-                      {item.arrayLength}
-                    </span>
-                  </li>
-                </Link>
-              );
-            })}
-        </ul>
-      ) : null}
-    </div>
+          </>
+        </div>
+      </section>
+    </aside>
   );
 }
 export default AsideMedia;
