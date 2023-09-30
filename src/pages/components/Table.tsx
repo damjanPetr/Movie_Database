@@ -1,141 +1,175 @@
-import { TdHTMLAttributes } from "react";
 import { AiFillUnlock } from "react-icons/ai";
-import { BiEdit, BiSolidEdit } from "react-icons/bi";
 import {
-  getFlag,
-  getFullCountryName,
-  getSideCountryName,
-} from "../../utils/func";
+  MovieAltTitles,
+  MovieTranslations,
+  tvAltTitles,
+} from "../../types/types";
+import { getFlag } from "../../utils/func";
 import { minaltTitles } from "../MovieDetail/AlternativeTitles/AlternativeTitles";
-import { minReleaseDate } from "../MovieDetail/ReleaseDate/ReleaseDate";
-import { minTranslations } from "../MovieDetail/Translations/Translations";
 
 type Props = {
-  data: {
-    [x: string]: minaltTitles[] | minReleaseDate[] | minTranslations[];
-  };
+  data: MovieAltTitles | tvAltTitles | MovieTranslations;
+  purpose: "translations" | "altTitles";
 };
 
-function Table({ data }: Props) {
-  const dataObject = Object.entries(data);
+function Table({ data, purpose }: Props) {
+  const saveData: {
+    [index: string]: (minaltTitles | MovieTranslations["translations"][0])[];
+  } = {};
+
+  if ("results" in data) {
+    data.results.forEach((item) => {
+      if (!saveData[item.iso_3166_1]) {
+        saveData[item.iso_3166_1] = [];
+      }
+      saveData[item.iso_3166_1].push(item);
+    });
+  } else if ("titles" in data) {
+    data.titles.forEach((item) => {
+      if (!saveData[item.iso_3166_1]) {
+        saveData[item.iso_3166_1] = [];
+      }
+      saveData[item.iso_3166_1].push(item);
+    });
+  } else if ("translations" in data) {
+    data.translations.forEach((item) => {
+      if (!saveData[item.iso_3166_1]) {
+        saveData[item.iso_3166_1] = [];
+      }
+      saveData[item.iso_3166_1].push(item);
+    });
+  }
+  Object.keys(saveData).forEach((item) => {
+    console.log(saveData[item]);
+  });
+
   return (
-    <article className="p-4 ">
-      {dataObject.map((item, index) => {
-        console.log("🚀 ~ file: Table.tsx:33 ~ {dataObject.map ~ item:", item);
+    <article className="pl-5">
+      {Object.keys(saveData).map((item, index) => {
         return (
           <table
+            id="tableSegment"
             key={`article-key ${(item[0], index)} `}
-            className="mb-4 w-full shadow-lg "
+            className="mb-4 w-full shadow-lg rounded-lg "
           >
-            {"english_name" in item[1][0] ? (
-              <caption
-                className="bg-brown-300 p-2 pl-2 text-left"
-                id={`goLink${item[0]}`}
-              >
-                <p className="">{getSideCountryName(item[0])}</p>
-                <BiEdit />
-              </caption>
-            ) : (
-              <caption
-                className="bg-brown-300 p-2 pl-2 text-left"
-                id={`goLink${item[0]}`}
-              >
-                <img
-                  src={getFlag(item[0])}
-                  alt=""
-                  className="mr-4 inline-block "
-                />
-                <p className="inline">{getFullCountryName(item[0])}</p>
-              </caption>
-            )}
+            {/* HEADER */}
+            <caption
+              className="bg-stone-200  text-left rounded-t-lg   "
+              id={`goLink${item}`}
+            >
+              <p className=" px-2.5 py-1.5 font-semibold mb-1">
+                <span>
+                  <img
+                    src={getFlag(item)}
+                    alt=""
+                    className="mr-2.5 inline-block  w-5 "
+                  />
+                </span>
+                {`${new Intl.DisplayNames(navigator.language, {
+                  type: "region",
+                }).of(item)}`}
+              </p>
+            </caption>
             <thead className="">
-              <tr className="border-collapse bg-zinc-200 p-1  ">
-                {"title" in item[1][0] ? (
-                  <>
-                    <th className="pl-4 text-lg font-bold">Title</th>
-                    <th className="pr-4 text-lg font-bold">Type</th>
-                  </>
-                ) : null}
-                {"certification" in item[1][0] ? (
-                  <>
-                    <th className="pl-4 text-lg font-bold">Date</th>
-                    <th className="pl-4 text-lg font-bold">Certification</th>
-                    <th className="pl-4 text-lg font-bold">Type</th>
-                    <th className="pr-4 text-lg font-bold">Language</th>
-                    <th className="pr-4 text-lg font-bold">Note</th>
-                  </>
-                ) : null}
-              </tr>
-            </thead>
-            <tbody className="border p-1 ">
-              {"title" in item[1][0]
-                ? item[1].map((item) => {
-                    return "title" in item ? (
-                      <tr className=" bg-blue-300 ">
-                        <td>{item.type}</td>
-                        <td className="">{item.type}</td>
-                      </tr>
-                    ) : null;
-                  })
-                : null}
-              {"certification" in item[1][0] ? (
-                <tr className="w-full ">
-                  <td>{item[1][0].release_date}</td>
-                  <td>{item[1][0].certification}</td>
-                  <td>{item[1][0].type}</td>
-                  {/* <td>{getCountryLanguage(item[1][0].iso_639_1)}</td> */}
-                  {/* <td>{item[1][0].descriptors}</td> */}
-                  <td>{item[1][0].note}</td>
+              {purpose === "altTitles" ? (
+                <tr className="text-left   flex ">
+                  <th className=" basis-1/2 py-1.5 px-2.5   font-semibold">
+                    Title
+                  </th>
+                  <th className=" basis-1/2 py-1.5 px-2.5  font-semibold">
+                    Type
+                  </th>
+                  {/* {"certification" in item[1][0] ? (
+                <>
+                  <th className="pl-4 text-lg font-bold">Date</th>
+                  <th className="pl-4 text-lg font-bold">Certification</th>
+                  <th className="pl-4 text-lg font-bold">Type</th>
+                  <th className="pr-4 text-lg font-bold">Language</th>
+                  <th className="pr-4 text-lg font-bold">Note</th>
+                </>
+              ) : null} */}
                 </tr>
               ) : null}
-
-              {"english_name" in item[1][0] ? (
-                <div className="w-full ">
-                  <tr>
-                    <td>Title</td>
-                    <td>{item[1][0].data.title}</td>
-                    <td className="h-1 p-1">
-                      <AiFillUnlock />
-                    </td>{" "}
-                  </tr>
-                  <tr>
-                    <td>Taglines</td>
-                    <td>{item[1][0].data.tagline}</td>
-                  </tr>
-                  <tr>
-                    <td>Overview</td>
-                    <td>{item[1][0].data.overview}</td>
-                    <td className="h-1 p-1">
-                      <AiFillUnlock />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <table className="table-auto ">
-                        <tbody>
-                          <tr>
-                            <td className="h-1 p-1">
-                              <AiFillUnlock />
-                            </td>
-                            <td className="h-1 p-1"></td>
-                            {item[1][0].data.runtime ? (
-                              <td>{item[1][0].english_name}</td>
-                            ) : (
-                              <td>Add Runtime</td>
-                            )}
-                            <AiFillUnlock />
-                            {item[1][0].data.homepage ? (
-                              <td>{item[1][0].data.homepage}</td>
-                            ) : (
-                              <td>Add Homepage</td>
-                            )}
+              {purpose == "translations" ? <></> : null}
+            </thead>
+            <tbody className=" p-10 rounded-t-lg   ">
+              {purpose === "translations"
+                ? saveData[item].map((item) => {
+                    console.log(item);
+                    {
+                      "title" in item ? (
+                        <tr className="">
+                          <td className=" bg-blue-300 " key={index}>
+                            {item ? (
+                              <>
+                                <div>{item.type}</div>
+                                <div className="">{item.type}</div>
+                              </>
+                            ) : null}
+                          </td>
+                        </tr>
+                      ) : null;
+                    }
+                    if ("data" in item) {
+                      return (
+                        <>
+                          {/* For tv names */}
+                          <tr className="">
+                            {item ? (
+                              <td className="[&_div]:px-2 [&_div]:py-1">
+                                <div className="w-full flex items-start  ">
+                                  <div className="w-24 ">Name</div>
+                                  <div className="flex-grow">
+                                    {item.data.title}
+                                  </div>
+                                  <div className="p-3">
+                                    <AiFillUnlock />
+                                  </div>
+                                </div>
+                                <div className="w-full flex items-start  ">
+                                  <div className="w-24  ">Taglines</div>
+                                  <div className="flex-grow">
+                                    {item.data.tagline ?? "No Taglines"}
+                                  </div>
+                                </div>
+                                <div className="w-full flex items-start  ">
+                                  <div className="w-24 flex-none ">
+                                    Overview
+                                  </div>
+                                  <div>{item.data.overview}</div>
+                                  <div className="h-1 p-1">
+                                    <AiFillUnlock />
+                                  </div>
+                                </div>
+                              </td>
+                            ) : null}
                           </tr>
-                        </tbody>
-                      </table>
-                    </td>
-                  </tr>
-                  <td></td>
-                </div>
+                        </>
+                      );
+                    }
+                  })
+                : null}
+              {purpose === "altTitles" ? (
+                <tr className="">
+                  {saveData[item].map((item2) => {
+                    return (
+                      <td className="flex  ">
+                        <>
+                          {"title" in item2 ? (
+                            <>
+                              <div className="flex-initial basis-1/2 py-1.5 px-2.5">
+                                {item2.title}
+                              </div>
+                              <div className="flex-initial basis-1/2 py-1.5 px-2.5">
+                                {item2.type}
+                              </div>
+                            </>
+                          ) : null}
+                        </>
+                      </td>
+                    );
+                  })}
+                </tr>
               ) : null}
             </tbody>
           </table>

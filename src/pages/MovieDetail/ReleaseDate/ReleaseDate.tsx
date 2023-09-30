@@ -34,7 +34,7 @@ export default function ReleaseDate() {
   return (
     <>
       <Banner data={details} />
-      <main className="mx-auto grid w-10/12 grid-cols-[30%_70%] p-4">
+      <main className="mx-auto grid w-10/12 grid-cols-[30%_70%] p-4 max-w-screen-xl mx-auto">
         <Aside asideTitle="Relase Dates" data={dataFilter} />
         <Table data={dataFilter} />
       </main>

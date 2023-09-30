@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLoaderData } from "react-router-dom";
+import { ScrollRestoration, useLoaderData } from "react-router-dom";
 import { getTvSeasonImages, still_182, still_92 } from "../../../api/api";
 import {
   TvDetails,
@@ -16,7 +16,8 @@ function SeasonDetails() {
 
   console.log(season);
   return (
-    <>
+    <div className="max-w-screen-xl mx-auto">
+      <ScrollRestoration />
       <section className=" flex justify-end ">
         <div className="pr-5"> {}</div>
       </section>
@@ -24,7 +25,7 @@ function SeasonDetails() {
         {season.episodes.map((item) => {
           return (
             /* Container */
-            <div className="rounded-lg shadow-md group mb-5" key={item.id}>
+            <div className="rounded-lg shadow-md group mb-5 " key={item.id}>
               {/* card not opened */}
               <div className="flex items-center">
                 <div className="h-[130px] w-[230px]">
@@ -56,7 +57,7 @@ function SeasonDetails() {
                   )}
                 </div>
                 {/* Content */}
-                <div className="items-center py-2.5 px-5 w-full  border-b  ">
+                <div className="items-center py-2.5 px-5 w-full  border-b min-h-[130px] ">
                   {/* title */}
                   <div className="title flex w-full">
                     <div className="text-lg font-bold px-2">{`${item.episode_number}`}</div>
@@ -241,13 +242,13 @@ function SeasonDetails() {
                       seasonImages.stills.map((item) => {
                         return (
                           <div
-                            className="w-[150px] flex-none  "
+                            className="w-[150px] flex-none min-h-[120px] "
                             key={item.file_path}
                           >
                             <img
                               src={still_92 + item.file_path}
                               alt=""
-                              className="w-full rounded-md  object-cover h-full "
+                              className="w-full rounded-md  object-cover h-full  "
                             />
                           </div>
                         );
@@ -260,7 +261,7 @@ function SeasonDetails() {
           );
         })}
       </div>
-    </>
+    </div>
   );
 }
 export default SeasonDetails;

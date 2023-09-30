@@ -15,7 +15,13 @@ export default function Recommendations({ recommendations }: Props) {
             return (
               <div className="group w-60 rounded-lg flex-none " key={item.id}>
                 <div className="">
-                  <Link to={"/" + item.id + "/details"}>
+                  <Link
+                    to={
+                      `${item.media_type == "movie" ? "/movie/" : "/tv/"}` +
+                      item.id +
+                      "/details"
+                    }
+                  >
                     {item.backdrop_path == null ? (
                       <div className="flex items-center justify-center bg-gray-300 w-full rounded-md h-[135px]">
                         <svg

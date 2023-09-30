@@ -410,7 +410,7 @@ export type SingularMovieWatchProviders = {
 };
 export type MovieRecommendations = {
   page: number;
-  results: Movie[];
+  results: (Movie & { media_type: "movie" | "tv" })[];
   total_pages: number;
   total_results: number;
 };

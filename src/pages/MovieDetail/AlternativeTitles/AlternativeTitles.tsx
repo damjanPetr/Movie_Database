@@ -15,40 +15,17 @@ export type minaltTitles = {
   title: string;
   type: string;
 };
-export type filterArrayTitles = Record<string, minaltTitles[]>;
+export type filterArrayTitles = minaltTitles;
 
 export default function AlternativeTitles() {
   const { details, altTitles } = useLoaderData() as {
     details: MovieDetails | TvDetails;
     altTitles: MovieAltTitles | tvAltTitles;
   };
-  const saveData: filterArrayTitles = {};
 
-  // altTitles["results" in altTitles ? "results" : "titles"].forEach((item) => {
-  //   if (!saveData[item.iso_3166_1]) {
-  //     saveData[item.iso_3166_1] = [];
-  //   }
-
-  //   saveData[item.iso_3166_1].push(item);
+  // Object.keys(saveData).forEach((item) => {
+  //   console.log(saveData[item]);
   // });
-
-  if ("results" in altTitles) {
-    altTitles.results.forEach((item) => {
-      if (!saveData[item.iso_3166_1]) {
-        saveData[item.iso_3166_1] = [];
-      }
-
-      saveData[item.iso_3166_1].push(item);
-    });
-  } else {
-    altTitles.titles.forEach((item) => {
-      if (!saveData[item.iso_3166_1]) {
-        saveData[item.iso_3166_1] = [];
-      }
-
-      saveData[item.iso_3166_1].push(item);
-    });
-  }
 
   return (
     <>
@@ -58,9 +35,9 @@ export default function AlternativeTitles() {
         <Banner data={details} tv={true} />
       )}
 
-      <main className="mx-auto grid w-10/12 grid-cols-[30%_70%] p-4">
-        <Aside data={saveData} asideTitle={"Alternative Titles"} />
-        <Table data={saveData} />
+      <main className="mx-auto grid w-10/12 grid-cols-[30%_70%] p-4 max-w-screen-xl">
+        <Aside data={altTitles} asideTitle={"Alternative Titles"} />
+        <Table data={altTitles} purpose="altTitles" />
       </main>
     </>
   );

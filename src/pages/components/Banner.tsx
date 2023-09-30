@@ -8,8 +8,8 @@ type Props = {
 };
 export default function Banner({ data, tv }: Props) {
   return (
-    <section className=" bg-zinc-600  text-white py-1.5 px-10 md:px-20">
-      <div className="mr-auto flex p-2 items-center">
+    <section className=" bg-zinc-600  text-white py-1.5 px-10 md:px-20 ">
+      <div className="mr-auto flex p-2 items-center max-w-screen-xl mx-auto">
         <img
           src={still_92 + data.poster_path}
           className="rounded-md w-16 flex-none "

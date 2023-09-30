@@ -4,6 +4,7 @@ import Banner from "../../components/Banner";
 import Nav from "../../components/Nav";
 import AsideMedia from "../Comp/AsideMedia";
 import MainMedia from "../Comp/MainMedia";
+import Aside from "../../components/Aside";
 
 export default function Logos() {
   const { data, details } = useLoaderData() as {
@@ -19,7 +20,7 @@ export default function Logos() {
           <AsideMedia data={data} details={details} type="logos" />
         </aside>
         <article className="w-[70%]">
-          <MainMedia data={data} type="logos" />
+          {/* <MainMedia data={data} type="logos" /> */}
         </article>
       </main>
     </>
