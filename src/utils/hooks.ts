@@ -6,7 +6,6 @@ export const useCountry = () => {
   useEffect(() => {
     async function getData() {
       if (window.localStorage.getItem("loc") == null) {
-        console.log("if");
         const response = await fetch("https://ipapi.co/json/");
 
         const data = await response.json();

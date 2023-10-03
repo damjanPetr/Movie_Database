@@ -32,7 +32,6 @@ export default function ReleaseDate() {
     });
   });
 
-  console.log(dataFilter);
   return (
     <>
       <Banner data={details} />

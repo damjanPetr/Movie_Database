@@ -46,7 +46,6 @@ function AsideMedia({ data, details, type }: Props) {
         <div className=" py-2  rounded-b-xl">
           <>
             {Object.keys(sortingImages).map((item, index) => {
-              console.log("%c ", "background: pink", sortingImages[item]);
               return (
                 <div key={item}>
                   <div

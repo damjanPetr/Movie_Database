@@ -153,7 +153,6 @@ function Social({ reviews }: Props) {
                   (() => {
                     const chunks = reviews[0].content.split("\n");
                     if (chunks.length > 1) {
-                      console.log("line");
                       return chunks.map((item, index) => {
                         return (
                           <p className="mb-5 " key={index}>
@@ -165,7 +164,6 @@ function Social({ reviews }: Props) {
                       const chunks = reviews[0].content
                         .split(".")
                         .map((item) => (item = item + "."));
-                      console.log("uuuu");
 
                       return chunks.map((item, index) => {
                         return (

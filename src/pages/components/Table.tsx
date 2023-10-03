@@ -39,9 +39,6 @@ function Table({ data, purpose }: Props) {
       saveData[item.iso_3166_1].push(item);
     });
   }
-  Object.keys(saveData).forEach((item) => {
-    console.log(saveData[item]);
-  });
 
   return (
     <article className="pl-5">
@@ -95,7 +92,6 @@ function Table({ data, purpose }: Props) {
             <tbody className=" p-10 rounded-t-lg   ">
               {purpose === "translations"
                 ? saveData[item].map((item) => {
-                    console.log(item);
                     {
                       "title" in item ? (
                         <tr className="">

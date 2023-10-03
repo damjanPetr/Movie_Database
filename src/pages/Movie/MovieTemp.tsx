@@ -26,14 +26,12 @@ function MovieTemp({
   const loc = useLocation();
 
   useEffect(() => {
-    console.log("TRANSFOR LINKNS");
     setTwShowFilterData(movies);
     setstartFiltering(false);
   }, [movies]);
 
   useEffect(() => {
     if (fetcher.data && fetcher.data.movies) {
-      console.log(fetcher.data.movies);
       // setPages((p) => p + 1);
       setTwShowFilterData((prev) => {
         return {
@@ -55,7 +53,6 @@ function MovieTemp({
   ) {
     if (scroll === "scroll" && startFiltering) {
       const movieData: MovieProps = await getDiscoverMovies(args);
-      console.log("filtering scroll scroll");
       setTwShowFilterData({
         ...twShowFilterData,
         ...movieData,
@@ -65,11 +62,8 @@ function MovieTemp({
       return;
     } else if (scroll === "scroll" && !startFiltering) {
       if (fetcher.state === "idle") {
-        console.log("normal staring  scroll");
-
         fetcher.load(loc.pathname + "/" + pages.toString());
 
-        console.log(loc);
         setPages(pages + 1);
 
         // if (fetcher.data && fetcher.data.tvShows != null) {
@@ -87,7 +81,6 @@ function MovieTemp({
       return;
     } else if (scroll === "normal" && discoverScroll) {
       const movieData: MovieProps = await getDiscoverMovies(args);
-      console.log("once");
       setTwShowFilterData({ ...movieData, results: movieData.results });
       setstartFiltering(true);
       return;

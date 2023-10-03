@@ -70,7 +70,7 @@ function MovieDetailAside({ itemDetail: movieDetail }: Props) {
         </ul>
         <hr className="my-10" />
         <div className="">
-          <h3 className="font-bold">Content Score</h3>
+          {/* <h3 className="font-bold">Content Score</h3> */}
           <div className=" rounded-lg">
             {/* <div className="">{movieDetail.}</div> */}
             <div className=""></div>

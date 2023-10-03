@@ -7,10 +7,6 @@ type Props = {
   data: FilteredReleaseDate;
 };
 function Aside({ data, asideTitle }: Props) {
-  Object.keys(data).forEach((item) => {
-    console.log(data[item]);
-  });
-
   return (
     <aside className="">
       <section className="rounded-xl shadow-md">

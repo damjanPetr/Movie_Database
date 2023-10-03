@@ -46,7 +46,6 @@ export async function getTvSeasonImages(
   season_number: number,
   episode_number: number
 ) {
-  console.log(tvId, season_number, episode_number);
   const response = await fetch(
     apiURL +
       `/tv/${tvId}/season/${season_number}/episode/${episode_number}/images`,
@@ -130,8 +129,6 @@ export async function getPopularTv(
   }&page=1&sort_by=popularity.desc&watch_region=${
     window.localStorage.getItem("loc") ?? "US"
   }&with_runtime.gte=0&with_runtime.lte=400&with_watch_monetization_types=flatrate|free|ads|rent|buy`;
-
-  console.log(arg);
 
   const response = await fetch(
     apiURL +
