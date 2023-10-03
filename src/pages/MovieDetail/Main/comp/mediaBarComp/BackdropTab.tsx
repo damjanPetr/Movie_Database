@@ -6,7 +6,7 @@ type Props = {
 };
 export default function BackdropTab({ item }: Props) {
   return (
-    <div className="flex-none">
+    <div className="flex-none h-full">
       <img
         src={base_url + item.file_path}
         alt=""

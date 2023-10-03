@@ -12,8 +12,6 @@ export default function CastCrew() {
     castCrew: MovieCredits;
   };
 
-  console.log(castCrew);
-
   const castSorted = castCrew.cast.sort((a, z) => a.order - z.order);
   const crewSorter = castCrew.crew.sort((a, z) => a.order - z.order);
 
@@ -36,7 +34,7 @@ export default function CastCrew() {
               Cast:{" "}
               <span className="text-gray-400">{castCrew.cast.length}</span>
             </h2>
-            <div className="space-y-2.5  fle">
+            <div className="space-y-2.5  fle pb-2">
               {castSorted.map((item, index) => {
                 return (
                   <div className="flex " key={index}>
@@ -92,7 +90,7 @@ export default function CastCrew() {
             </div>
           </div>
         }
-        <div className="crev w-1/2">
+        <div className="crev w-1/2 pb-2">
           <h2 className="ml-2 p-2 text-2xl font-medium">
             Crew: <span className="text-gray-400">{castCrew.crew.length}</span>
           </h2>

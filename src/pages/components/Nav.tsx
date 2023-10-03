@@ -4,8 +4,6 @@ import { Link, useMatch } from "react-router-dom";
 function Nav() {
   const match = useMatch("/tv/*");
 
-  console.log("🚀 ✔ file: Nav.tsx:7 ✔ Nav ✔ match:", match);
-
   return (
     <nav className="flex items-center justify-center p-2">
       <ul className="blue flex gap-4 capitalize z-10">
@@ -142,7 +140,7 @@ function Nav() {
         <li className="group relative rounded-md p-2 hover:bg-slate-500">
           Fandom
           <div className="absolute top-[calc(100%+0.1rem)] flex hidden w-max flex-col items-start justify-start gap-1 rounded-lg bg-white px-2 py-2   group-hover:flex left-0">
-            <div className="group/1 relative">
+            {/* <div className="group/1 relative">
               <div className="flex w-full items-center self-stretch p-2 hover:bg-stone-300/50">
                 <p>Discuss </p>
                 <p className="ml-4">{<BiSolidRightArrow />}</p>
@@ -167,7 +165,7 @@ function Nav() {
                   Content Issues
                 </Link>
               </div>
-            </div>
+            </div> */}
             <Link
               to={"../reviews"}
               className="w-full px-2 py-1 hover:bg-stone-300/50"

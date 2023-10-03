@@ -285,7 +285,7 @@ export type MovieVideos = {
     site: string;
     size: number;
     type: string;
-    official: true;
+    official: boolean;
     published_at: string;
     id: string;
   }[];

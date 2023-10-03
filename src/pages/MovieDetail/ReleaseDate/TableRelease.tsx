@@ -7,10 +7,6 @@ type Props = {
 };
 
 function Table({ data }: Props) {
-  Object.keys(data).forEach((item) => {
-    console.log(data[item]);
-  });
-
   return (
     <article className="pl-5">
       {Object.keys(data).map((item, index) => {

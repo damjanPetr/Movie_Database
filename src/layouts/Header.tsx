@@ -85,7 +85,7 @@ export default function Header() {
                 })}
               </ul>
             </div>
-            <div className="group  text-base relative p-4">
+            {/* <div className="group  text-base relative p-4">
               <div className="font-semibold">People</div>
               <ul className="absolute z-50 left-2 top-[calc(100%+3px)] -mt-3 hidden flex-col items-center rounded-lg py-2 bg-white  border group-hover:flex">
                 {[{ place: "people", name: "Popular People" }].map(
@@ -102,7 +102,7 @@ export default function Header() {
                   }
                 )}
               </ul>
-            </div>
+            </div> */}
           </nav>
           {/* <div className="ml-auto mr-4">
           <ul>

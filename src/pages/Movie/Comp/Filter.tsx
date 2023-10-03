@@ -255,7 +255,6 @@ function Filter({
     type: "",
     text: "",
   });
-  console.log(url.pathname);
   const reducer = (
     state: stateReducer,
     action: actionReducer
@@ -1628,7 +1627,6 @@ function Filter({
       <button
         className=" bg-cyan-500 rounded-xl w-full text-lg text-white py-4 active:scale-105  active:bg-cyan-600o transition-transform duration-0   mx-auto"
         onClick={() => {
-          console.log("%c search url", "background: yellow", filterCb());
           setPage(1);
           callback(filterCb(), "normal", true);
         }}

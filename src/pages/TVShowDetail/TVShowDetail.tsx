@@ -14,8 +14,6 @@ type Props = {
 function TVShowDetail() {
   const { tvDetail } = useLoaderData() as Props;
 
-  console.log(tvDetail);
-
   return (
     <div className=" ">
       <ScrollRestoration />
@@ -100,7 +98,6 @@ function TVShowDetail() {
                   </span> */}
                 </div>
               </div>
-
               {/* User Score / Trailer */}
               <div className="flex items-center">
                 {/* Circular Progress Meter */}
@@ -145,7 +142,7 @@ function TVShowDetail() {
                 </div>
                 {tvDetail.videos.results.filter((item) => {
                   return item.official === true && item.type === "Trailer";
-                }).length < 0 ? (
+                }).length > 0 ? (
                   <button
                     className="btn flex items-center font-semibold p-2 bg-black/60 hover:shadow-lg transition-all hover:bg-black/70 rounded-md hover:scale-105 "
                     onClick={() => {
@@ -185,7 +182,6 @@ function TVShowDetail() {
                 ) : null}
               </div>
               {/* Overview */}
-
               <div className="min-h-[150px]">
                 <p className="mb-2 italic text-gray-400">{tvDetail.tagline}</p>
                 <h3 className="text-2xl mb-4 leading-tight">Overview</h3>
@@ -210,42 +206,46 @@ function TVShowDetail() {
                 </a>
               )}
 
-              <dialog id="trailer_modal" className="modal">
-                <div className="modal-box bg-black w-[80vw] h-[80vh]">
-                  <form method="dialog">
-                    <button
-                      className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white p-2 "
-                      onClick={() => {
-                        const dialogIframe = document.querySelector(
-                          "#trailer_modal iframe"
-                        ) as HTMLIFrameElement;
+              {tvDetail.videos.results.filter((item) => {
+                return item.official === true;
+              }).length > 0 ? (
+                <dialog id="trailer_modal" className="modal">
+                  <div className="modal-box bg-black w-[80vw] h-[80vh]">
+                    <form method="dialog">
+                      <button
+                        className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white p-2 "
+                        onClick={() => {
+                          const dialogIframe = document.querySelector(
+                            "#trailer_modal iframe"
+                          ) as HTMLIFrameElement;
 
-                        if (dialogIframe.contentWindow !== null) {
-                          dialogIframe.contentWindow.postMessage(
-                            `
+                          if (dialogIframe.contentWindow !== null) {
+                            dialogIframe.contentWindow.postMessage(
+                              `
                             {"event":"command", "func":"stopVideo","args":""}`,
-                            "*"
+                              "*"
+                            );
+                          }
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </form>
+                    <iframe
+                      allow=" autoplay;"
+                      allowFullScreen
+                      className="w-full h-full rounded-lg"
+                      src={`https://youtube.com/embed/${
+                        tvDetail.videos.results.filter((item) => {
+                          return (
+                            item.official === true && item.type === "Trailer"
                           );
-                        }
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </form>
-                  {/* <iframe
-                          allow=" autoplay;"
-                          allowFullScreen
-                          className="w-full h-full rounded-lg"
-                          src={`https://youtube.com/embed/${
-                            tvDetail.videos.results.filter((item) => {
-                              return (
-                                item.official === true && item.type === "Trailer"
-                              );
-                            })[0].key
-                          }?enablejsapi=1&version=3&playerapiid=ytplayer`}
-                        ></iframe> */}
-                </div>
-              </dialog>
+                        })[0].key
+                      }?enablejsapi=1&version=3&playerapiid=ytplayer`}
+                    ></iframe>
+                  </div>
+                </dialog>
+              ) : null}
             </section>
           </div>
         </section>

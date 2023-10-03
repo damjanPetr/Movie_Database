@@ -56,7 +56,7 @@ export default function Recommendations({ recommendations }: Props) {
                   </Link>
                 </div>
                 <div className="flex justify-between px-1 py-1 mt-1">
-                  <p className="font-medium ">{item.title}</p>
+                  <p className="font-medium ">{item.title ?? item.name}</p>
                   <p className="font-medium">
                     {Math.round(item.vote_average * 10)}%
                   </p>

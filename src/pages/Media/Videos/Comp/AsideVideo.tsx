@@ -24,9 +24,7 @@ function AsideVideo({ type, data }: PropsAsideVideo) {
     <div className="max-w-sm rounded-lg shadow-md">
       <div className="mb-2 flex items-center justify-between rounded-lg bg-stone-900 p-4 text-white shadow-inner ">
         <p className="text-xl font-bold capitalize">Videos</p>
-        <div className="flex gap-4">
-          <AiFillPlusCircle />
-        </div>
+        <div className="flex gap-4">{/* <AiFillPlusCircle /> */}</div>
       </div>
       {/* Content */}
       <ul>

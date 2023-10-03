@@ -14,7 +14,6 @@ function SeasonDetails() {
     season: TvSeasonDetails;
   };
 
-  console.log(season);
   return (
     <div className="max-w-screen-xl mx-auto">
       <ScrollRestoration />

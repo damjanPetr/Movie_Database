@@ -48,10 +48,6 @@ function Aside({ data, asideTitle }: Props) {
     });
   }
 
-  Object.keys(saveData).forEach((item) => {
-    console.log(saveData[item]);
-  });
-
   return (
     <aside className="">
       <section className="rounded-xl shadow-md">

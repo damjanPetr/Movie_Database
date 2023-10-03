@@ -21,18 +21,15 @@ function TvTemp({ todayDateFilter }: { todayDateFilter?: boolean }) {
   const [pages, setPages] = useState(2);
   const [startFiltering, setstartFiltering] = useState(false);
   const [twShowFilterData, setTwShowFilterData] = useState<TvShows>(tvShows);
-  console.log("%c utouhtnoea", "background: cyan", twShowFilterData);
   const loc = useLocation();
 
   useEffect(() => {
-    console.log("TRANSFOR LINKNS");
     setTwShowFilterData(tvShows);
     setstartFiltering(false);
   }, [tvShows]);
 
   useEffect(() => {
     if (fetcher.data && fetcher.data.tvShows) {
-      console.log(fetcher.data.tvShows);
       // setPages((p) => p + 1);
       setTwShowFilterData((prev) => {
         return {
@@ -55,7 +52,6 @@ function TvTemp({ todayDateFilter }: { todayDateFilter?: boolean }) {
   ) {
     if (scroll === "scroll" && startFiltering) {
       const tvShowData: TvShows = await getDiscoverTV(args);
-      console.log("filtering scroll scroll");
       setTwShowFilterData({
         ...twShowFilterData,
         ...tvShowData,
@@ -65,8 +61,6 @@ function TvTemp({ todayDateFilter }: { todayDateFilter?: boolean }) {
       return;
     } else if (scroll === "scroll" && !startFiltering) {
       if (fetcher.state === "idle") {
-        console.log("normal staring  scroll");
-
         fetcher.load(loc.pathname + "/" + pages.toString());
 
         console.log(loc);
@@ -87,7 +81,6 @@ function TvTemp({ todayDateFilter }: { todayDateFilter?: boolean }) {
       return;
     } else if (scroll === "normal" && discoverScroll) {
       const tvShowData: TvShows = await getDiscoverTV(args);
-      console.log("once");
       setTwShowFilterData({ ...tvShowData, results: tvShowData.results });
       setstartFiltering(true);
 

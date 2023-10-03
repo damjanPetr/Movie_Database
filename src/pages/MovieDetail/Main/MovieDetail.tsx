@@ -1,4 +1,4 @@
-import {} from "react";
+import { useRef } from "react";
 import { ScrollRestoration, useLoaderData } from "react-router-dom";
 import { base_url, base_urlBg } from "../../../api/api";
 import { MovieDetails } from "../../../types/types";
@@ -16,7 +16,8 @@ export default function MovieDetail() {
     movieDetail: MovieDetails;
   };
 
-  console.log(movieDetail);
+  const popupYoutube = useRef<HTMLDialogElement>(null);
+
   const { hours, minutes } = toHoursAndMinutes(movieDetail.runtime);
   return (
     <div className=" ">
@@ -149,9 +150,12 @@ export default function MovieDetail() {
                 <button
                   className="btn flex items-center font-semibold p-2 bg-black/60 hover:shadow-lg transition-all hover:bg-black/70 rounded-md hover:scale-105 "
                   onClick={() => {
-                    const modal = document.getElementById(
-                      "trailer_modal"
-                    ) as HTMLDialogElement;
+                    // const modal = document.getElementById(
+                    //   "trailer_modal"
+                    // ) as HTMLDialogElement;
+
+                    const modal = popupYoutube.current;
+
                     if (modal !== null) {
                       modal.showModal();
                     }
@@ -194,8 +198,10 @@ export default function MovieDetail() {
               </div>
               {movieDetail.homepage && <a href={movieDetail.homepage}></a>}
 
-              {movieDetail.video && (
-                <dialog id="trailer_modal" className="modal">
+              {movieDetail.videos.results.filter((item) => {
+                return item.official === true && item.type === "Trailer";
+              }).length > 0 ? (
+                <dialog id="trailer_modal" className="modal" ref={popupYoutube}>
                   <div className="modal-box bg-black w-[80vw] h-[80vh]">
                     <form method="dialog">
                       <button
@@ -208,7 +214,7 @@ export default function MovieDetail() {
                           if (dialogIframe.contentWindow !== null) {
                             dialogIframe.contentWindow.postMessage(
                               `
-                          {"event":"command", "func":"stopVideo","args":""}`,
+                                  {"event":"command", "func":"stopVideo","args":""}`,
                               "*"
                             );
                           }
@@ -231,7 +237,7 @@ export default function MovieDetail() {
                     ></iframe>
                   </div>
                 </dialog>
-              )}
+              ) : null}
             </section>
           </div>
         </section>

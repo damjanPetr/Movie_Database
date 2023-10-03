@@ -12,7 +12,6 @@ export default function Home() {
     trending: MovieProps;
     getPTV: TVProps;
   };
-  console.log(trending);
 
   const [data, setData] = useState(popular);
 

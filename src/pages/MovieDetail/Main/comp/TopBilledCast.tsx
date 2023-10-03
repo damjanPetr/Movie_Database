@@ -1,15 +1,16 @@
 import { useState } from "react";
+import { Link, useMatch } from "react-router-dom";
 import { still_300 } from "../../../../api/api";
 import { MovieCredits } from "../../../../types/types";
-import MovieDetailAside from "../MovieDetailAside";
-import { Link } from "react-router-dom";
 
 type Props = {
   castData: MovieCredits;
   movieId: number;
 };
 export default function TopBilledCast({ castData, movieId }: Props) {
+  const match = useMatch(`/movie/*`);
   const [loadNumber, setLoadNumber] = useState(10);
+
   return (
     <div className="p-2 border-b">
       <h3 className="text-xl font-bold mb-2 ml-1.5">Top Billed Cast</h3>
@@ -36,7 +37,15 @@ export default function TopBilledCast({ castData, movieId }: Props) {
           ))}
         <div className="w-36 flex items-center flex-none">
           <div className="w-full flex items-center ml-2 hover:text-gray-500">
-            <Link to={`/${movieId}/cast-crew`} className="font-bold">
+            <Link
+              to={
+                `/${match?.pathnameBase == "/movie" ? "movie/" : "tv/"}` +
+                `${movieId}` +
+                "/cast-crew"
+              }
+              // className="text-base font-semibold mt-4 ml-1.5 inline-block "
+              className="font-bold"
+            >
               View More
             </Link>
             <span>
@@ -57,7 +66,11 @@ export default function TopBilledCast({ castData, movieId }: Props) {
         </div>
       </div>
       <Link
-        to={`/${movieId}` + "/cast-crew"}
+        to={
+          `/${match?.pathnameBase == "/movie" ? "movie/" : "tv/"}` +
+          `${movieId}` +
+          "/cast-crew"
+        }
         className="text-base font-semibold mt-4 ml-1.5 inline-block "
       >
         Full Cast & Crew

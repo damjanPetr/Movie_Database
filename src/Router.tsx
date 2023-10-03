@@ -174,12 +174,6 @@ const router = createHashRouter([
                 element: <AlternativeTitles />,
                 loader: async ({ params }) => {
                   const altTitles = await getMovieAltTitles(params.movieId);
-
-                  console.log(
-                    "🚀 ✔ file: Router.tsx:178 ✔ loader: ✔ altTitles:",
-                    altTitles
-                  );
-
                   const details = await movieDetailLoader(params.movieId);
                   return { details, altTitles };
                 },
@@ -212,12 +206,6 @@ const router = createHashRouter([
                 loader: async ({ params }) => {
                   const details = await movieDetailLoader(params.movieId);
                   const data = await getMovieTranslations(params.movieId);
-
-                  console.log(
-                    "🚀 ✔ file: Router.tsx:216 ✔ loader: ✔ data:",
-                    data
-                  );
-
                   return { data, details };
                 },
               },
@@ -325,7 +313,6 @@ const router = createHashRouter([
             path: "/tvshow/airing-today/:page_number?",
             element: <TvTemp todayDateFilter={true} />,
             loader: async ({ params }) => {
-              console.log("airing today");
               const data = await getGenresTv();
               const data2 = await getLanguages();
               const tvShows = await getPopularTv(
@@ -362,7 +349,6 @@ const router = createHashRouter([
             loader: async ({ params }) => {
               const data = await getGenresTv();
               const data2 = await getLanguages();
-              console.log(params.id);
               const tvShows = await getTopratedTV(
                 params.page_number ? params.page_number : ""
               );
@@ -399,12 +385,6 @@ const router = createHashRouter([
                 element: <AlternativeTitles />,
                 loader: async ({ params }) => {
                   const altTitles = await getTVAltTitles(params.tvId);
-
-                  console.log(
-                    "🚀 ✔ file: Router.tsx:397 ✔ loader: ✔ altTitles:",
-                    altTitles
-                  );
-
                   const details = await tvDetailLoader(params.tvId);
                   return { details, altTitles };
                 },
