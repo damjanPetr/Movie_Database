@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useEffect, useState } from "react";
-import { useActionData, useLoaderData } from "react-router-dom";
+import { Form, useActionData, useLoaderData } from "react-router-dom";
 import { TVProps } from "../../types/types";
 import ContentBlock, { MovieProps } from "./comp/ContentBlock";
 
@@ -59,13 +59,15 @@ export default function Home() {
         </div>
         <div className="w-full p-4">
           <div className="relative flex ">
-            <form className="w-full flex-1 ">
+            <Form className="w-full flex-1 " id="search-form" action="/search">
               <input
                 type="text"
-                name="search"
+                role="search"
+                aria-label="Search movies/tv shows"
+                name="s"
                 id="search"
                 className="w-full rounded-full  p-4 text-xl  capitalize outline-none placeholder:italic placeholder:tracking-wide placeholder:text-gray-600 "
-                placeholder="search for a movie, tv show, person..."
+                placeholder="search for a movie or tv shows..."
               />
               <button className="hidden top-0 sm:block absolute right-0 h-full w-40 transition-all  rounded-full bg-gradient-to-r from-teal-500  to-teal-600 text-lg font-bold text-white outline-none hover:text-gray-800">
                 Search
@@ -83,7 +85,7 @@ export default function Home() {
                   />
                 </svg>
               </button>
-            </form>
+            </Form>
           </div>
         </div>
       </section>

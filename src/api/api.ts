@@ -1,5 +1,6 @@
 // import dotenv from "dotenv";
 
+import { stringify } from "postcss";
 import {
   Countries,
   MovieProvidersGeneral,
@@ -36,6 +37,14 @@ export async function movieDetailLoader<T>(id: T) {
 export async function getTvSeason(tvId: string, season_number: string) {
   const response = await fetch(
     apiURL + `/tv/${tvId}/season/${season_number}?append_to_response=images`,
+    apiFetchOptions
+  );
+  return response.json();
+}
+
+export async function search(string: string, type: "movie" | "tv") {
+  const response = await fetch(
+    apiURL + `/search/${type == "movie" ? "movie" : "tv"}?query=${string}`,
     apiFetchOptions
   );
   return response.json();
