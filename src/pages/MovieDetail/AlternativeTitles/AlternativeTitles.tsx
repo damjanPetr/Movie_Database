@@ -35,7 +35,7 @@ export default function AlternativeTitles() {
         <Banner data={details} tv={true} />
       )}
 
-      <main className="mx-auto grid w-10/12 grid-cols-[30%_70%] p-4 max-w-screen-xl">
+      <main className="mx-auto grid w-10/12 grid-cols-[30%_70%] p-4 max-w-screen-xl max-sm:grid-cols-1 max-sm:gap-y-5">
         <Aside data={altTitles} asideTitle={"Alternative Titles"} />
         <Table data={altTitles} purpose="altTitles" />
       </main>

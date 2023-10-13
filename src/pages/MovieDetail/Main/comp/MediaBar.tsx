@@ -116,7 +116,7 @@ export default function MediaBar({
           <h3 className="text-xl font-bold mb-2 ml-1.5">Media</h3>
         </div>
         <nav className="ml-auto mr-8 shadowAside">
-          <ul className="ml-auto flex gap-4 [&>*]:cursor-pointer   ">
+          <ul className="ml-auto flex gap-4 [&>*]:cursor-pointer  max-sm:flex-col max-sm:mb-4 ">
             <li
               className="active:scale-105"
               onClick={() => {

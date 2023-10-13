@@ -151,9 +151,9 @@ export default function ContentBlock({
         loading ? "bg-red-900" : "bg-blue-900"
       }`}
     >
-      <div className=" ml-4 flex items-center justify-start gap-4 ">
+      <div className=" ml-4 flex items-center justify-start gap-4 max-sm:flex-col ">
         <h1 className="ml-6 p-2 text-2xl font-semibold">{title}</h1>
-        <div className=" flex rounded-full border-2">
+        <div className=" flex rounded-full border-2  ">
           {buttons.map((item, index) => {
             return (
               <div

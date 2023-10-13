@@ -15,11 +15,11 @@ export default function Logos() {
     <>
       <Nav />
       <Banner data={details} />
-      <main className="mx-auto flex w-11/12">
-        <aside className="w-[30%] p-4">
+      <main className="mx-auto flex w-11/12 max-sm:flex-col">
+        <aside className="sm:w-[30%] p-4">
           <AsideMedia data={data} details={details} type="logos" />
         </aside>
-        <article className="w-[70%]">
+        <article className="sm:w-[70%]">
           <MainMedia data={data} type="logos" />
         </article>
       </main>

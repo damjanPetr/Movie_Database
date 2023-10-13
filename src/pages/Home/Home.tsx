@@ -46,7 +46,7 @@ export default function Home() {
   return (
     <div className="mx-auto max-w-screen-2xl">
       <section
-        className=" bannerImg flex flex-col items-start justify-center bg-cover bg-no-repeat p-14"
+        className=" bannerImg flex flex-col items-start justify-center bg-cover bg-no-repeat  sm:p-14"
         style={{
           backgroundImage: `url('https://image.tmdb.org/t/p/w1920_and_h600_multi_faces_filter(duotone,032541,01b4e4)${bgPicture}')`,
         }}

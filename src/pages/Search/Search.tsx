@@ -26,8 +26,8 @@ function Search() {
 
   return (
     <div className="mx-auto max-w-screen-2xl">
-      <main className="max-w-screen-xl mx-auto flex p-10 ">
-        <section className="w-[30%]  p-4">
+      <main className="max-w-screen-xl mx-auto flex p-10 max-sm:flex-col ">
+        <section className="sm:w-[30%]  p-4">
           <div className="rounded-xl shadow-md">
             <div className="flex w-full items-center justify-between bg-slate-900   text-center text-white p-5 text-xl font-bold rounded-t-xl ">
               <h3 className=" text-xl">Search Results</h3>
@@ -83,7 +83,7 @@ function Search() {
             Back
           </Link>
         </section>
-        <div className="w-[70%] space-y-4 py-4">
+        <div className="sm:w-[70%] space-y-4 py-4 ">
           {data.results &&
             type === "movies" &&
             data.results.map((item) => {

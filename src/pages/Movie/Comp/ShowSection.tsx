@@ -8,7 +8,6 @@ type Props = {
 };
 
 function ShowSection({ cardData, movies }: Props) {
-  console.log("%c heoatnuo", "background: pink", cardData);
   return (
     <div className="flex justify-between flex-wrap pl-7 gap-4  max-[700px]:justify-center min-[850px]:max-[880px]:gap-2 min-[800px]:max-[900px]:justify-around content-start  max-[480px]:flex-col max-[480px]:mt-10 ">
       {cardData.results.length > 0 ? (

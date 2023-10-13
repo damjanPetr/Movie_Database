@@ -25,9 +25,9 @@ function TVShowDetail() {
             backgroundImage: `url(${base_urlBg + tvDetail.backdrop_path})`,
           }}
         >
-          <div className=" max-w-screen-xl mx-auto flex items-center justify-center  bg-transparent px-10 py-8 text-white bg-blend-darken ">
+          <div className=" max-w-screen-xl mx-auto flex items-center justify-center  bg-transparent px-10 py-8 text-white bg-blend-darken max-sm:flex-col ">
             {/* Image*/}
-            <div className="img w-[300px] h-[450px] flex-none ">
+            <div className="img w-[300px] h-[450px] flex-none max-sm:mb-4 ">
               <img
                 src={base_url + tvDetail.poster_path}
                 alt="Movie Title Picture"
@@ -35,7 +35,7 @@ function TVShowDetail() {
               />
             </div>
             {/* Content*/}
-            <section className="content flex flex-col  pl-10">
+            <section className="content flex flex-col  pl-10 ">
               <div className="mb-10 space-x-1 ">
                 <h2 className="text-4xl font-bold ">
                   {tvDetail.name}
@@ -102,7 +102,7 @@ function TVShowDetail() {
               <div className="flex items-center">
                 {/* Circular Progress Meter */}
 
-                <div className="flex justify-between gap-2 items-center ">
+                <div className="flex justify-between gap-2 items-center mb-2">
                   <div
                     className="relative h-16 w-16 rounded-full flex items-center justify-center border-4 border-black hover:scale-105 transition-all isolation-auto "
                     style={{
@@ -251,8 +251,8 @@ function TVShowDetail() {
         </section>
 
         {/* Main Section */}
-        <article className=" mx-auto flex max-w-screen-xl  p-10">
-          <section className=" min-w-[75%] pr-10">
+        <article className=" mx-auto flex max-w-screen-xl  p-10 max-sm:flex-col">
+          <section className=" min-w-[75%] sm:pr-10">
             <TopBilledCast castData={tvDetail.credits} movieId={tvDetail.id} />
             <Social reviews={tvDetail.reviews.results} />
             <MediaBar movieData={tvDetail} />

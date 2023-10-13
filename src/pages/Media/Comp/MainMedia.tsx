@@ -29,11 +29,11 @@ function MainMedia({ data, type }: Props) {
   });
 
   return (
-    <div className="mx-auto flex max-w-7xl flex-wrap content-center items-start justify-start gap-4 pl-7 py-4">
+    <div className="mx-auto flex max-w-7xl flex-wrap content-center items-start justify-start gap-4 pl-7 py-4 max-sm:justify-center">
       {imagesArray.map((item) => {
         return (
           <div
-            key={item.id}
+            key={item.file_path}
             className="shadow-md flex-initial  rounded-lg w-40 "
           >
             <Link
