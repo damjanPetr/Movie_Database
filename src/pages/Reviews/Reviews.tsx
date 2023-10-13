@@ -14,13 +14,16 @@ export default function Reviews() {
     <div>
       <Nav />
       <Banner data={details} />
-      <main className="mx-auto flex w-11/12 max-w-screen-xl">
+      <main className="mx-auto flex w-11/12 max-w-screen-xl max-sm:flex-col">
         <div className="w-[30%]"></div>
-        <div className=" mt-4 w-[70%]">
-          {data.results.length === 0 ? <p>No viewBox</p> : null}
+        <div className=" mt-4 sm:w-[70%]   ">
+          {data.results.length === 0 ? <p>No Reviews Found</p> : null}
           {data.results.map((item) => {
             return (
-              <div key={item.id} className="mb-4 rounded-lg p-4 shadow-xl">
+              <div
+                key={item.id}
+                className="mb-4 rounded-lg p-4 shadow-xl max-sm:mx-auto"
+              >
                 <div className="mb-4 flex">
                   <div className="img p-2">
                     {item.author_details.avatar_path !== null &&

@@ -31,9 +31,9 @@ export default function MovieDetail() {
             backgroundImage: `url(${base_urlBg + movieDetail.backdrop_path})`,
           }}
         >
-          <div className=" max-w-screen-xl mx-auto flex items-center justify-center  bg-transparent px-10 py-8 text-white bg-blend-darken ">
+          <div className=" max-w-screen-xl mx-auto flex items-center justify-center  bg-transparent px-10 py-8 text-white bg-blend-darken max-sm:flex-col  ">
             {/* Image*/}
-            <div className="img w-[300px] h-[450px] flex-none ">
+            <div className="img w-[300px] h-[450px] flex-none max-sm:mb-10 ">
               <img
                 src={base_url + movieDetail.poster_path}
                 alt="Movie Title Picture"
@@ -106,10 +106,10 @@ export default function MovieDetail() {
               </div>
 
               {/* User Score / Trailer */}
-              <div className="flex items-center">
+              <div className="flex items-center ">
                 {/* Circular Progress Meter */}
 
-                <div className="flex justify-between gap-2 items-center">
+                <div className="flex justify-between gap-2 items-center mb-2">
                   <div
                     className="relative h-16 w-16   rounded-full flex items-center justify-center   border-4 border-black hover:scale-105 transition-all "
                     style={{
@@ -243,8 +243,8 @@ export default function MovieDetail() {
         </section>
 
         {/* Main Section */}
-        <article className=" mx-auto flex max-w-screen-xl  p-10">
-          <section className=" min-w-[75%] pr-10">
+        <article className=" mx-auto flex max-w-screen-xl  p-10 max-sm:flex-col">
+          <section className=" min-w-[75%] sm:pr-10">
             <TopBilledCast
               castData={movieDetail.credits}
               movieId={movieDetail.id}

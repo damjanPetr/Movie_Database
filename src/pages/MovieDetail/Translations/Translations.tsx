@@ -49,7 +49,7 @@ export default function Translations() {
   return (
     <>
       <Banner data={details} />
-      <main className="mx-auto grid px-10 py-7 grid-cols-[30%_70%] p-4 max-w-screen-xl ">
+      <main className="mx-auto grid px-10 py-7 grid-cols-[30%_70%] p-4 max-w-screen-xl max-sm:grid-cols-1 max-sm:gap-y-5 ">
         <Aside asideTitle="Translations" data={data} />
         <Table data={data} purpose="translations" />
       </main>

@@ -362,14 +362,14 @@ function Filter({
 
   return (
     <aside className="w-64 flex-none">
-      <p
+      {/* <p
         className="fixed left-0 p-4 bg-blue-200 text-white"
         onClick={() => {
           console.log(filterUrs);
         }}
       >
         {JSON.stringify(nav.state)}
-      </p>
+      </p> */}
       <Card title="Sort">
         <p className="mb-2">Sort Results By</p>
 

@@ -34,7 +34,7 @@ function AsideMedia({ data, details, type }: Props) {
     <aside className="">
       <section className="rounded-xl shadow-md">
         <div className="flex w-full items-center justify-between bg-slate-900   text-center text-white p-5 text-xl font-bold rounded-t-xl ">
-          <h3 className=" text-xl">{type + " "}</h3>
+          <h3 className=" text-xl capitalize">{type + " "}</h3>
           <span className="p-2 text-xl text-gray-300 ">
             {/* {"results" in data
               ? data.results.length

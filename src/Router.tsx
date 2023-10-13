@@ -25,6 +25,7 @@ import {
   movieDetailLoader,
   movieGetCredits,
   movieGetImages,
+  search,
   tvDetailLoader,
   tvGetCredits,
   tvGetImages,
@@ -56,6 +57,7 @@ import Seasons from "./pages/TV/Seasons/Seasons.tsx";
 import TvTemp from "./pages/TV/TvTemp.tsx";
 import TVShowDetail from "./pages/TVShowDetail/TVShowDetail.tsx";
 import { MovieAltTitles, MovieDetails } from "./types/types.tsx";
+import Search from "./pages/Search/Search.tsx";
 
 const router = createHashRouter([
   {
@@ -83,6 +85,20 @@ const router = createHashRouter([
               const getPTV = await getPopularTv("popularTv", "1");
 
               return { popular, trending, getPTV };
+            },
+          },
+          {
+            path: "/search",
+            element: <Search />,
+            loader: async ({ params, request }) => {
+              const url = new URL(request.url);
+              const string = url.searchParams.get("s");
+              if (string) {
+                const data = await search(string, "movie");
+                const data2 = await search(string, "tv");
+
+                return { data, data2 };
+              }
             },
           },
           {
