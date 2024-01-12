@@ -112,7 +112,7 @@ const router = createHashRouter([
               const data = await getGenresMovies();
               const data2 = await getLanguages();
               const movies = await getMoviePopularMovies(
-                params.page_number ? params.page_number : ""
+                params.page_number ? params.page_number : "1"
               );
               return {
                 genres: data,
@@ -128,7 +128,7 @@ const router = createHashRouter([
               const data = await getGenresMovies();
               const data2 = await getLanguages();
               const movies = await getMovieNowPlaying(
-                params.page_number ? params.page_number : ""
+                params.page_number ? params.page_number : "1"
               );
               return {
                 genres: data,
@@ -144,7 +144,7 @@ const router = createHashRouter([
               const data = await getGenresMovies();
               const data2 = await getLanguages();
               const movies = await getMovieUpcoming(
-                params.page_number ? params.page_number : ""
+                params.page_number ? params.page_number : "1"
               );
               return {
                 genres: data,
@@ -161,7 +161,7 @@ const router = createHashRouter([
               const data2 = await getLanguages();
               const movies = await getPopularTv(
                 "popularTv",
-                params.page_number ? params.page_number : ""
+                params.page_number ? params.page_number : "1"
               );
               return {
                 genres: data,
@@ -316,7 +316,7 @@ const router = createHashRouter([
               const data2 = await getLanguages();
               const movies = await getPopularTv(
                 "popularTv",
-                params.page_number ? params.page_number : ""
+                params.page_number ? params.page_number : "1"
               );
               return {
                 genres: data,
@@ -333,7 +333,7 @@ const router = createHashRouter([
               const data2 = await getLanguages();
               const tvShows = await getPopularTv(
                 "airingToday",
-                params.page_number ? params.page_number : ""
+                params.page_number ? params.page_number : "1"
               );
               return {
                 genres: data,
@@ -349,7 +349,7 @@ const router = createHashRouter([
               const data = await getGenresTv();
               const data2 = await getLanguages();
               const tvShows = await getOnTheAirTV(
-                params.page_number ? params.page_number : ""
+                params.page_number ? params.page_number : "1"
               );
               return {
                 genres: data,
@@ -366,7 +366,7 @@ const router = createHashRouter([
               const data = await getGenresTv();
               const data2 = await getLanguages();
               const tvShows = await getTopratedTV(
-                params.page_number ? params.page_number : ""
+                params.page_number ? params.page_number : "1"
               );
 
               return {

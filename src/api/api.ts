@@ -177,7 +177,7 @@ export async function getOnTheAirTV(page_number: string) {
   return data;
 }
 
-export async function getTopratedTV(page_number = "1") {
+export async function getTopratedTV(page_number: string) {
   const response = await fetch(
     apiURL + `/tv/top_rated?page=${page_number}`,
     apiFetchOptions
@@ -193,9 +193,10 @@ export async function getDiscoverTV(arg: string) {
 }
 
 export async function getMoviePopularMovies(page?: string) {
+  console.log(page);
   if (page != undefined) {
     const response = await fetch(
-      apiURL + `/movie/popular?language=en_US&page=${page}`,
+      apiURL + `/movie/popular?language=en_US&page=${parseInt(page)}`,
       apiFetchOptions
     );
     const data = await response.json();
@@ -236,7 +237,7 @@ export async function getMovieUpcoming(page?: string) {
     return data;
   }
 }
-export async function getMovieNowPlaying(page?: string) {
+export async function getMovieNowPlaying(page = "1") {
   if (page != undefined) {
     const response = await fetch(
       apiURL + `/movie/now_playing?language=en_US&page=${page}`,
